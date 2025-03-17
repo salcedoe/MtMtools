@@ -27,12 +27,12 @@ function hp = mmPlotMask2Surface(MSK,options)
 %   - hp: handle to patch
 % ---
 % EXAMPLES
-% hp = plot_seg_surface(BW);
-% hp = plot_seg_surface(BW,fcolor='cyan');
-% hp = plot_seg_surface(BW,fcolor='magenta',falpha=0.25, lightEMup=true, decimator=0.2);
+% hp = mmPlotMask2Surface(BW);
+% hp = mmPlotMask2Surface(BW,fcolor='cyan');
+% hp = mmPlotMask2Surface(BW,fcolor='magenta',falpha=0.25, lightEMup=true, decimator=0.2);
 %
 % tform = createScaling3d(Sseg.xyz)
-% hp = plot_seg_surface(BW,'magenta',transform_mat=tform); 
+% hp = mmPlotMask2Surface(BW,'magenta',transform_mat=tform); 
 % ---
 % AUTHOR: Ernesto Salcedo, PhD
 % SITE: University of Colorado Modern Human Anatomy
@@ -50,7 +50,6 @@ arguments
     options.new_figure logical = false;
     options.tag char='';
     options.title char='';
-
 end
 
 if options.smooth % smooth boolean

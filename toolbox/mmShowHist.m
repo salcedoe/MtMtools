@@ -53,16 +53,19 @@ else % grayscale
     subplot_display(img,col,num_cols,title_str);
 end
 
-    function ax = subplot_display(img,col,num_cols,title_str)
+set(gcf,"Tag","mmShowHist")
+
+    function iax = subplot_display(img,col,num_cols,title_str)
         
-        ax = subplot(2,num_cols,col); % position image
-        imshow(img) % display image
-       
+        iax = subplot(2,num_cols,col); % position image
+        imshow(img,[]) % display image
+        set(iax,Tag=sprintf('img%d',col))
         if ~isempty(title_str)
             title(title_str) % title image
         end
 
-        subplot(2,num_cols,col+num_cols) % position histogram
+        hax = subplot(2,num_cols,col+num_cols); % position histogram
         imhist(img) % display histogram
+        set(hax,Tag=sprintf('hist%d',col))
     end
 end

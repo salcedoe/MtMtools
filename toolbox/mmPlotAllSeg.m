@@ -39,11 +39,11 @@ arguments
     options.falpha (1,1) double = 0.5;
     options.smooth logical = false;
     options.dec_factor (1,1) double = 0.15;
-    options.new_figure logical = true;
+    options.new_figure logical = false;
 end
 
 if options.new_figure
-    figure(Visible="on")
+    figure(Visible="on",Color="white")
 end
 
 count = height(segT);
