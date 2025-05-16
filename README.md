@@ -8,6 +8,12 @@ This repo contains helper Functions and Apps for the [Muddling Through MATLAB Do
 
 Add the MtMtoolbox to the MATLAB search path to use
 
+## Data
+
+Example Data can be found in this [shared MATLAB Drive folder](https://drive.mathworks.com/sharing/36f2e302-384d-4c4e-aa98-8e853c1051c0).
+
+Be sure to "Add Shortcut" under the Share Content tab in the online MATLAB drive tab. This will ensure the contents are synced with the latest updates.
+
 ## Dependencies
 
 Some functions require the following toolboxes
