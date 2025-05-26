@@ -1,7 +1,7 @@
 %[text] %[text:anchor:T_32C68122] # Mathematical Operations using Numeric Arrays
 %[text] %[text:anchor:T_38F3BC22] ![](text:image:8b9c)
 %[text] %[text:anchor:T_EE64DA8C] [<u>Numeric Arrays</u>](https://salcedoe.github.io/MtMdocs/matlabBasics/Numeric/) are arrays that contain numbers (as opposed to characters or booleans). This exercise reviews the concepts described in the Numeric Arrays module. Please review [that module first](https://salcedoe.github.io/MtMdocs/matlabBasics/Numeric/).
-%[text:tableOfContents]{"heading":"**Table of Contents**"}
+%[text:tableOfContents]{"heading":"Table of Contents"}
 %%
 %[text] %[text:anchor:T_08F97686] # Math Operators
 %[text] - **Add**:            +
@@ -24,7 +24,7 @@
 %[text] - Take away your original number from x. Assign the result to x, overwriting the previous contents \
 
 %%
-%[text] - If you entered the the syntax correctly, the final in `x` should be 5.  
+%[text] - If you entered the the syntax correctly, the final in `x` should be 5.
 %[text] - Run the script again, only change the value of ***N*** to see if it works on all numbers;
 %[text] - Make N an array and run the script - all answers should come up 5 \
 %[text] magic!
@@ -80,7 +80,7 @@ r = randi(10,4,5)
 %[text] ```
 %%
 %[text] %[text:anchor:H_AA3F80F6] ## Matrix math functions
-%[text] - Calculate the mean of ***r****:* \
+%[text] - Calculate the mean of ***r*** \
 
 %[text] - Why do you get a vector as an answer? \
 %[text] ```
@@ -139,7 +139,7 @@ m = reshape(1:25,5,5)
 %[text] Multiply m x r
 
 %[text] - *record scratch*
-%[text] - Review these results. 
+%[text] - Review these results.
 %[text] - Do they make any sense?
 %[text] - Is this element by element multiplication? \
 %%
@@ -156,7 +156,7 @@ m = reshape(1:25,5,5)
 %[text] What about raising the matrices' elements to a power?
 %[text] Raise *m* to the power of 2
 
-%[text] - This does not make any sense. 
+%[text] - This does not make any sense.
 %[text] - What is happening? \
 %%
 %[text] %[text:anchor:H_308C73C2] ### Linear Algebra is happening
