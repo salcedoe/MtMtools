@@ -1,23 +1,40 @@
-function folder_path = mmSetUnitDataFolder(unit)
-%SET_UNIT_DATA_FOLDER Sets the current folder to one of the UNIT data
-%folders in ANAT 6205 MATLAB drive folder
-%   This function is specific to ANAT 6205 MATLAB folder
+function datapath = mmSetUnitDataFolder(unit_num)
+%MMSETUNITDATAFOLDER Sets the current folder a unit data folder in the MtMdata Shared Drive
+% download the shared drive here: https://drive.mathworks.com/sharing/36f2e302-384d-4c4e-aa98-8e853c1051c0
+% INPUT
 %   unit - the Unit Number you want set
-%   Example:
-%      set_unit_data_folder(2)
+%
+% Example:
+%      mmSetUnitDataFolder(2)
 % ---
 % CU Anschutz School of Medicine Modern Human Anatomy
 % Ernesto Salcedo, PhD
 % Ernesto.Salcedo@cuanschutz.edu
 
-folder_path = fullfile(matlabdrive,"ANAT6205", sprintf("UNIT %d",unit),"data");
-
-if ~exist(folder_path,"dir")
-    beep
-    fprintf('MATLAB Drive folder not found. Find the UNIT %d data folder\n',unit)
-    folder_path = uigetdir;
+arguments
+    unit_num (1,1) {mustBeNumeric}
 end
-    cd(folder_path)
 
-fprintf("The current folder is %s",folder_path);
+
+% paths.toolbox = mfilename("fullpath");
+% paths.repo = fileparts(fileparts(paths.toolbox));
+% paths.scripts = fullfile(paths.repo,'scripts');
+% paths.unit = fullfile(paths.scripts,sprintf('unit%d',unit_num));
+
+dp = fullfile(matlabdrive,"MtMdata", sprintf("unit%d",unit_num));
+
+if ~exist(dp,"dir")
+    beep
+    fprintf('Indicated MtMdata folder not found. Find the unit%d data folder in the MtMdata folder\n',unit)
+    dp = uigetdir;
+end
+
+cd(dp)
+
+if nargout>0
+    datapath = dp;
+else
+    fprintf("The current folder is now %s\n",pwd);
+end
+
 end

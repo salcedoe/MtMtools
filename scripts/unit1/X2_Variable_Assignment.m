@@ -1,10 +1,12 @@
 %[text] %[text:anchor:T_C5E7DB7D] # Variable Assignment
-%[text] During this course, we will be assigning data to variables. We'll start with the fundamentals
-%[text] %[text:anchor:T_C5E745A5] The fundamental classes are: 
-%[text] - Numeric Arrays
-%[text] - Character Arrays
-%[text] - Logical arrays \
+%[text] [Online Documentation](https://salcedoe.github.io/MtMdocs/matlabBasics/ArrayAssignmentOverview/)
+%[text] During this course, we will be assigning data to variables. We'll start with the fundamentals classes. Online documentation for these classes can be found here
+%[text] - [Numeric Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Numeric/)
+%[text] - [Character Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Character/)
+%[text] - [Logical arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Logical/) \
 %[text] These three classes can hold basically all of the data that you need for programming. 
+%[text:tableOfContents]{"heading":"Table of Contents"}
+%[text] 
 %%
 %[text] %[text:anchor:H_6F58495C] ## Assignment
 %[text] Assignment is the process of adding data to a variable.
@@ -53,10 +55,10 @@ exist('notAfunction')
 my_primes = primes(10) % creates a vector of prime numbers through 10
 mean = mean(my_primes) % assign to the variable mean the average of the vector my_primes 
 %[text] - Well, actually, it works fine the *first* time.
-%[text] - But once ***mean*** is added to the Workspace as a variable, the function **mean** no longer works properly. 
-%[text] - Test this by re-running this code block  
-%[text] - The error we get is because  MATLAB is trying to index the variable ***mean*** and not call the function ***mean***. 
-%[text] - This ambiguity is in fact a criticism of  MATLAB: indexing variables and inputting inputs into functions can look identical and become a source of confusion. 
+%[text] - But once ***mean*** is added to the Workspace as a variable, the function **mean** no longer works properly.
+%[text] - Test this by re-running this code block
+%[text] - The error we get is because  MATLAB is trying to index the variable ***mean*** and not call the function ***mean***.
+%[text] - This ambiguity is in fact a criticism of  MATLAB: indexing variables and inputting inputs into functions can look identical and become a source of confusion.
 %[text] - So, don't name your variable the same as functions or you will have troubles \
 %%
 %[text] %[text:anchor:H_CE3B910C] ### Copying data
@@ -137,7 +139,7 @@ b = [b 3 4]
 b = [0 1 b]
 %[text] - here we add the scalars 0 and 1 before the contents of ***b*** and overwrite ***b*** \
 %%
-%[text] Try it Now: add -1 before and 5 after the current series in ***b***  
+%[text] Try it Now: add -1 before and 5 after the current series in ***b*** 
 %[text] ```
 %[text] e.g. -1 0 1 2 3 4 3 4 5
 %[text] ```
@@ -281,10 +283,10 @@ t(2,4)
 m(4,2)
 %[text] - same value \
 %%
-%[text] %[text:anchor:H_5D0E2AE9] ## Deletion
+%[text] %[text:anchor:H_5D0E2AE9] ## Deleting elements
 %[text] %[text:anchor:H_56304ADE] Emptying arrays and deleting elements by using the empty square brackets
 %[text] ```
-%[text] variable_name([ ]
+%[text] variable_name(1) = [ ]
 %[text] ```
 %[text] 
 %[text] Assign to ***t*** an empty pair of brackets

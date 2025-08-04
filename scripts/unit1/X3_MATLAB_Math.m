@@ -58,7 +58,6 @@ mod(a,3)
 %[text] - do you see any patterns? \
 %[text] **Now, consider** ***b:***
 b = 0:0.25:2
-
 %[text] What are the remainders after dividing by 1?
 %%
 %[text] %[text:anchor:H_49913708] ## Matrix Math
@@ -97,8 +96,6 @@ r = randi(10,4,5)
 
 %%
 %[text] - Enter the syntax to calculate the **maximum** value across the rows \
-
-%%
 
 %%
 %[text] %[text:anchor:H_320CD45D] ### Magic Matrices

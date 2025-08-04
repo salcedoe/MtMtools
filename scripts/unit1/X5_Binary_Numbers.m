@@ -1,4 +1,6 @@
 %[text] %[text:anchor:T_473038EA] # Binary Numbers
+%[text] The power of the Power of Two: representing all values with just one's and zero's.
+%[text] [Online Documentation](https://salcedoe.github.io/MtMdocs/matlabBasics/BinaryNumbers/)
 %[text] %[text:anchor:T_7D4FDDC3] ![](text:image:2372)
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
@@ -8,35 +10,35 @@ clearvars
 %%
 %[text] %[text:anchor:H_DD0862C6] ## Converting to Binary
 %[text] It is easy to convert decimals to binary using the ***dec2bin*** function
-%[text] The following converts the decimal 20 to binary using *dec2bin*
-dec2bin(20) %[output:0dd5e6f2]
+%[text] The following converts the decimal `20` to binary using *dec2bin*
+dec2bin(20)
 %[text] - notice that the default doesn't have leading zeros \
 %[text] 
 %%
-%[text] The following converts each element in a 1x20 numeric array to its binary counterpart:
-ar = 1:20 %[output:1021e674]
-dec2bin(ar,8) % the second input indicates the bit depth %[output:57032f20]
+%[text] The following converts each element in a `1x20` numeric array to its binary counterpart:
+ar = 1:20
+dec2bin(ar,8) % the second input indicates the bit depth
 %[text] - Notice here, we specify a set number of bits to display (8), so there are leading zeros in the results \
 %%
 %[text] %[text:anchor:H_36E34025] ## Convert to decimal
-%[text] Use **bin2dec**  to convert '00001010' to a decimal. Note, your input should be a character array
-bin2dec('00001010') %[output:5f098e2a]
+%[text] Use **bin2dec**  to convert `'00001010'` to a decimal. Note, your input should be a character array
+bin2dec('00001010')
 %%
 %[text] %[text:anchor:T_411D6FC8] # Numeric arrays and memory
-%[text] Recall, there are multiple class of numeric arrays. Here are the main ones we are going to use:
+%[text] Recall, there are multiple class of numeric arrays. Here are the main ones that we are going to use:
 %[text] - **double** - the default, a floating point class, 64 bit
 %[text] - **single** - a floating point class, 32 bit
 %[text] - **uint8** - unsigned integer, 8 bit
 %[text] - **uint16** - unsigned integer, 16 bit \
-%[text] Conveniently, the name of each class is also a MATLAB function that convert a number from one class to another. The conversion of a variable from one class to another class is know as **typecasting**
-%[text] Consider the following code. The first line has a control element (a slider) that allows you to change the value of the variable ***a.*** Once you change the value of ***a***, the next lines of code typecasts the value in ***a*** and assign that value to the variables ***b, c,*** and ***d***, respectively. 
-%[text] 1. Execute the code without changing the value of ***a*** (The default value should be 10)
-%[text] 2. Manipulate the value of ***a*** as indicated in the questions that follow the code \
+%[text] Conveniently, the name of each class is also a MATLAB function that convert a number from one class to another. The conversion of a variable from one class to another class is know as **type casting**
+%[text] Consider the following code. The first line has a control element (a slider) that allows you to change the value of the variable *`a`****.*** Once you change the value of *`a`*, the next lines of code typecasts the value in *a* and assign that value to the variables *`b`****,*** *`c`****,*** and *`d`*, respectively. 
+%[text] 1. Execute the code without changing the value of *`a`* (The default value should be `10`)
+%[text] 2. Manipulate the value of *`a`* as indicated in the questions that follow the code \
 clearvars
-a = 1170  %[control:slider:7802]{"position":[5,8]} %[control:slider:55e0]{"position":[8,9]} %[output:42603a0a]
-b = single(a) %[output:8aebea75]
-c = uint16(a) %[output:418180c9]
-d = uint8(a) %[output:1bcddc2e]
+a = 600  %[control:slider:7802]{"position":[5,7]} %[control:slider:55e0]{"position":[7,8]}
+b = single(a)
+c = uint16(a)
+d = uint8(a)
 %[text] - Review the variables in the Workspace. Make sure you are displaying the value, size, bytes, and class columns in the workspace
 %[text] - Notice that all variables have the same value (10), but, they all have different classes and occupy different amount of space in memory (bytes)
 %[text] - What class is ***a***? Why is it that one? We didn't explicitly set its class... \
@@ -65,14 +67,14 @@ d = uint8(a) %[output:1bcddc2e]
 %%
 %[text] %[text:anchor:H_3929C913] ### Typecasting Numeric vectors
 %[text] Consider the following array:
-a = [0 10 100 256 1000 66e3 2097151] %[output:06604dcf]
+a = [0 10 100 256 1000 66e3 2097151]
 %[text] -   typecast ***a*** to class **single** and assign to b \
-b=single(a) %[output:094c1f5e]
+
 %[text] -   typecast ***a*** to an **unsigned 16-bit integer** and assign to c \
-c=uint16(b) %[output:4bcb5389]
+
 %[text] - 
 %[text] -   typecast ***a*** to an **unsigned 8-bit integer** and assign to d \
-d=uint8(a)
+
 %[text] - notice the class of each variable
 %[text] - Notice which values saturate when \
 %[text] 
@@ -80,7 +82,7 @@ d=uint8(a)
 %[text] %[text:anchor:H_B552E15F] ### Saturate and clamp the arrays
 %[text] %[text:anchor:H_72DB3AF5] Compare the maximum values in ***a*** and ***b*** vs ***c*** and ***d*** after moving the slider
 %[text] 
-saturator = 0 %[control:slider:4f63]{"position":[13,14]}
+saturator = 120 %[control:slider:4f63]{"position":[13,16]}
 a+saturator
 b+saturator
 c+saturator
@@ -90,15 +92,13 @@ d+saturator
 %[text] %[text:anchor:H_45F3CE52] # Typecasting Character arrays
 %[text] %[text:anchor:H_57D8F5AB] ## How are character arrays stored in memory?
 clearvars %[text:anchor:H_AD9398D5]
-ch = 'hello' %[output:936a34b3]
-%[text] - Can you convert character arrays to binary using **dec2bin?** Try it now and assign to *ch\_bin* \
-n =uint16(ch) %[output:90c58545]
-%[text] - What does each row represent?
-%[text] - Each column? \
+ch = 'hello'
 %%
-%[text] - What numbers are those? Convert *ch\_bin* to a numeric array using **bin2dec** \
-ch2=char(n) %[output:0479808a]
+%[text] Type cast the character array to a uint16 numeric array and assign to *`n`*:
+
+%[text] 
 %[text] - So, what do these numbers represent? \
+%[text] 
 %[text] ```
 %[text] 
 %[text] ```
@@ -114,7 +114,7 @@ uint16('a':'z')
 %%
 %[text] %[text:anchor:H_D9E2EACA] ### Are the ASCII codes different for uppercase characters?
 %[text] Typecast the capital letter characters 'A' through 'Z' into a **uint16** array. 
-uint16('A':'Z') %[output:5e3e33fa]
+
 %[text] - Are the ASCII codes different from the lower case characters? \
 %[text] ```
 %[text] 
@@ -122,10 +122,9 @@ uint16('A':'Z') %[output:5e3e33fa]
 %[text] 
 %%
 %[text] %[text:anchor:H_4EE83B11] ## Math and Character arrays do not mix
-%[text] Or, at least have unexpected results. 
-%[text] Consider the following two variables
-n = '5' %[output:973e8110]
-m = 5 %[output:44c135b3]
+%[text] Or, at least have unexpected results. Consider the following two variables
+n = '5'
+m = 5
 %[text] - What class is ***m?*** ***n?*** \
 %[text] ```
 %[text] 
@@ -136,60 +135,58 @@ m = 5 %[output:44c135b3]
 %[text] ```
 %%
 %[text] Enter the syntax to add 1 to ***m***:   
-m+1 %[output:1137235e]
+
 %[text] ...and to add 1 to ***n:***
-n+1 %[output:0268a6da]
+
 %[text] - What does adding 1 to '5' = 54? Why 54? \
 %%
 %[text] Enter the syntax to typecast the character array ***n*** to a **uint16**
-uint16('0':'9') %[output:0a148255]
+
 %[text] - What number do you get?  \
 %[text] 
 %[text]  
 %%
 %[text] %[text:anchor:H_B3A09EFA] ## Typecasting digits to characters
 %[text] The following typecasts the characters 0 through 9 into an **uint16**
-uint16('0':'9') %[output:9f66869d]
+uint16('0':'9')
 %[text] So, now, the result of n+1 should makes more sense. MATLAB automatically typecasts ***n*** to a double when it sees the ***+*** operator. When you typecast a character array to a double, you get the numeric ascii code of the variable, not the numeric equivalent. In this case, the [ASCII code](https://www.ascii-code.com) was 53. 53+1 = 54.
 %%
 %[text] %[text:anchor:H_845420E2] ### Type casting Character Arrays
 %[text] What is the ASCII code for '50'? 
-uint16('50') %[output:8ef26ab8]
+uint16('50')
 %[text] - Why do you get an array of two numbers? \
 %%
 %[text] Same deal for 500
 
 %%
 %[text] Explain this result:
-'0'+10 %[output:4f6fba24]
+'0'+10
 %[text] - What is the ASCII code for '0' \
 %[text] ```
 %[text] 
 %[text] ```
 %%
 %[text] %[text:anchor:H_39386DA7] ### ASCII to Char
-%[text] The following term describes someone who shows no regret or guilt for what they’ve done. What's the term?
-ac = [115    97   118    97   103   101] %[output:66e56548]
-char(ac) %[output:023e5acb]
+%[text] The following is code for a slang term that means "extremely pleasing, flavorful, or outstanding" . What's the term?
+ac = [98   117   115   115   105   110]
 %%
 %[text] %[text:anchor:H_33693C0A] ### Decoding secret messages
 %[text] You receive the following secret message:
-cipher = 'K"jcxg"vjg"rcemcig0"Ugpf"vjg"fgnkxgt{"ocp' %[output:0bd0cc43]
+cipher = 'K"jcxg"vjg"rcemcig0"Ugpf"vjg"fgnkxgt{"ocp'
 %[text] Since its Tuesday, you know the ASCII code has been shifted by 2. What's the secret message?
-char(cipher) %[output:3cee3d62]
-char(cipher-2) %[output:7e4e8c57]
+
 %%
 %[text] %[text:anchor:T_C38DE6B2] # Typecasting to a logical
 %[text] Any value that is not zero will typecast to a TRUE in a logical array. 
 %[text] The function **logical** typecasts other class types:
 clearvars
-logical(1000) %[output:279f6365]
-logical(0) %[output:91ceb317]
+logical(1000)
+logical(0)
 %%
 %[text] %[text:anchor:H_CBCF5347] ## Typecast a numeric array to a logical array
 %[text] %[text:anchor:H_B99C59BA] Consider the following numeric vector:
-a = -2:1:2 %[output:716f27bb]
-logical(a) %[output:6baa7de8]
+a = -2:1:2
+logical(a)
 %%
 %[text] Enter the syntax to typecast ***a*** to a logical array using the function **logical**. Which values will convert to true?
 
@@ -209,12 +206,11 @@ a = 'hello'
 %%
 %[text] %[text:anchor:H_931D4F73] ### Typecasting empty arrays 
 %[text] %[text:anchor:H_301E175D] What about empty arrays?
-a = '' %[output:2bf169e2]
-b = [] %[output:8eb79a74]
+a = ''
+b = []
 %%
 %[text] Enter the syntax to typecast *a* and *b* to logical class. 
-logical(a) %[output:44e51503]
-logical(b) %[output:8e4232c9]
+
 %[text] What did you get?
 %[text] ```
 %[text] 
@@ -248,112 +244,4 @@ c = true;
 %---
 %[control:slider:4f63]
 %   data: {"defaultValue":0,"label":"saturator","max":1000,"min":-1000,"run":"Section","runOn":"ValueChanging","step":10}
-%---
-%[output:0dd5e6f2]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'10100'"}}
-%---
-%[output:1021e674]
-%   data: {"dataType":"matrix","outputData":{"columns":20,"name":"ar","rows":1,"type":"double","value":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"]]}}
-%---
-%[output:57032f20]
-%   data: {"dataType":"textualVariable","outputData":{"header":"20×8 char array","name":"ans","value":"    '00000001'\n    '00000010'\n    '00000011'\n    '00000100'\n    '00000101'\n    '00000110'\n    '00000111'\n    '00001000'\n    '00001001'\n    '00001010'\n    '00001011'\n    '00001100'\n    '00001101'\n    '00001110'\n    '00001111'\n    '00010000'\n    '00010001'\n    '00010010'\n    '00010011'\n    '00010100'\n"}}
-%---
-%[output:5f098e2a]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"ans","rows":"1","value":"10"},"version":0}
-%---
-%[output:42603a0a]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"a","rows":"1","value":"117"},"version":0}
-%---
-%[output:8aebea75]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","header":"<a href=\"matlab:helpPopup('single')\" class=\"headerDataType\">single<\/a>","name":"b","rows":"1","value":"117"},"version":0}
-%---
-%[output:418180c9]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","header":"<a href=\"matlab:helpPopup('uint16')\" class=\"headerDataType\">uint16<\/a>","name":"c","rows":"1","value":"117"},"version":0}
-%---
-%[output:1bcddc2e]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","header":"<a href=\"matlab:helpPopup('uint8')\" class=\"headerDataType\">uint8<\/a>","name":"d","rows":"1","value":"117"},"version":0}
-%---
-%[output:06604dcf]
-%   data: {"dataType":"matrix","outputData":{"columns":7,"name":"a","rows":1,"type":"double","value":[["0","10","100","256","1000","66000","2097151"]]}}
-%---
-%[output:094c1f5e]
-%   data: {"dataType":"matrix","outputData":{"columns":7,"header":"1×7 single row vector","name":"b","rows":1,"type":"single","value":[["0","10","100","256","1000","66000","2097151"]]}}
-%---
-%[output:4bcb5389]
-%   data: {"dataType":"matrix","outputData":{"columns":7,"header":"1×7 uint16 row vector","name":"c","rows":1,"type":"uint16","value":[["0","10","100","256","1000","65535","65535"]]}}
-%---
-%[output:936a34b3]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch","value":"'hello'"}}
-%---
-%[output:90c58545]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"header":"1×5 uint16 row vector","name":"n","rows":1,"type":"uint16","value":[["104","101","108","108","111"]]}}
-%---
-%[output:0479808a]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch2","value":"'hello'"}}
-%---
-%[output:5e3e33fa]
-%   data: {"dataType":"matrix","outputData":{"columns":26,"header":"1×26 uint16 row vector","name":"ans","rows":1,"type":"uint16","value":[["65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90"]]}}
-%---
-%[output:973e8110]
-%   data: {"dataType":"textualVariable","outputData":{"name":"n","value":"'5'"}}
-%---
-%[output:44c135b3]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"m","rows":"1","value":"5"},"version":0}
-%---
-%[output:1137235e]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"ans","rows":"1","value":"6"},"version":0}
-%---
-%[output:0268a6da]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"ans","rows":"1","value":"54"},"version":0}
-%---
-%[output:0a148255]
-%   data: {"dataType":"matrix","outputData":{"columns":10,"header":"1×10 uint16 row vector","name":"ans","rows":1,"type":"uint16","value":[["48","49","50","51","52","53","54","55","56","57"]]}}
-%---
-%[output:9f66869d]
-%   data: {"dataType":"matrix","outputData":{"columns":10,"header":"1×10 uint16 row vector","name":"ans","rows":1,"type":"uint16","value":[["48","49","50","51","52","53","54","55","56","57"]]}}
-%---
-%[output:8ef26ab8]
-%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"1×2 uint16 row vector","name":"ans","rows":1,"type":"uint16","value":[["53","48"]]}}
-%---
-%[output:4f6fba24]
-%   data: {"dataType":"not_yet_implemented_variable","outputData":{"columns":"1","name":"ans","rows":"1","value":"58"},"version":0}
-%---
-%[output:66e56548]
-%   data: {"dataType":"matrix","outputData":{"columns":6,"name":"ac","rows":1,"type":"double","value":[["115","97","118","97","103","101"]]}}
-%---
-%[output:023e5acb]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'savage'"}}
-%---
-%[output:0bd0cc43]
-%   data: {"dataType":"textualVariable","outputData":{"name":"cipher","value":"'K\"jcxg\"vjg\"rcemcig0\"Ugpf\"vjg\"fgnkxgt{\"ocp'"}}
-%---
-%[output:3cee3d62]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'K\"jcxg\"vjg\"rcemcig0\"Ugpf\"vjg\"fgnkxgt{\"ocp'"}}
-%---
-%[output:7e4e8c57]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'I have the package. Send the delivery man'"}}
-%---
-%[output:279f6365]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"ans","value":"   1\n"}}
-%---
-%[output:91ceb317]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"ans","value":"   0\n"}}
-%---
-%[output:716f27bb]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"name":"a","rows":1,"type":"double","value":[["-2","-1","0","1","2"]]}}
-%---
-%[output:6baa7de8]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"header":"1×5 logical array","name":"ans","rows":1,"type":"logical","value":[["1","1","0","1","1"]]}}
-%---
-%[output:2bf169e2]
-%   data: {"dataType":"text","outputData":{"text":"\na =\n\n  0×0 empty <a href=\"matlab:helpPopup('char')\" style=\"font-weight:bold\">char<\/a> array\n\n","truncated":false}}
-%---
-%[output:8eb79a74]
-%   data: {"dataType":"text","outputData":{"text":"\nb =\n\n     []\n\n","truncated":false}}
-%---
-%[output:44e51503]
-%   data: {"dataType":"text","outputData":{"text":"\nans =\n\n  0×0 empty <a href=\"matlab:helpPopup('logical')\" style=\"font-weight:bold\">logical<\/a> array\n\n","truncated":false}}
-%---
-%[output:8e4232c9]
-%   data: {"dataType":"text","outputData":{"text":"\nans =\n\n  0×0 empty <a href=\"matlab:helpPopup('logical')\" style=\"font-weight:bold\">logical<\/a> array\n\n","truncated":false}}
 %---
