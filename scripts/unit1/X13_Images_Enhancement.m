@@ -318,7 +318,7 @@ for n=1:numel(i)
 end
 %[text] - there is still extensively shadowing throughout the pages \
 %%
-%[text] But the function **adapthisteq,** however, works quite nicely in this situation
+%[text] But the function **adapthisteq** works quite nicely in this situation
 i{end+1} = adapthisteq(book);
 title_str(end+1) = 'adapthisteq';
 nexttile
