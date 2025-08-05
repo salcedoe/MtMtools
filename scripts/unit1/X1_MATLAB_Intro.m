@@ -226,7 +226,7 @@ clc
 %[text] For these functions to work, MATLAB needs to find them.  MATLAB finds function by searching the Path — a compendium of folders containing  MATLAB stuff. To add the course functions to the MATLAB path, follow these steps. 
 %[text] 1. Home Tab
 %[text] 2. Click on Set Path (under "Environment" section)
-%[text] 3. "Add Folder to Path" 
+%[text] 3. "Add Folder to Path"
 %[text] 4. Select the `MtMtools/MtMtoolbox` folder
 %[text] 5. Check On "Save path for future sessions" - so you don't have to repeat this process
 %[text] 6. Click "OK" \
@@ -234,10 +234,9 @@ clc
 %%
 %[text] ## Course Data
 %[text] As we work through the course exercises, we will be loading example datasets. I have save all of these datasets in a shared MATLAB drive folder called "MtMdata".
-%[text] - You can add this folder to your MATLAB drive by clicking on this [MATLAB Drive link](https://drive.mathworks.com/sharing/36f2e302-384d-4c4e-aa98-8e853c1051c0). 
-%[text] - Clicking on this link should take you to the online MATLAB drive Website. 
+%[text] - You can add this folder to your MATLAB drive by clicking on this [MATLAB Drive link](https://drive.mathworks.com/sharing/36f2e302-384d-4c4e-aa98-8e853c1051c0).
+%[text] - Clicking on this link should take you to the online MATLAB drive Website.
 %[text] - Under the "Shared Content" tab, select "Add Shortcut" to add a synchronized copy of the folder to your MATLAB drive. \
-%[text] ## 
 %%
 %[text] ####  Did you do it right?
 %[text] Try to run the following code block

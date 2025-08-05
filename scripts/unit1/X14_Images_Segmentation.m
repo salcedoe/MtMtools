@@ -1,7 +1,7 @@
 %[text] %[text:anchor:T_CD677283] # Segmentation
-%[text] Segmentation is used to locate objects or boundaries in an image. You typically segment images to identify objects and other relevant information within an image.
-%[text] *Masks*. Segmentation results in the creation of a mask (typically a logical array) that is the same size as the image being processed. These masks contain true in the regions corresponding to the identified object or boundary. A cluster of trues that share a pixel edge are typically known as connected components or blobs. 
-%[text] *Region Properties.* Once created, segmentation masks can be used to calculate the properties of the object identified in the image (properties such as area, length, and circularity) or to selectively adjust pixel intensities in the original image. 
+%[text] **Segmentation** is used to locate objects or boundaries in an image. You typically segment images to identify objects and other relevant information within an image.
+%[text] **Masks**. Segmentation results in the creation of a mask (typically a logical array) that is the same size as the image being processed. The pixels in these masks contain clusters of the exact same value (typically logical `1s` or an integer value) that can be used to index the original image. These clusters of identical values often correspond to internal regions in the image that represent objects or boundaries. 
+%[text] **Nomenclature**: Small clusters of non-contiguous masks inside an image  are also known as regions, connected components, or blobs. 
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %%
 %[text] %[text:anchor:H_A5C76033] ## Example: High-Resolution Moon
@@ -15,7 +15,6 @@ img = imread("FullMoonGray.png");
 figure;
 imshow(img)
 %%
-%[text] 
 %[text] %[text:anchor:H_AA679321] ## Manual Segmentation
 %[text] Segmentation is the process of dividing an image into multiple parts of connected pixels. You typically segment images to identify objects and other relevant information within an image. Segmentation results in the creation of a mask (typically a logical array) that is the same size as the image to be processed. This mask can be used to selectively adjust pixel intensities in the original image (using logical imaging) and to calculate the properties of the object identified in the image (properties such as area, length, and circularity)
 %[text] Manual segmentation is a common tool used when automated methods do not work. It basically involves a great deal tracing and can be EXTREMELY labor intensive. 
@@ -23,7 +22,7 @@ imshow(img)
 %[text] An ROI is a Region of Interest - or a small part of an image in which you are interested.
 %[text] %[text:anchor:H_0846B998] ## Circle Tool
 %[text] The function **drawcircle** allows you to draw a circle on an image. You can then use the ROI to create a logical array (also called a mask). After you draw the circle and double click inside the circle. 
-%[text] Notes about the following code: The function **drawcircle**  returns a handle (roi\*\*\*)\*\*\* to the ROI drawn on the image. This handle contains the properties of the ROI. The **wait** function pauses the script and waits for the user to double-click inside the circle before allowing the script to continue executing. In addition to property data for the ROI, ***roi*** also contains functions that can operate on the ROI. One of these functions is called **createMask**. Notice that you use dot notation (and no parentheses) to execute this function. The **roi.createMask** function returns a logical array that can be used as mask on the original image.
+%[text] Notes about the following code: The function **drawcircle**  returns a handle (`roi`) to the ROI drawn on the image. This handle contains the properties of the ROI. The **wait** function pauses the script and waits for the user to double-click inside the circle before allowing the script to continue executing. In addition to property data for the ROI, ***roi*** also contains functions that can operate on the ROI. One of these functions is called **createMask**. Notice that you use dot notation (and no parentheses) to execute this function. The **roi.createMask** function returns a logical array that can be used as mask on the original image.
 % display the image
 figure(Visible="on");
 nexttile
@@ -43,67 +42,19 @@ title('moon mask')
 impixelinfo
 %[text]  
 %%
-%[text] %[text:anchor:H_8D67E1C7] ## Overlay Mask and Moon with imshowpair
-%[text] The function **imshowpair** is used compare two images by creating a composite image where one image is overlaid on the other. 
+%[text] %[text:anchor:H_8D67E1C7] ## Overlay Mask and Moon 
+%[text] Review the properties of the `img` and `moon_mask`
+%[text] - What class are these variables
+%[text] - What size do these variables have? \
+%[text] The function **imshowpair** allows us to overlay the mask on the original image, as follows
 % display overlay
 figure;
 imshowpair(img, moon_mask) % create composite image
 title('Pink = Mask')
 %[text] - **imshowpair** uses pseudocolor to overlay the images: the first input is shown in shades of green, while the second input is shown in shades of magenta.   \
 %%
-%[text] %[text:anchor:H_247859AB] ## Measuring Masks
-%[text] Once you have a mask of an image, you can use that mask to measure things on the image. Remember, masks are just logical arrays, which are just TRUEs and FALSEs. 
-%[text] %[text:anchor:H_AC2CD31D] ### Example: Estimate Pixel Size in miles
-%[text] In this example, we will estimate the size of a pixel (assuming each pixel is square) by creating a mask of the moon and then grab information readily available on the internet.
-%[text] To estimate the size of the pixel, we need to measure a known distance on the moon. One such distance is the diameter of the moon. On our image, we can measure the diameter of the moon in pixels. From the internet, we can copy the actual diameter of the moon (in miles). Then we can divide the miles by the pixels and get miles per pixel, or basically the size of one pixel in our image. 
-%[text] To measure the diameter of the moon, we could simply draw a line from one edge of the moon to the other, making sure that we pass through the exact center of the moon. Or, for a little more precision, we could draw a circular mask, calculate the area of this mask, and then calculate the diameter from the Area, using geometry:
-%[text] $\\begin{array}{l}\nA=\\pi r^2 \\\\\nr^2 =\\frac{A}{\\pi }\\\\\nr=\\sqrt{\\frac{A}{\\pi }}\\\\\nd=r\*2\n\\end{array}${"editStyle":"visual"}
-%[text] Once you create an ROI, the area of the ROI is easy to calculate: just add up all of the TRUEs in the mask
-moon_area = sum(moon_mask(:)); % add up all pixels to calculate area
-moon_radius = sqrt(moon_area / pi);  % calculate the radius from area
-moon_diameter_px = moon_radius * 2; % in pixels
-%%
-%[text] Now, we need to look up the diameter of moon in miles: google says it 2159 miles. Let's use that. 
-%[text] Here create a new variable called ***moon\_diameter*** that contains the diameter of the moon in miles. 
-moon_diameter = 2159
-%%
-%[text] To estimate the size of a pixel, we need to divide the miles by the pixels to get miles-per-pixel, as follows:
-pixel_size = moon_diameter / moon_diameter_px; % calculate miles per pixel
-
-% create a nice little table
-calculations = table(moon_area, moon_radius, moon_diameter, moon_diameter_px, pixel_size) % display results
-fprintf('A pixel in the moon image is approx. %1.4f miles wide (and tall)!\n', pixel_size)
-%%
-%[text] %[text:anchor:H_58221991] ### Calculate cross-sectional area of binary moon (cross-sectional area)
-%[text] Simply multiply the number of pixels (area) by the size of a pixel^2 
-CS_area = moon_area*pixel_size^2;
-fprintf('Cross-sectional area shown in moon image is approx. %1.2g miles^2\n', CS_area)
-disp('The moon''s total surface area has previoulsy been calculated to be approx 14.6 million miles')
-%[text] - so our rough estimate is within reason \
-%%
-%[text] %[text:anchor:H_808CA1E9] ### Measure the longest Diameter in the Tycho Crater
-%[text] Use the ruler in **imageViewer** to measure the longest diameter. Remember to measure through the center of the crater
-%[text] The Crater is indicated by a red asterisk
-figure(Visible="on");
-imshow(img)
-text(1015, 1863, '*','Color','r') % plot an asterisks on the image
-%[text] The function **imdistline** lets you draw a line on the image. 
-d = imdistline
-%%
-%[text] %[text:anchor:H_97E09439] ### How big is the Tycho Crater??
-%[text] Multiply pixel length by width of a pixel (pixels are square)
-pixel_distance = d.getDistance % pull the length (in pixels) off the ROI line you just drew
-crater_width =  pixel_distance * pixel_size % Multiply to get length in miles
-%[text] 
-%%
-%[text] %[text:anchor:H_A3B9967E] ### Actual Tyco Crater Size
-%[text] Were you right?
-URL = 'https://www.google.com/search?client=safari&rls=en&q=tycho+crater+size&ie=UTF-8&oe=UTF-8'
-web(URL,'-browser')
-actual_crater_width = 85 * 0.621371 %  convert to miles
-%%
-%[text] %[text:anchor:H_7658A978] ## Mask manipulations
-%[text] Once you have created your mask, you can use this mask to select or manipulate intensities inside the ROI, without affecting the intensities outside of the ROI.
+%[text] %[text:anchor:H_7658A978] ## Mask Indexing
+%[text] Once you have created your mask, you can use this mask to select or manipulate intensities inside the ROI, without affecting the intensities outside of the ROI. This is just indexing by any other name
 %[text] For example, we can use our moon mask to select the intensities inside the moon and pass those intensities into **imhist**, so that we show the histogram of just the moon (without all those pesky space pixels):
 %[text] %[text:anchor:H_4189100C] ### Moon Histogram
 %[text] We can use our mask to selectively input intensities into functions. For example, we could show the histogram of just the moon intensities (with out all of those pesky space pixels) by using moon\_mask as a logical array on the image
@@ -142,7 +93,7 @@ imshow(moon)
 title('brighten just the moon pixels')
 %[text] - notice on the right that we don't brighten space, just the moon \
 %%
-%[text] %[text:anchor:T_593EF927] # Automating Segmentation
+%[text] ## Automating Segmentation
 %[text] *For when you don't want to manually draw ROIs*
 %[text] In this section we discuss the process of creating masks using logical operations and segmentation functions
 %[text] First, let's review the histogram of the moon image.
@@ -153,7 +104,7 @@ grid minor
 xline(35,'r--');
 %[text] - notice the dip in pixel values below ~35... \
 %%
-%[text] %[text:anchor:H_4DA8B04E] ## Create Moon Mask using logical operations
+%[text] ### Create Moon Mask using logical operations
 %[text] Pixel values in the moon are greater than ~35. 
 %[text] So, create a logical array that masks pixels in the moon image with intensity values greater than 30
 clf
@@ -163,7 +114,7 @@ imshowpair(img, mask) % overlay mask and moon
 %[text] - Nice, that worked well. BUT notice black dots in moon...
 %[text] - These dots were not segmented and not considered part of the moon \
 %%
-%[text] %[text:anchor:H_9AAA20A0] ## Automatic threshold detection
+%[text] ### Automatic threshold detection
 %[text] The **graythresh** function analyzes an image's histogram using an algorithm known as Otsu's algorithm. 
 lvl = graythresh(img)
 %%
@@ -183,27 +134,27 @@ imshow(mask)
 mask = imbinarize(img);
 imshowpair(img,mask)
 %%
-%[text] %[text:anchor:T_5979C8D6] # Morphological Operations 
+%[text] ## Morphological Operations 
 %[text] Once you have created a mask, you often need to clean up that mask. Morphological operations and transformations that can modify the images based on the shapes inside of the image. They are often used to clean up masks. 
 %[text] In fact, there are many operations used to clean up masks (aka black and white images aka BW)
 %[text] The function **bwmorph** is a nice, simple, and basic function that can perform many different types of morphological operations (MorphOps). Read the documentation for a description of all that **bwmorph** can do
 web(fullfile(docroot, 'images/ref/bwmorph.html'))
 %%
-%[text] %[text:anchor:H_788EC534] ## Fill them holes
+%[text] ### Fill them holes
 %[text] In addition to **bwmorph**, there are many functions that perform morphological operations. 
 %[text] %[text:anchor:H_21D2EF1F] For example, the function **imfill** fills any holes in a mask. Notice that **imfill** returns a logical array
 figure;
 tiledlayout(1,2,"TileSpacing","none")
 nexttile; imshow(mask)
 title('original mask')
-mask_fill = imfill(mask, 'holes'); % notice that we overwrite the mask with its better self
+mask_fill = imfill(mask, 'holes'); 
 nexttile; imshowpair(mask, mask_fill)
 title('filled mask: pink means filled')
 %[text] - Great, the holes are filled.
 %[text] - But, the edges are a little ragged… \
 %[text] 
 %%
-%[text] %[text:anchor:H_2E7909DB] ## bwmorph - close
+%[text] ### bwmorph - close
 %[text] We use the function **bwmorph** to "close" the image. This simply means to add and then remove pixels from the object edges.
 nexttile(1);
 imshow(mask_fill);
@@ -212,26 +163,16 @@ mask_close = bwmorph(mask_fill, 'close');
 imshowpair(mask_fill, mask_close);
 %[text] - notice that in each case, we are inputting ***thresh\_mask*** into **bwmorph** and then overwriting the previous ***thresh\_mask*** with the output from **bwmorph** \
 %%
-%[text] %[text:anchor:H_8550F9A7] ## Final Result
+%[text] ### Final Result
 %[text] %[text:anchor:H_B631F82A] Compare the original image to the mask
 figure
 imshowpair(img, mask_close)
 %[text] - Remember, Pink is the mask in the pseudocoloring
 %[text] - That looks pretty, pretty good \
+%[text] ## 
 %%
-%[text] %[text:anchor:H_BF15E581] ## Recalculate Mask Measurements
-%[text] Use the same calculations that we used above to estimate pixels size (in miles) and compare to the manual mask we generated
-moon_area = sum(mask_close(:)); % add up all pixels to calculate area
-moon_radius = sqrt(moon_area / pi);  % calculate the radius from area
-moon_diameter_px = moon_radius * 2; % in pixels
-pixel_size = moon_diameter / moon_diameter_px;
-
-% concatenate calculation tables to compare results
-calculations = [table(["manual"; "threshold"],'VariableNames', {'method'}) [calculations; ...
-    table(moon_area, moon_radius, moon_diameter_px, moon_diameter, pixel_size)]] % display results
-%[text] - not too shabby - values nearly identical \
-%%
-%[text] %[text:anchor:T_7EA7589A] # Prepping images and Dealing with Uneven illumination 
+%[text] ## Preprocessing images 
+%[text] ### Example: Dealing with Uneven illumination 
 %[text] Usually segmentation is not as straight forward as segmenting the moon image. In that image, the moon is very bright and space is very dark. There is a lot of contrast between the two, making the segmentation a much easier task
 %[text] Consider instead the following image
 close all
@@ -272,17 +213,17 @@ imshowpair(imgc,mask)
 %[text] - a simple threshold doesn't work here because of the uneven background illumination
 %[text] - We need a more advanced thresholding technique \
 %%
-%[text] %[text:anchor:T_586AAA0B] # Prototyping Segmentation with ImageSegmenter
+%[text] ## Prototyping Segmentation with the ImageSegmenter
 %[text] %[text:anchor:T_DDB04772] The ImageSegmenter app provides an easy-to-use GUI to prototype the thresholding and is a great tool for troubleshooting thresholding
 %[text] You can launch the ImageSegmenter app by clicking on its icon, which resides in the Apps Tab, under the  "Image Processing and Computer Vision" section
 %[text] ![](text:image:1950)
 %[text] Or, you can call it programmatically, inputting the variable that you want to segment, as follows:
 imageSegmenter(imgc)
-%[text] %[text:anchor:H_B7BAF51C] ## Contrast
+%[text] ### Contrast
 %[text] 1. On launch, the app will ask if you want to increase image contrast
 %[text] 2. Select No (enhancing the contrast now would make the background illumination problem even worse) \
 %[text] ![](text:image:6f06)
-%[text] %[text:anchor:H_1E1EE347] ## Threshold
+%[text] ### Threshold
 %[text] 1. Once the image is loaded, you should see the following tools in the toolbar.
 %[text] 2. Click on **Threshold** \
 %[text] ![](text:image:54aa)
@@ -300,7 +241,7 @@ imageSegmenter(imgc)
 %[text] 4. Click on Create mask \
 %[text] ![](text:image:6b45)
 %[text] - not perfect, but something we can work with \
-%[text] %[text:anchor:H_18BE0467] ## Morphological Operations
+%[text] ### Morphological Operations
 %[text] %[text:anchor:H_2E632036] Our mask is not complete and there is noise. We can use morphological operations to clean up this noise
 %[text] 1. **Clear Borders** - remove any mask that touches the edge of the image
 %[text] 2. **Fill Holes** - fill any holes in the coin masks \
