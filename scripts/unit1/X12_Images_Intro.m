@@ -1,4 +1,4 @@
-%[text] %[text:anchor:T_9022C83E] # Introducing Digital Images
+%[text] %[text:anchor:T_9022C83E] # Introduction to Digital Images
 %[text] In this live script, we will explore the properties of intensity (or grayscale) images by opening them in MATLAB.
 %[text] Images are just numeric matrices. There is no image variable type in MATLAB.  The position of each the element in the matrix corresponds to the position of the pixel in the image, and the value of the element corresponds to the intensity.
 %[text] This convention makes working with images in MATLAB similar to working with any other type of matrix data and makes the full power of MATLAB available for image processing applications.
@@ -101,7 +101,7 @@ imshow(img) %[output:5f1c0fb4]
 %[text] 
 %%
 %[text] %[text:anchor:H_F2BA861D] ### Display the Histogram
-%[text] One of the most important ways to inspect the properties of an image is to review its histogram. To display the histogram of an image, you need to use the function **`imhist`****.**
+%[text] One of the most important ways to inspect the properties of an image is to review its histogram. To display the histogram of an image, you need to use the function **`imhist`****\*\*\*\*.**
 imhist(img) %[output:48e29630]
 %[text] - A histogram can tell you a lot about an image.
 %[text] - For example, the bit depth of the image can be revealed by looking at the maximum x-value. In this case, we have a max x of around 255, which indicates that this images is an 8-bit image.
@@ -180,7 +180,7 @@ title('Full Moon') %[output:80af3b5d]
 %[text] 2. Load the Image
 %[text] 3. Create new tile
 %[text] 4. display the Image
-%[text] 5. Title the image 
+%[text] 5. Title the image
 %[text] 6. Repeat \
 %[text] ### Exploring the contents in a folder
 %[text] For step 1, we need a way to get information about files in a folder. The function **`dir`** does just that
