@@ -16,7 +16,7 @@ if ~isempty(options.fn2display)
     fn = options.fn2display; % set fieldnames to show
 else
     fn = string(fieldnames(p));
-    la = structfun(@ismatrix,p); 
+    la = structfun(@isnumeric,p); 
     fn = fn(la); % ignore non-numeric inputs
 end
 
