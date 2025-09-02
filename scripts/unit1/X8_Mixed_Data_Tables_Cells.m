@@ -111,7 +111,7 @@ virtual = [false false true false false true true true false true]';
 %%
 %[text] %[text:anchor:H_24AB335A] ### Generating a table from the variables
 %[text] Since the data are in the correct orientation (column vectors) and have the same number of rows, we can easily organize them into a table by just inputting the variables into the **table** function:
-T = table(student,score, virtual) %[output:9e7d771e]
+T = table(student,score, virtual)
 %[text] - Inspect ***T*** in the workspace.
 %[text] - What class is it? What size does it have?
 %[text] - Double-click on ***T***. Notice its spreadsheet-like appearance in the Variable Editor \
@@ -121,13 +121,13 @@ T = table(student,score, virtual) %[output:9e7d771e]
 %%
 %[text] %[text:anchor:H_8F9A37A7] ### Table Properties
 %[text] All tables have Properties structure that defines the properties of the table. You can bring up these property using dot notation, as follows:
-T.Properties %[output:86afbc8c]
+T.Properties
 %[text] - Notice that the syntax returns a structure array, which has a hierarchical data structure
 %[text] - Data in a structure can be accessed using dot notation, very similar to a table
 %[text] - The names of the columns are stored under the "VariableNames" field as a cell array \
 %%
 %[text] We can list all of the column names as follows
-T.Properties.VariableNames %[output:7bf249e9]
+T.Properties.VariableNames
 %[text] - notice these variable names are saved in a cell array \
 %%
 %[text] %[text:anchor:H_102C463A] #### Modifying column names
@@ -136,7 +136,7 @@ T.Properties.VariableNames %[output:7bf249e9]
 T.Properties.VariableNames
 %%
 %[text] We can use **`regexprep`** to capitalize the first letter in each column header. 
-T.Properties.VariableNames = regexprep(T.Properties.VariableNames, '(^\w)', '${upper($1)}') % capitalize the first letter %[output:811d7bf3]
+T.Properties.VariableNames = regexprep(T.Properties.VariableNames, '(^\w)', '${upper($1)}') % capitalize the first letter
 %[text] - **`regexprep`** returns cell arrays by default, so this works really well
 %[text] - I found the required regular expressing using the following ChatGPT Prompt: "Use **`regexprep`** to capitalize the first letter in a cell array of words" \
 %%
@@ -170,7 +170,7 @@ T{:,[1 4]}
 %[text] - here we get a matrix of the data from the first and fourth variables in the table \
 %%
 %[text] %[text:anchor:H_5D2D9C08] ### Now you try
-%[text] Create a new table, *`t`**,* that contains following :
+%[text] Create a new table, *`t`**\*\*,* that contains following :
 Student = (11:20)';
 Score = [16 17 22 9 10 16 21 14 8 18]';
 Virtual = [false false true false false true true true false true]';
@@ -187,7 +187,7 @@ Virtual = [false false true false false true true true false true]';
 %%
 %[text] ### Sort rows
 %[text] You can sort the rows of a table using the **sortrows function**. Here we sort based on whether or not the score was from a virtual exam.
-T = sortrows(T,"Virtual") %[output:86942c3a]
+T = sortrows(T,"Virtual")
 %%
 %[text] %[text:anchor:H_6E9990CF] ## Basic Analysis
 %[text] We can perform stats on the data in our table by simply indexing out the data from a column. Here we calculate the overall mean Score
@@ -207,19 +207,4 @@ s = mean(T.score)
 %---
 %[metadata:view]
 %   data: {"layout":"inline","rightPanelPercent":40}
-%---
-%[output:9e7d771e]
-%   data: {"dataType":"tabular","outputData":{"columnNames":["student","score","virtual"],"columns":3,"dataTypes":["double","double","logical"],"header":"10×3 table","name":"T","rows":10,"type":"table","value":[["1","17","false"],["2","15","false"],["3","20","true"],["4","5","false"],["5","7","false"],["6","19","true"],["7","22","true"],["8","15","true"],["9","9","false"],["10","17","true"]]}}
-%---
-%[output:86afbc8c]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"  <a href=\"matlab:helpPopup('matlab.tabular.TableProperties')\" style=\"font-weight:bold\">TableProperties<\/a> with properties:\n\n             Description: ''\n                UserData: []\n          DimensionNames: {'Row'  'Variables'}\n           VariableNames: {'student'  'score'  'virtual'}\n           VariableTypes: [\"double\"    \"double\"    \"logical\"]\n    VariableDescriptions: {}\n           VariableUnits: {}\n      VariableContinuity: []\n                RowNames: {}\n        CustomProperties: No custom properties are set.\n      Use <a href=\"matlab:helpPopup table\/addprop\">addprop<\/a> and <a href=\"matlab:helpPopup table\/rmprop\">rmprop<\/a> to modify CustomProperties.\n"}}
-%---
-%[output:7bf249e9]
-%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"1×3 cell array","name":"ans","rows":1,"type":"cell","value":[["'student'","'score'","'virtual'"]]}}
-%---
-%[output:811d7bf3]
-%   data: {"dataType":"tabular","outputData":{"columnNames":["Student","Score","Virtual"],"columns":3,"dataTypes":["double","double","logical"],"header":"10×3 table","name":"T","rows":10,"type":"table","value":[["1","17","false"],["2","15","false"],["3","20","true"],["4","5","false"],["5","7","false"],["6","19","true"],["7","22","true"],["8","15","true"],["9","9","false"],["10","17","true"]]}}
-%---
-%[output:86942c3a]
-%   data: {"dataType":"tabular","outputData":{"columnNames":["Student","Score","Virtual"],"columns":3,"dataTypes":["double","double","logical"],"header":"20×3 table","name":"T","rows":20,"type":"table","value":[["1","17","false"],["2","15","false"],["4","5","false"],["5","7","false"],["9","9","false"],["11","16","false"],["12","17","false"],["14","9","false"],["15","10","false"],["19","8","false"],["3","20","true"],["6","19","true"],["7","22","true"],["8","15","true"]]}}
 %---
