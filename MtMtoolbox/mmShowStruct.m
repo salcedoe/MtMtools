@@ -8,7 +8,7 @@ function mmShowStruct(p,options)
 arguments
     p struct % must contain fields with images in them
     options.fn2display = [];
-    options.titles = [] % optional set of titles 
+    options.titles = [] % optional set of titles
 end
 
 
@@ -16,7 +16,7 @@ if ~isempty(options.fn2display)
     fn = options.fn2display; % set fieldnames to show
 else
     fn = string(fieldnames(p));
-    la = structfun(@isnumeric,p); 
+    la = structfun(@isnumeric,p);
     fn = fn(la); % ignore non-numeric inputs
 end
 
@@ -26,11 +26,13 @@ else
     titles = options.titles;
 end
 
+ax = gobjects(numel(fn));
 for n=1:numel(fn)
-    nexttile
+    ax(n) = nexttile;
     imshow(p.(fn(n)))
     title(titles(n))
 end
 
 set(gcf, 'Tag','mmShowStruct')
+linkaxes(ax,'xy')
 end

@@ -58,7 +58,7 @@ a==12 %[output:08871dcc]
 %[text] %[text:anchor:H_37075D5A] ## Relational Operation and Assignment
 %[text] To assign a logical array, you need the single equal sign (like everything else).
 %[text] The following syntax reads "b is assigned the relational operation a is equal to 25"
-b = a==25
+b = a==25 %[output:635e8e7e]
 %[text] - What class is *b?* \
 %[text] ```
 %[text] 
@@ -74,13 +74,13 @@ b = a==25
 %[text] 
 %%
 %[text] Enter the syntax to assign to the variable ***c*** the result from the relational operation "*a* is less than or equal to 13" 
-
+c = a <= 13  %[output:683b8f1e]
 %%
 %[text] %[text:anchor:H_0B692FDE] ## Relational Operations on arrays
 %[text] Create a numeric array *a* containing the numbers 1 through 10
-
+a=1:10 %[output:77d108f4]
 %[text] Enter the syntax to compare the elements in *a* to the value 5 using the greater than operation. Assign the output to the variable ***b***
-
+b = a>5 %[output:86077dde]
 %[text] - Notice that *`b`* is same size as *`a`*
 %[text] - notice that *`b`* has 1's in the corresponding elements where *`a`* is greater than `5` and zeros everywhere else
 %[text] - Use the variable editor to compare *`a`* to *`b`* (double-click on *`a`*) \
@@ -92,10 +92,10 @@ b = a==25
 %[text] - Notice how the logical `1`s in *`b`* mask `6-10` in *`a`*, which are all greater than `5` \
 %%
 %[text] Enter the syntax to create a logical array called ***c*** that contains 1's for all elements in ***a*** that are less than or equal 8 
-
+c = a <= 8 %[output:2bb63064]
 %%
 %[text] Enter the syntax to create a logical array called ***c*** that contains 1's for all elements in ***a*** that do not equal 4 
-
+c = a ~= 4 %[output:3d3d30e8]
 %%
 %[text] %[text:anchor:H_0455A20C] ## Relational operators on matrices
 %[text] %[text:anchor:H_E6B73E71] For the follow, we create a numeric array containing the digits 1 through 12 using the following syntax:
@@ -104,29 +104,29 @@ N = reshape(1:9, 3,3) %[text:anchor:M_3286] %[output:04b1cb7e]
 %%
 %[text] **Equal to**
 %[text] Enter the syntax that assigns *Ro* the relational operation "N is equal to 5"
-
+Ro = N == 5 %[output:0ea434a6]
 %[text] - Note the lone 1 in a sea of zeros
 %[text] - That 1 is located in the same location as 5 is in *N*
 %[text] - This is called masking the 5 \
 %%
 %[text] **Not equal to**
 %[text]  Enter the syntax that assigns *Ro*  the relational operation "N is not equal to 5".
-
+Ro = N ~= 5 %[output:451c375f]
 %[text] - There now should just be a lone zero surrounded by 1's \
 %%
 %[text] **Less than**
 %[text] Enter the syntax that assigns *Ro* the relational operation "N is less than 5":
-
+Ro = N<5 %[output:337761f0]
 %[text] - 1's in the elements corresponding to the elements in *N* that contain 1, 2, 3 and 4 \
 %%
 %[text] **Greater than or Equal to**
 %[text] Enter the syntax for "Ro is assigned the relational operation N is greater than or equal to 5"
-
+Ro = N >= 5 %[output:41ae51ac]
 %%
 %[text] %[text:anchor:H_CF8DE8DC] ## Finding Even (or odd) numbers
 %[text] As we learned in the MATLAB Math Module, the function ***mod*** returns the remainder after dividing the dividend (input 1) by the divisor (input 2).
 %[text] So,  If we apply ***mod***  to *N* using a divisor of 2,  as follows...
-mod(N,2)
+mod(N,2) %[output:567905d4]
 %[text] *...* Then we get *ans*  which contains the remainder after dividing each element in *N* by 2
 %[text] Important to NOTE:
 %[text] - Odd numbers return a remainder of 1. Even numbers return a remainder of 0.
@@ -134,10 +134,10 @@ mod(N,2)
 %%
 %[text] %[text:anchor:H_ECEF6446] ## Create a logical array corresponding to the evens (in N)
 %[text] We need to use a relational operation (equal to  == ) to create a logical array which has 1's for the corresponding even numbers in *N*, 
-evens = mod(N,2) == 0
+evens = mod(N,2) == 0 %[output:9e8a9c26]
 %%
 %[text] Using similar syntax, how would you create a logical array called *odds* that has 1's for the odd numbers?
-
+odds = mod(N,2) == 1 %[output:78d6c878]
 %%
 %[text] Alternatively, you could just typecast the output from *mod* to a logical array (since the output from *mod* already has 1s for odd numbers)
 
@@ -154,29 +154,29 @@ evens = mod(N,2) == 0
 %%
 %[text] %[text:anchor:H_3625759A] ## Examples
 %[text] First, create the two logical arrays on which to perform the logical arrays
-la1 = [true true; false false]
-la2 = [true false; false true]
+la1 = [true true; false false] %[output:133146b6]
+la2 = [true false; false true] %[output:02967fd9]
 %%
 %[text] %[text:anchor:H_B4CA4FD5] ## logical AND
 %[text] Enter the syntax to return the logical AND of `la1` and `la2` (don't assign a variable name)
-
+a = la1 & la2 %[output:8cdbdbc5]
 %[text] - Notice the operation returns an array that is the same size as ***`la1`*** or ***`la2`***
 %[text] - What class is the array that returned?
 %[text] - Remember, only TRUE and TRUE return a TRUE. Everything else comes up FALSE \
 %%
 %[text] %[text:anchor:H_689B9A32] ## logical OR
 %[text] %[text:anchor:H_15C27A5D] Enter the syntax to perform a logical OR operation on the two arrays (don't worry about assignment):
-
+b = la1 | la2 %[output:6ec5ac3a]
 %[text] - A TRUE and anything else returns a TRUE \
 %%
 %[text] %[text:anchor:H_7BBC8B8E] ## logical XOR
 %[text] %[text:anchor:H_7145C564] Enter the syntax to perform a logical XOR operation on the two arrays
-
+c  = xor(la1, la2) %[output:8686e82a]
 %[text] - only a TRUE and a FALSE return TRUE \
 %%
 %[text] %[text:anchor:H_367F2333] ## logical NOT
 %[text] Enter the syntax to return the logical NOT of *`la1`*
-
+~evens %[output:9ea78274]
 %[text] - Notice that NOT does not combine arrays.
 %[text] - It Simply flips the logical of the inputted array \
 %%
@@ -184,8 +184,8 @@ la2 = [true false; false true]
 %%
 %[text] **Odds and evens**
 %[text] Recall, the variable *evens* had true for all of the even numbers in *`N`*
-N
-evens
+N %[output:21a78da8]
+~evens %[output:1509fba5]
 %%
 %[text] Enter the syntax to return the logical NOT of the *`evens`* array
 
@@ -200,26 +200,26 @@ evens
 %[text] Logical Indexing uses a logical array the same size as the matrix. The 1's in the logical array are said to mask the elements in the other array, effectively selecting them. In the above example, the 1's are masking the 4, 5, 6 (shaded blue cells), so those are the numbers that are returned. 
 %[text] Here is the same action using MATLAB syntax:
 %[text] - First create the numeric array shown in the diagram above \
-M = [ 1 2 3; 4 5 6]
+M = [ 1 2 3; 4 5 6] %[output:5567ca2e]
 %[text] - Then, create a logical array, LA, in which M is greater than 3 \
-
+LA = M>3 %[output:139ea419]
 %[text] - Finally, use the logical array to index the numeric array \
-
+M(LA) %[output:42a88390]
 %%
 %[text] - Alternatively, you can use the assignment syntax to change the values  in c (and maintain the matrix) \
-M(LA) = [7 8 9]
+M(LA) = [7 8 9] %[output:8889b439]
 %%
 %[text] %[text:anchor:H_5D482389] ## Logical Indexing: More Examples
 %[text] Remember [*N*](internal:M_3286)?
-N
+N %[output:53f5f4b7]
 %[text] - a numeric array of integers from 1 to 12 \
 %[text] And [*evens*](internal:H_ECEF6446)*?*
-evens
+evens %[output:1088446d]
 %[text] - a logical array that masks the even numbers in *N* \
 %%
 %[text] %[text:anchor:H_869906B2] ## Index *N* with *evens*
 %[text] Enter the syntax to index ***N*** with ***evens:***
-
+N(odds) %[output:1e63c3f8]
 %[text] 
 %[text] - What is the shape of the returned array? \
 %[text] ```
@@ -232,23 +232,23 @@ evens
 %[text] To get more precise indexing, we can combine logical arrays using relational operations. 
 %[text] For example. Say we were interested in the even numbers from ***N*** that were greater than 5. We can easily grab these numbers by combing our ***evens*** logical array with a relational operation. 
 %[text] **STEP 1**: Enter the syntax that assigns to the variable ***Ro*** the relational operation "all elements in N that are greater than or equal to 5." Ro should be a logical array that masks all numbers in *N* greater than or equal to 5
-
+Ro = N>=5 %[output:91dfdd0f]
 %%
 %[text] **STEP 2:** Enter the syntax to assign a new logical array ***Ro2***  the logical AND operation between ***Ro*** and ***evens.*** Ro2 should mask all even numbers in N that are greater than or equal to 5
-
+Ro2 = Ro & evens %[output:52028be5]
 %[text] 
 %%
 %[text] **STEP 3:** Index *N* with with *Ro2*
-
+N(Ro2) %[output:72fadc37]
 %[text] - MATLAB should return a column vector containing the even numbers from 6 through 9 \
 %%
 %[text] %[text:anchor:H_0788093F] ### The OR logical operator
 %[text] What numbers are returned when you index N with the relational operation "Ro OR evens?"
-
+N(Ro | evens) %[output:545aee84]
 %%
 %[text] %[text:anchor:H_99E3EB63] ### The XOR function
 %[text] %[text:anchor:H_93E1F610] What numbers are returned when you index N with the relational operation "Ro XOR evens?"
-
+N(xor(Ro,evens)) %[output:6da5c6fa]
 %%
 %[text] %[text:anchor:H_E7385E4D] ## Useful Functions that Return Logical arrays
 %[text] Often start with *is\**
@@ -260,13 +260,13 @@ evens
 %[text] The function **isprime** returns a TRUE if a number is a prime number. Otherwise it returns a false. 
 %[text] %[text:anchor:H_0E289E5C] Use the function **isprime** to determine the sum of the prime numbers between 1 & 100:
 %[text] **STEP 1**: Enter the syntax to assign the variable ***N*** the series of numbers between 1 and 100
-
+N=1:100 %[output:8de8d57c]
 %[text] **STEP 2:** Enter the syntax to assign a new variable ***TF***  the output from ***isprime*** with ***N*** as the function's lone input
-
+TF = isprime(N) %[output:9e147355]
 %[text] **STEP 3:** Enter the syntax to assign a new variable ***prime\_nums*** the output after indexing ***N*** with ***TF***
-
+prime_nums = N(TF) %[output:67a70366]
 %[text] **STEP 4:** Enter the syntax to assign a new variable ***S*** the sum of the variable ***prime\_nums***
-
+S = sum(prime_nums) %[output:3f144c66]
 %[text] - your answer should be 1060 \
 
 %[appendix]{"version":"1.0"}
@@ -295,6 +295,117 @@ evens
 %[output:08871dcc]
 %   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"ans","value":"   1\n"}}
 %---
+%[output:635e8e7e]
+%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"b","value":"   0\n"}}
+%---
+%[output:683b8f1e]
+%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"c","value":"   1\n"}}
+%---
+%[output:77d108f4]
+%   data: {"dataType":"matrix","outputData":{"columns":10,"name":"a","rows":1,"type":"double","value":[["1","2","3","4","5","6","7","8","9","10"]]}}
+%---
+%[output:86077dde]
+%   data: {"dataType":"matrix","outputData":{"columns":10,"header":"1×10 logical array","name":"b","rows":1,"type":"logical","value":[["0","0","0","0","0","1","1","1","1","1"]]}}
+%---
+%[output:2bb63064]
+%   data: {"dataType":"matrix","outputData":{"columns":10,"header":"1×10 logical array","name":"c","rows":1,"type":"logical","value":[["1","1","1","1","1","1","1","1","0","0"]]}}
+%---
+%[output:3d3d30e8]
+%   data: {"dataType":"matrix","outputData":{"columns":10,"header":"1×10 logical array","name":"c","rows":1,"type":"logical","value":[["1","1","1","0","1","1","1","1","1","1"]]}}
+%---
 %[output:04b1cb7e]
 %   data: {"dataType":"matrix","outputData":{"columns":3,"name":"N","rows":3,"type":"double","value":[["1","4","7"],["2","5","8"],["3","6","9"]]}}
+%---
+%[output:0ea434a6]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro","rows":3,"type":"logical","value":[["0","0","0"],["0","1","0"],["0","0","0"]]}}
+%---
+%[output:451c375f]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro","rows":3,"type":"logical","value":[["1","1","1"],["1","0","1"],["1","1","1"]]}}
+%---
+%[output:337761f0]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro","rows":3,"type":"logical","value":[["1","1","0"],["1","0","0"],["1","0","0"]]}}
+%---
+%[output:41ae51ac]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro","rows":3,"type":"logical","value":[["0","0","1"],["0","1","1"],["0","1","1"]]}}
+%---
+%[output:567905d4]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"name":"ans","rows":3,"type":"double","value":[["1","0","1"],["0","1","0"],["1","0","1"]]}}
+%---
+%[output:9e8a9c26]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"evens","rows":3,"type":"logical","value":[["0","1","0"],["1","0","1"],["0","1","0"]]}}
+%---
+%[output:78d6c878]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"odds","rows":3,"type":"logical","value":[["1","0","1"],["0","1","0"],["1","0","1"]]}}
+%---
+%[output:133146b6]
+%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"2×2 logical array","name":"la1","rows":2,"type":"logical","value":[["1","1"],["0","0"]]}}
+%---
+%[output:02967fd9]
+%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"2×2 logical array","name":"la2","rows":2,"type":"logical","value":[["1","0"],["0","1"]]}}
+%---
+%[output:8cdbdbc5]
+%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"2×2 logical array","name":"ans","rows":2,"type":"logical","value":[["1","0"],["0","0"]]}}
+%---
+%[output:6ec5ac3a]
+%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"2×2 logical array","name":"b","rows":2,"type":"logical","value":[["1","1"],["0","1"]]}}
+%---
+%[output:8686e82a]
+%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"2×2 logical array","name":"c","rows":2,"type":"logical","value":[["0","1"],["0","1"]]}}
+%---
+%[output:9ea78274]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"ans","rows":3,"type":"logical","value":[["1","0","1"],["0","1","0"],["1","0","1"]]}}
+%---
+%[output:21a78da8]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"name":"N","rows":3,"type":"double","value":[["1","4","7"],["2","5","8"],["3","6","9"]]}}
+%---
+%[output:1509fba5]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"ans","rows":3,"type":"logical","value":[["1","0","1"],["0","1","0"],["1","0","1"]]}}
+%---
+%[output:5567ca2e]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"name":"M","rows":2,"type":"double","value":[["1","2","3"],["4","5","6"]]}}
+%---
+%[output:139ea419]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"2×3 logical array","name":"LA","rows":2,"type":"logical","value":[["0","0","0"],["1","1","1"]]}}
+%---
+%[output:42a88390]
+%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":3,"type":"double","value":[["4"],["5"],["6"]]}}
+%---
+%[output:8889b439]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"name":"M","rows":2,"type":"double","value":[["1","2","3"],["7","8","9"]]}}
+%---
+%[output:53f5f4b7]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"name":"N","rows":3,"type":"double","value":[["1","4","7"],["2","5","8"],["3","6","9"]]}}
+%---
+%[output:1088446d]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"evens","rows":3,"type":"logical","value":[["0","1","0"],["1","0","1"],["0","1","0"]]}}
+%---
+%[output:1e63c3f8]
+%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":5,"type":"double","value":[["1"],["3"],["5"],["7"],["9"]]}}
+%---
+%[output:91dfdd0f]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro","rows":3,"type":"logical","value":[["0","0","1"],["0","1","1"],["0","1","1"]]}}
+%---
+%[output:52028be5]
+%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"3×3 logical array","name":"Ro2","rows":3,"type":"logical","value":[["0","0","0"],["0","0","1"],["0","1","0"]]}}
+%---
+%[output:72fadc37]
+%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":2,"type":"double","value":[["6"],["8"]]}}
+%---
+%[output:545aee84]
+%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":7,"type":"double","value":[["2"],["4"],["5"],["6"],["7"],["8"],["9"]]}}
+%---
+%[output:6da5c6fa]
+%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":5,"type":"double","value":[["2"],["4"],["5"],["7"],["9"]]}}
+%---
+%[output:8de8d57c]
+%   data: {"dataType":"matrix","outputData":{"columns":100,"name":"N","rows":1,"type":"double","value":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30"]]}}
+%---
+%[output:9e147355]
+%   data: {"dataType":"matrix","outputData":{"columns":100,"header":"1×100 logical array","name":"TF","rows":1,"type":"logical","value":[["0","1","1","0","1","0","1","0","0","0","1","0","1","0","0","0","1","0","1","0","0","0","1","0","0","0","0","0","1","0"]]}}
+%---
+%[output:67a70366]
+%   data: {"dataType":"matrix","outputData":{"columns":25,"name":"prime_nums","rows":1,"type":"double","value":[["2","3","5","7","11","13","17","19","23","29","31","37","41","43","47","53","59","61","67","71","73","79","83","89","97"]]}}
+%---
+%[output:3f144c66]
+%   data: {"dataType":"textualVariable","outputData":{"name":"S","value":"        1060\n"}}
 %---
