@@ -67,7 +67,7 @@ for n=PixSz % repeat each PixSz element
         ylabel(sprintf('PixSz=%d',n))
 
         ax(tile_idx+1) = nexttile(tile_idx+1);
-        burnedImage = imoverlay(label2rgb(pLd1,turbo),ixm);
+        burnedImage = imoverlay(label2rgb(pLd1,turbo(max(pLd1(:)))),ixm);
         imshow(burnedImage)
         
         % nexttile(tile_idx+2)
