@@ -1,4 +1,4 @@
-function BW = mmGetWatershed(BW, PixSz, options)
+function [BW,pLd1] = mmGetWatershed(BW, PixSz, options)
 %MMGETWATERSHED performs the necessary steps to properly watershed an image
 % for more info, see here: http://blogs.mathworks.com/steve/2013/11/19/watershed-transform-question-from-tech-support/
 %
