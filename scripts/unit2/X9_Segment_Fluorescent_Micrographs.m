@@ -37,7 +37,7 @@ mmAddScaleBar(gca,50,0.23,'white',2);
 %[text] %[text:anchor:H_9B9041B7] use **mmShowHist** to show the image channels and their corresponding histograms 
 figure %[text:anchor:H_DC77A4E7]
 mmShowHist(p.img)
-%[text] - is this image brightfield or fluorescent? \
+%[text] - is this image Brightfield or fluorescent? \
 %[text] ```
 %[text] 
 %[text] ```
