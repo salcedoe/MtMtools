@@ -66,12 +66,18 @@ title('Is My Blue Your Blue?');% Set x-axis limits and ticks
 xlim([1 width]); % Set x-axis limits to the width of the image
 xticks(linspace(1, width, 5)); % Set 5 ticks along the x-axis
 xticklabels(round(linspace(hue_start, hue_end, 5))); % Label ticks with hue values
-xlabel('Hue Values (Degrees)'); %
+xlabel('Hue Values (Degrees)');
 set(gca,'YColor','none')
 
 end
 %%
 %[text] ## Create Hue Color Bar
+%[text] Next, we are going to work with a modified version of the MATLAB HSV colormap. Here are 10 colors from the HSV colormap:
+hsv(10)
+%[text] - notice that we have 3 columns, a R, G, and B column
+%[text] - Each row represents a different color
+%[text] - So, even though we are using HSV colors, we still have to convert them to RGB color values to display them properly \
+%%
 %[text] I have added a function to the bottom of this live script that creates a rainbow image from the **hsv** colormap and then manipulates its S and V values as follows
 %[text] - top row: modify S range
 %[text] - middle row: unadulterated
