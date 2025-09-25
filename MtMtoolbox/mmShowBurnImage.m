@@ -1,6 +1,15 @@
 function mmShowBurnImage(img,mask,options)
 %MMSHOWBURNIMAGE - simplifies creating a burned image, where a masked is
 %burned into an image using the function imoverlay
+% INPUTS
+% - img: a grayscale or rgb image
+% - mask: a binary mask
+% OPTIONS
+% - color: the color of the burned image (default = yellow)
+% 
+% EXAMPLES
+% mmShowBurn(rgb,mask)
+% mmShowBurn(rgb,mask,color='white')
 
 % Author: Ernesto Salcedo, PhD
 % Site: University of Colorado Modern Human Anatomy
