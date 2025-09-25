@@ -89,14 +89,13 @@ automask = false(masks.ImageSize);
 automask(masks.PixelIdxList{:})=true;
 imshowpair(p.rgb,automask)
 %%
-%[text] ## LungHist700 Dataset
+%[text] ## Exercise: LungHist700 Dataset
 %[text] In this example, we will open a subset for the LungHist700 dataset, which is a dataset of histological images for deep learning in pulmonary pathology. In this dataset are 691 high-resolution (1200 × 1600 pixels) histopathological lung images, covering adenocarcinomas, squamous cell carcinomas, and normal tissues from 45 patients.
 %[text] For this exercise, we will focus on the keratinization that occurs in squamous cell carcinomas.
 %[text] ![](text:image:7dc9)
 %[text] You can find the `LungHist700` folder in the `MtMdata/unit2` folder. The following sets a path to a folder containing well differentiated squamous cell carcinomas (scc\_bd).
 clearvars
-mmSetUnitDataFolder(2); % change to unit2 folder
-image_folder = fullfile(pwd,"lungHist700","images","scc_bd") % create path to image files
+image_folder = fullfile(mmSetUnitDataFolder(2),"lungHist700","images","scc_bd") % create path to image files
 contents = dir(fullfile(image_folder,'*.jpg')) % get info on the image files in the scc_bd folder
 %[text] - There are 99 images in the scc\_bd folder \
 %%
@@ -116,6 +115,7 @@ names = extractBefore(names,'.jpg'); % remove the extension
 allT = array2table(split(names,"_"),"VariableNames",["Disease" "Progression" "Mag" "ID"]);
 allT.File = names % it's a good idea to keep the filename too
 %%
+%[text] ### Display Images
 image_path = fullfile(image_folder,contents(1).name)
 p.rgb = imread(image_path);
 figure
@@ -153,11 +153,12 @@ p.mask = segmentKeratin(p.medf);
 figure;
 mmShowBurnImage(p.rgb,p.mask)
 %%
-%[text] 
+%[text] ### Clean up Noise
 p.mask = bwareaopen(p.mask, 250);
 
 mmTightTiledLayout % horizontal, no spacing in tiles. figure call built-in
 displayOutcome(p)
+
 function displayOutcome(p)
 % displays original image and blended image, side by size,
 %   with linked zooming turned on
@@ -181,10 +182,12 @@ mmTightTiledLayout
 displayOutcome(p)
 %%
 %[text] ### A FOR LOOP to segment them all
+%[text] Now we have all the steps we need to generate some data. We'll package our FOR LOOP in a function for later use.
+function reviewSegmentation(contents)
 figure
 tiledlayout(5,4,"TileSpacing","none","Padding","tight") % need a different tiled layout
 for n=1:10
-    image_path = fullfile(image_folder,contents(n).name);
+    image_path = fullfile(contents(n).folder,contents(n).name);
     p.rgb = imread(image_path);
     p.medf = medfilt3(p.rgb, [7 7 1]); % 7 7 1 for the win
     p.mask = segmentKeratin(p.medf);
@@ -193,10 +196,14 @@ for n=1:10
     displayOutcome(p)
     text(100,100,num2str(n),'Color','w','FontSize',9) % add the image number in top right corner
 end
+end
 %%
 %[text] ### Analysis
 %[text] Once we are happy with our segmentations we can analyze the extent of the keratinization by summing the total area of the mask. We can also create a ratio of keratinization to total tissue by dividing the area of the keratination by the total area of the tissue. We have already created a table, T, containing the information about  each tissue. So, we'll just add our data to the proper row in the table. We'll just add a couple of columns to the table to handle our new table. Also, let's restrict our analysis to "20X" images only so that's we what prototyped our analysis on.
 T = allT(allT.Mag=="20x",:); % keep only rows with 20X in them
+T = count_Keratin(T);
+
+function T = count_Keratin(T)
 
 % preallocate column in table
 T.Keratin = zeros(height(T),1);
@@ -217,6 +224,35 @@ for n=1:height(T)
     T.Tissue(n) = bwarea(~p.background); % everything not background is tissue
     T.Ratio(n) = T.Keratin(n)/T.Tissue(n); % Keratin / Tissue
 end
+end
+%%
+%[text] ## Next Dataset
+image_folder = fullfile(mmSetUnitDataFolder(2),"lungHist700","images","nor"); % create path to  normal image files
+contents = dir(fullfile(image_folder,'*.jpg')); % get info on the image files in the scc_bd folder
+
+names = string({contents.name})'; % get all the file names
+names = extractBefore(names,'.jpg'); % remove the extension
+t = array2table(split(names,"_"),"VariableNames",["Disease" "Mag" "ID"]);
+t.File = names % it's a good idea to keep the filename too
+t = t(t.Mag=="20x",:) % just keep the 20X rows
+t.Progression = strings(height(t),1); % no progression info for normal tissue
+t = movevars(t,"Progression","After","Disease");
+%%
+%[text] ### Review Segmentation
+%[text] Does the segmentation work for this dataset
+reviewSegmentation(contents)
+%%
+%[text] ### Run the Analysis
+t = count_Keratin(t); % use function from above
+%%
+%[text] ### Concatenate Data
+T = [T;t];
+T = convertvars(T,["Disease" "Progression" "Mag"],'categorical');
+summary(T)
+%%
+%[text] ### Visualize Results
+figure;
+mmBoxSwarm(T.Disease,T.Ratio)
 %%
 function [BW,maskedRGBImage] = segmentKeratin(RGB)
 %createMask  Threshold RGB image using auto-generated code from colorThresholder app.
