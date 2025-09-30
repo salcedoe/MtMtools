@@ -10,22 +10,31 @@ function p = mmGetTextureFilters(p,nhood)
 % OUTPUTS
 % p - updated structure containing four new fields: gray, std, rng, and ent
 %
+% Examples:
+%
+% p = mmGetTextureFilters(p)
+% p = mmGetTextureFilters(p,true(7))
+%
 % Author: Ernesto Salcedo, PhD
 % Site: University of Colorado Modern Human Anatomy
-% Updated: 10/01/2024
+% Updated: 09/28/2025
 
 arguments
     p struct
     nhood (:,:) {mustBeNumericOrLogical} = []
 end
 
-if any(isfield(p,{'rgb','img'}))
+if any(isfield(p,{'rgb','gray'})) % must contain a field called rgb or gray
     if isfield(p,'rgb')
         p.gray = rgb2gray(p.rgb);
-    elseif isfield(p,'img')
-        p.gray = p.img;
+    elseif isfield(p,'gray') && ~ismatrix(p.gray)
+        try
+            p.gray = rgb2gray(p.gray);
+        catch
+            disp('The field p.gray cannot be converted to grayscale')
+        end
     else
-        disp('First input must be a structure containing a field named rgb for color images or img for grayscale images.')
+        disp('First input must be a structure containing a field called rgb (for color images) or gray (for grayscale images).')
         return
     end
 end

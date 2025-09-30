@@ -1,38 +1,60 @@
-function mmShowStruct(p,options)
+function mmShowStruct(S,options)
 %MMSHOWSTRUCT Displays images that are packaged into a structure
 %
 % INPUTS
-% - p: a structure contain fields with image variables
+% - S: a structure contain fields with image variables
+% - fn2display: cell array or string contain the names of the fields you
+% want to display
 % - titles (optional): string array of titles for plots
+%
+% EXAMPLES
+% mmShowStruct(p)
+% mmShowStruct(p,fn2display={'rgb','gray'})
+% mmShowStruct(p,fn2display={'rgb','gray'},titles={'Original','Grayscale'})
 
 arguments
-    p struct % must contain fields with images in them
-    options.fn2display = [];
-    options.titles = [] % optional set of titles
+    S struct % must contain fields with images in them
+    options.fn2display {mustBeText} = '';
+    options.titles {mustBeText} = '' % optional set of titles
 end
 
+% find the numeric fields
+fn = string(fieldnames(S)); % indicated fieldnames that are in S
+num_la = structfun(@isnumeric,S); % find numeric fields in p
 
-if ~isempty(options.fn2display)
-    fn = options.fn2display; % set fieldnames to show
+if ~isempty(options.fn2display) % only plot indicate fields
+
+    la = ismember(fn, options.fn2display) & num_la; % do the fields exist and are they numeric
+   
+    if any(la)
+        fn = fn(la);
+    else        
+        error('Fields to display (fn2disp) not found in structure or not numeric.')        
+    end
 else
-    fn = string(fieldnames(p));
-    la = structfun(@isnumeric,p);
-    fn = fn(la); % ignore non-numeric inputs
+    fn = string(fieldnames(S)); % all fieldnames
+    fn = fn(num_la); % ignore non-numeric inputs
 end
 
 if isempty(options.titles)
     titles = fn;
 else
-    titles = options.titles;
+    if isequal(numel(options.titles),numel(fn))
+        titles = options.titles;
+    else
+        disp('Number of titles must match the number of fields to display.');
+        titles = fn; %
+    end
 end
 
+% Display the indicated fields in the structure
 ax = gobjects(numel(fn));
 for n=1:numel(fn)
     ax(n) = nexttile;
-    imshow(p.(fn(n)))
+    imshow(S.(fn(n)))
     title(titles(n))
 end
 
-set(gcf, 'Tag','mmShowStruct')
-linkaxes(ax,'xy')
+set(gcf, 'Tag','mmShowStruct') % tag the figure 
+linkaxes(ax,'xy') % link the axes
 end
