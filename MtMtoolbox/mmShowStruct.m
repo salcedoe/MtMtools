@@ -20,7 +20,10 @@ end
 
 % find the numeric fields
 fn = string(fieldnames(S)); % indicated fieldnames that are in S
-num_la = structfun(@isnumeric,S); % find numeric fields in p
+% num_la = structfun(@isnumeric,S); % find numeric fields in p
+num_la = structfun(@ismatrix,S); % find numeric fields in p
+
+
 
 if ~isempty(options.fn2display) % only plot indicate fields
 

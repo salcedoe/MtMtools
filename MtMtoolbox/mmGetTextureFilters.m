@@ -33,10 +33,10 @@ if any(isfield(p,{'rgb','gray'})) % must contain a field called rgb or gray
         catch
             disp('The field p.gray cannot be converted to grayscale')
         end
-    else
-        disp('First input must be a structure containing a field called rgb (for color images) or gray (for grayscale images).')
-        return
     end
+else
+    disp('First input must be a structure containing a field called rgb (for color images) or gray (for grayscale images).')
+    return
 end
 
 if nargin>1 % apply neighborhood

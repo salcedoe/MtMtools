@@ -39,9 +39,14 @@ bar_width = width/widthPERpixel;
 if nargin == 6 && ~isempty(pos) %user-defined position
     pos(2,:) = [pos(1) + bar_width pos(2)];
 else    
-    x = size(ax.Children.CData,1)* 0.50; % target left corner of image
-    y = size(ax.Children.CData,2)* 0.60; % target bottom of image
-    roi = drawline(ax,'Position',[x y; x+bar_width  y]);
+    hi = findobj(gca,'Type','image');
+    xy = size(hi.CData) .* [0.5 0.6 1];
+    xy = xy(1:2);
+    % x = size(ax.Children.CData,1)* 0.50; % target left corner of image
+    % y = size(ax.Children.CData,2)* 0.60; % target bottom of image
+    % roi = drawline(ax,'Position',[x y; x+bar_width  y]);
+    roi = drawline(ax,'Position',[xy; xy(1)+bar_width  xy(2)]);
+    
     roi.wait
     pos = (roi.Position);
     delete(roi)
@@ -52,6 +57,9 @@ hl = line(pos(:,1), pos(:,2), 'Color',Color,'LineWidth',LineThickness);
 if nargin == 7
     text(hl.XData(1), hl.YData(1)-40,sprintf('%d %s',width,unit),'Color',Color)
 end
+
+fprintf('Scale Bar placed at %1.1f, %1.1f',hl.XData(1),hl.YData(1))
+
 end
 
 
