@@ -1,5 +1,5 @@
 %[text] %[text:anchor:T_101DA890] # Vertices, Triangles, and 3D surfaces
-%[text] In this module, we will build 3D surfaces (also known as manifold surfaces) using the power of triangle. 
+%[text] In this module, we will build 3D surfaces (also known as manifold surfaces or meshes) using the power of triangle. 
 %[text] %[text:anchor:H_3B24DDD8] ## Faces and vertices matrices
 %[text]  Terminology
 %[text] - Points in space are called VERTICES (or nodes)
@@ -7,206 +7,8 @@
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 %%
-%[text] %[text:anchor:H_D3E98789] ## First, a review of the 2D realm
-%[text] Triangles have three vertices (three X,Y coordinates). We can organize these vertices as a matrix, where every row in the matrix represents one pair of vertices:
-clearvars
-V = [0 0; 3 0; 3 4] 
-%[text] - Here, the first column is the x-coordinates and the second column is the y-coordinates \
-%%
-%[text] %[text:anchor:H_B2411B8E] ### Plot Triangle
-%[text] We can plot the vertices using **scatter** 
-figure;
-% plot vertices
-scatter(V(:,1),V(:,2),'filled');
-xlabel('x'); ylabel('y');
-grid minor % display grid on plot
-axis equal
-%%
-%[text] And the triangle face using **patch**. 
-% add face
-patch(V(:,1),V(:,2),'blue','LineStyle',':','FaceAlpha',0.55)
-xlim([-1 4]); ylim([-1 5])
-xline(0); yline(0)
-%%
-%[text] %[text:anchor:H_CE2E914D] ### Scaling
-%[text] You can scale the size of a triangle by multiplying (or dividing) the vertices by a factor. 
-%[text] Try it now: Triple the vertices
-V = V * 2
-%%
-%[text] Plot the larger triangle:
-hold on
-scatter(V(:,1),V(:,2),'filled');
-patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1);
-xlim([-2 10]); ylim([-2 12])
-xline(0); yline(0)
-%[text] - the green triangle is the original triangle
-%[text] - the yellow triangle is the scaled triangle
-%[text] - The red vertices are the scaled vertices \
-%[text] How does this work?
-%[text] - $V\_1 =0,0\\Longrightarrow V\_1 \*3=0,0${"editStyle":"visual"}
-%[text] - $V\_2 =3,0\\Longrightarrow V\_2 \*3=9,0${"editStyle":"visual"}
-%[text] - $V\_3 =4,3${"editStyle":"visual"}$\\Longrightarrow V\_3 \*3=12,9${"editStyle":"visual"} \
-%%
-%[text] %[text:anchor:H_FEB7576A] ### Centroid
-%[text] The center of a triangle is its centroid. To calculate the centroid, you simply calculate the mean of the vertices. 
-%[text] Try it now. Calculate the mean of V and assign to ***centroids***:
-centroid = mean(V) % centroid of small triangle
-%%
-%[text] Plot the centroid 
-clf;
-
-scatter(V(:,1),V(:,2),'filled');
-hold on
-scatter(centroid(:,1),centroid(:,2),'kx') % plot the centroid
-patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1);
-grid on
-axis equal
-%[text] - here, the centroid is plotted as a black x \
-%%
-%[text] %[text:anchor:H_5AA86369] ### Translation
-%[text] Moving the triangle is known as translation. We use addition / subtraction to move the location of the triangle. For example, to center our triangle to 0,0, we subtract the current centroid from all vertices. 
-%[text] Try it now: Center our triangle at 0,0 and then recalculate the centroid
-V = V - centroid
-%%
-clf;
-xline(0,'LineWidth',1,Alpha=0.25); yline(0,'LineWidth',1,Alpha=0.25)
-
-hold on
-scatter(0,0,'kx') % plot 0,0
-
-patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1); % plot the triangle face
-
-axis equal
-axis([-7 5 -5 10])
-grid minor
-
-%[text] - The translated triangle is now centered at 0,0 \
-%%
-%[text] %[text:anchor:H_10910D06] ## Remember sin and cosine?
-%[text] SOHCAHTOA: Sin (theta) = opposite over hypotenuse, Cos (theta) = adjacent over hypotenuse 
-%[text] The following plots the sine and cosine of pi/4
-clf
-plot([0 cos(pi/4)], [0 sin(pi/4)],'-ro',... 
-    [cos(pi/4) cos(pi/4)], [0 sin(pi/4)],'--ro',...
-    [0 cos(pi/4)], [0 0],'--ro') % plot pi/4
-axis off
-
-text(sin(pi/4)+0.05, cos(pi/4)+0.05,'\pi/4','Interpreter','Tex','FontSize',16)
-text(0.25, -0.065,'cos(\theta)','Interpreter','Tex','FontSize',16)
-text(0.79, 0.3,'sin(\theta)','Interpreter','Tex','FontSize',16)
-text(0.1, 0.065,'\theta','Interpreter','Tex','FontSize',16)
-%%
-%[text] %[text:anchor:H_E028C729] ### Sine and cosine can be used to plot out a circle
-hold on
-r1 = 1; % radius
-r2 = r1;
-
-theta=-pi:0.01:pi;
-plot(r1*cos(theta), r2*sin(theta),[0 0],...
-    [-1 1],'--', [-1 1], [0 0],'--') % plot the axis
-   
-
-ylabel('sine (radians)')
-xlabel('cosine (radians)')
-
-
-title('sine vs cosine')
-axis square
-grid minor
-%%
-%[text] Also remember the following results for cosine and sine
-cosd(90)
-sind(90)
-%%
-%[text] %[text:anchor:H_F787E7D5] ## Rotation
-%[text] **WARNING**. The following contains linear algebra. Do not panic. You still don't really need to know linear algebra. 
-%[text] Rotation can be accomplished through linear algebra and rotation matrices:
-%[text] $R\\left(\\theta \\right)=\\left\\lbrack \\begin{array}{cc}\n\\cos \\;\\theta  & -\\sin \\theta \\\\\n\\sin \\;\\theta  & \\cos \\;\\theta \n\\end{array}\\right\\rbrack${"editStyle":"visual"}
-%[text] - this is just a square matrix of 4 values \
-%%
-%[text] Here is the linear algebra equation
-%[text] $\\left\\lbrack \\begin{array}{c}\nx^{\\prime } \\\\\ny^{\\prime } \n\\end{array}\\right\\rbrack${"editStyle":"visual"}= $\\left\\lbrack \\begin{array}{cc}\n\\cos \\;\\theta  & -\\sin \\theta \\\\\n\\sin \\;\\theta  & \\cos \\;\\theta \n\\end{array}\\right\\rbrack \\left\\lbrack \\begin{array}{c}\nx\\\\\ny\n\\end{array}\\right\\rbrack${"editStyle":"visual"}
-%[text] - where x' and y' are the new x and y coordinates
-%[text] - So, you basically just multiply the rotation matrix by your vertices matrix
-%[text] - Notice in the vertices matrix, the x coordinates are in the top row and the y coordinates are in the bottom row (so, transposed from the way we have V) \
-%[text] Common rotations matrices are:
-%[text] $\\left\\lbrack \\begin{array}{cc}\n0 & -1\\\\\n1 & 0\n\\end{array}\\right\\rbrack ,\\left\\lbrack \\begin{array}{cc}\n-1 & 0\\\\\n0 & -1\n\\end{array}\\right\\rbrack ,\\left\\lbrack \\begin{array}{cc}\n0 & 1\\\\\n-1 & 0\n\\end{array}\\right\\rbrack${"editStyle":"visual"}
-%[text] for 90˚, 180˚, and 270˚ counter-clock wise rotations. 
-%%
-%[text] %[text:anchor:H_6987826B] ### 90º rotation
-%[text] We can perform the linear algebra as follows 
-Vrot = [ 0 -1; 1 0] * V'; % 90˚ counter-clockwise rotation
-Vrot = Vrot' % transpose the vertices back
-%[text] - Notice that we are NOT using dot multiplication here, because we want linear algebra to happen
-%[text] - Also notice that we had to transpose V to make the linear algebra work and then we transposed V back again \
-%%
-%[text] %[text:anchor:H_145C7D94] ### Plot the result
-%[text] Notice that the triangle is rotated around 0,0
-figure
-patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1); % original triangle face
-
-patch(Vrot(:,1),Vrot(:,2),'blue','FaceAlpha',0.5); % rotated triangle face
-title('90˚ Rotation')
-
-axis equal
-% axis([-7 5 -5 10])
-grid minor
-xline(0,'LineWidth',1); yline(0,'LineWidth',1)
-%%
-%[text] ### Gamify your triangle
-%[text] Video games use rotation matrices, scaling, and translation to move objects in a game. Here we plot original triangle (in yellow), make a copy of that triangle (in blue), and then update the vertices in the triangle to scale or translate the triangle
-%%
-figure
-patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1); % original triangle face
-%%
-%[text] #### Copy Triangle and display
-Vrot2 = V; % copy triangle vertices
-hp = patch(Vrot2(:,1),Vrot2(:,2),'blue','FaceAlpha',0.5); % plot and get handle to triangle for rotation
-grid on
-%%
-%[text] #### Rotate Triangle
-Vrot2 = [-1 0; 0 -1] * Vrot2'; % rotate 180
-Vrot2 = Vrot2'; % transpose back
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%%
-%[text] Roll your own rotation matrix
-angl = 45;
-rot_mat = [cosd(angl) -sind(angl);...
-           sind(angl) cosd(angl)]
-
-Vrot2 = rot_mat* Vrot2'; % rotate 180
-Vrot2 = Vrot2'; % transpose back
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%[text] - What would happen if you ran this code block again? \
-%%
-%[text] #### Scale triangle
-%[text] Here we reduce the size of our triangle by half.
-Vrot2 = Vrot2 * 0.5 % scale triangle by 1/2
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%[text] - what happens if you run this code block again? \
-%%
-%[text] #### Increase the triangle size.
-%[text]  Change the following code to increase the size of your triangle
-Vrot2 = Vrot2 * 1 % scale triangle
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%[text] 
-%%
-%[text] #### Translate triangle
-%[text] The following code moves the triangle so the minimum vertex will be at 0,0
-Vrot2 = Vrot2 - min(Vrot2); % move minimum vertex to 0,0
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%[text] 
-%%
-%[text] Drive your triangle (change the translation values)
-Vrot2 = Vrot2 + [4 4];
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%%
-%[text] #### Recenter Blue Triangle to 0,0
-Vrot2 = Vrot2 - mean(Vrot2);
-hp.Vertices = Vrot2; % update the vertices in the blue triangle
-%%
-%[text] %[text:anchor:T_F581598C] # Triangles in 3D
-%[text] %[text:anchor:H_D958E7CE] ## A point in 3D requires three coordinates
+%[text] ## Triangles in 3D
+%[text] ### A point in 3D requires three coordinates
 %[text] Specifically, an X, a Y, and a Z coordinate. Using the notation (X,Y,Z), this code adds a single point (or vertex) at (0.5,0.5,0)
 close all
 figure;
@@ -215,7 +17,7 @@ scatter3(0.5,0.5,1,'m','filled')
 xlabel('x'); ylabel('y'); zlabel('z')
 %[text] - notice that here we use **scatter3**.  \
 %%
-%[text] %[text:anchor:H_930388E2] ## A Triangle in 3D requires 3 coordinates at every vertex
+%[text] ### A Triangle in 3D requires 3 coordinates at every vertex
 %[text] Let's add two more points to create the vertices of a triangle 
 %[text] Similar to the 2D triangle, we create a single array that stores the vertices for each point, row by row, as follows:
 V = [0.5 0.5 1; ... % X,Y,Z for the magenta point
@@ -228,7 +30,7 @@ figure;
 scatter3(V(:,1),V(:,2),V(:,3),[],[1 0 1; 0 0 1; 0 1 1],'filled')
 axis vis3d
 %%
-%[text] %[text:anchor:H_84C23D76] ## Patches
+%[text] ### Patches
 %[text] Patches are filled polygons (or faces). A simple call to the function *patch* can fill in the triangle with a color. 
 %[text] We will use the columns from our Vertices matrix V.
 p = patch(V(:,1),V(:,2),V(:,3), 'y'); % color yellow
@@ -238,7 +40,7 @@ xlabel('x'); ylabel('y'); zlabel('z')
 %[text] -  Notice that patch automatically closes the shape.
 %[text] - Also notice that we didn't need a "hold on" — patches automatically assume hold is on \
 %%
-%[text] %[text:anchor:H_BB55B81A] ## Faces Matrix
+%[text] ### Faces Matrix
 %[text] In the previous call to **patch,** we inputted vectors for X, Y, and Z. This works fine; however, you must specify each coordinate explicitly, even if you are reusing that coordinate (say, for example, we wanted to add another face to our burgeoning manifold surface)
 %[text] %[text:anchor:H_33BBB902] There is another way to input coordinates into patch. This is known as the Vertices / Faces input pair. This is the most common way to organize the data for a surface. 
 %[text] A Face matrix is simply a collection of row indices for the vertices matrix. That is to say that every single number found in the face matrix points to a row in the paired vertices matrix.
@@ -248,7 +50,7 @@ F = [1 2 3]
 %[text] - Since there is only one row, this face matrix would form only one triangle.
 %[text] - The numbers in this face matrix indicate the row in V, the vertex matrix, to use as a vertex for the triangle. So, in this example, `F` uses the vertices found in the first, second, and third row in  `V` \
 %%
-%[text] %[text:anchor:H_96AEE103] ## Patch call with vertex, face input
+%[text] ### Patch call with vertex, face input
 %[text] We will create a new figure with a yellow face, with one simple call to patch using F and V
 figure;
 p = patch('Faces',F, 'Vertices', V, 'facecolor', 'y');
@@ -258,7 +60,7 @@ view(3)
 axis vis3d
 grid on
 %%
-%[text] %[text:anchor:H_52411155] ### Label Faces and Vertices
+%[text] #### Label Faces and Vertices
 %[text] %[text:anchor:H_3B54539B] We will use the local function **label\_patches** to label the vertices and faces for clarity (see end of script to review function).
 label_patches(F, V)
 view([28.925 40.038])
@@ -268,7 +70,7 @@ p.Faces
 p.Vertices
 %[text] -  The faces and vertices properties of p match F and V.  \
 %%
-%[text] %[text:anchor:H_D0824329] ## View angle
+%[text] ### View angle
 %[text] The function **view** controls the display angle
 %[text] ![](text:image:7cb1)
 view(10,45)
@@ -280,7 +82,7 @@ az = 130; %[control:slider:3ad3]{"position":[6,9]}
 view(az,el)
 %[text] - compare az 0 to az 180. Even though they look the same, they are actually in opposing directions. This is an optical illusion \
 %%
-%[text] %[text:anchor:H_36EA290F] ## Add a second face
+%[text] ### Add a second face
 %[text] Using Faces and Vertices matrices allows you to reuse some of the Vertices, so you don't have to explicitly redefine them every time. 
 %[text] %[text:anchor:H_32849CBF] #### First, add a new vertex
 %[text] Let's add a new vertex by adding another row to V
@@ -303,7 +105,7 @@ F = [1 2 3; ...
 %[text] - So, we are reusing Vertices 1 and 3. And our second face will share an edge with the first face \
 %[text]  
 %%
-%[text] %[text:anchor:H_B1E0DE7C] ## Two-Faced Patch  
+%[text] ### Two-Faced Patch  
 %[text] %[text:anchor:H_4AC04563] We plot both faces as follows
 figure; % create a new figure
 p = patch('Faces',F, 'Vertices', V, 'facecolor', 'c');
@@ -321,7 +123,7 @@ label_patches(F, V);
 %[text] - The common values in *F* \
 %[text] 
 %%
-%[text] %[text:anchor:H_8867DBF7] ## Add a third face
+%[text] ### Add a third face
 %[text] %[text:anchor:H_AAD44FFE] Let's continue with our pyramid.  First, we need another vertex. So, where do we need more vertices to complete the pyramid?
 V = [V; 1 1 0]; % add new vertices at 1, 1, 0
 
@@ -342,7 +144,7 @@ xlabel('x'); ylabel('y'); zlabel('z')
 %[text] And we can label all the vertices and faces again for clarity
 label_patches(F,V);
 %%
-%[text] %[text:anchor:H_22F710F2] ## Final Face(s)
+%[text] ### Final Face(s)
 %[text] %[text:anchor:H_16093655] We now have all the vertices we need to complete our pyramid. We just need to add three more faces: one to close up the side and two to close up the bottom.
 %[text] What do we need to add to F to complete the pyramid? Add THREE new rows to F
 
@@ -351,11 +153,11 @@ label_patches(F,V);
 p.Faces = F;
 label_patches(F,V);
 %%
-%[text] %[text:anchor:H_09CA0337] ## Patch Properties
+%[text] ### Patch Properties
 %[text] There are a lot of color, lighting and transparency options for patches
 web(fullfile(docroot, 'matlab/ref/patch-properties.html'))
 %%
-%[text] %[text:anchor:H_11F5961E] ### Set FaceColor Explicitly
+%[text] #### Set FaceColor Explicitly
 %[text] First, we recreate *V* in case we lost some of you in the previous cell blocks
 clearvars
 V = [0.5 0.5 1.0;...
@@ -380,13 +182,13 @@ p.FaceVertexCData = cdata;
 axis vis3d
 %[text] - Notice here that FaceVertexCData has one row of RGB triplets for each face \
 %%
-%[text] %[text:anchor:H_CBD486F8] ### Change the face colors to a different color map
+%[text] #### Change the face colors to a different color map
 %[text] %[text:anchor:H_EDA0B756] Remember, you just need to come up with a new *cdata* matrix and assign that matrix to the **FaceVertexCData** property
 cdata = spring(height(F)); % update cdata to parula %[text:anchor:H_2C294192]
 p.FaceVertexCData = cdata;
 %[text] - re-run this codeblock, changing only the colormap \
 %%
-%[text] %[text:anchor:H_160D6D18] ### Set FaceColor to the current colormap
+%[text] #### Set FaceColor to the current colormap
 %[text] %[text:anchor:H_5E6CF101] If you don't want to explicitly create a *cdata* colormap matrix for your manifold, you can simply set the **FaceVertexCData** property to a series of whole numbers, and then the current colormap of the figure will be assigned to the manifold. Remember, a every figure has a default colormap (probably parula). If you just want that to use that colormap, just input a column vector of integers, with the same number of rows as F into FaceVertexCData as follows:
 p.FaceColor = 'flat';
 p.FaceVertexCData = (1:size(F,1))' % FaceVertexCData needs to be column vector
@@ -399,12 +201,12 @@ colormap(bone)
 %[text] %[text:anchor:H_C20D6428] The value ranges from 0 to 1
 p.FaceAlpha = 0.75;
 %%
-%[text] %[text:anchor:H_2348AB2D] ###  Change the transparency
+%[text] #### Change the transparency
 %[text] %[text:anchor:H_7AC8B035] Try it now. Set the face alpha to 0.5 and 0.25
 p.FaceAlpha = 0.75
 colormap("turbo")
 %%
-%[text] %[text:anchor:H_C5FC7D80] ###  EdgeAlpha
+%[text] ####  EdgeAlpha
 %[text] %[text:anchor:H_BCE32D5B] What do you think the edge alpha sets? Try it now. Set the edge alpha to 0.25
 p.EdgeAlpha = .25
 %%
@@ -412,7 +214,7 @@ p.EdgeAlpha = .25
 p.EdgeColor = 'c'
 %[text] - What changed? \
 %%
-%[text] %[text:anchor:H_F820CC54] ## Animation
+%[text] ### Animation
 %[text] The function **rotate** rotates a 3D object.
 %[text] %[text:anchor:H_021A17DF]  The following input rotates the pyramid around the z-axis 10 degrees 36 times
 % p.Parent.Parent.Visible = 'on' % make figure visible to see animation
@@ -454,86 +256,60 @@ view(35,30)
 axis vis3d equal
 colormap("turbo")
 xlabel('x'); ylabel('y'); zlabel('z')
+%[text] ### 
 %%
-%[text] %[text:anchor:H_B5449802] ### Scale and Translate that Diamond
-%[text] %[text:anchor:H_1CF53D45] - Double the size of the diamond
-%[text] - shift the diamond so that its centroid is centered at 0,0,0 \
-p.Vertices = p.Vertices * 1% update vertices to double size 
+%[text] ## Create Surface from Vertebra Segmentation
+%[text] Load Lung CT Volume and One vertebrae (just the vertebral body, excluding the spinous processes)
+clearvars
+close all
+mmSetUnitDataFolder(3)
+medVolCT = medicalVolume(fullfile("MedicalVolumeDICOMData","LungCT01"))
+medVolLabel = medicalVolume("LungCT01_vertebra.nii.gz") % load segmentation of one Vertebrae
+%[text] - The Label Map is the same size as the cT Volume \
 %%
-%[text] Review your diamond. Notice how the center axes of the diamond runs through 0.5, 0.5 of the xy plane. 
-%[text] Shift the center axes to 0,0
-p.Vertices = p.Vertices % update vertices to recenter to 0,0,0
+%[text] ### Show the Label
+volshow(medVolLabel)
 %%
-%[text] %[text:anchor:H_F74A42F5] ## Set the face colors to the colormap
-p.FaceColor = 'flat';
-p.FaceVertexCData = (1:height(F))' % FaceVertexCData needs to be column vector
-colormap("sky") % update to preferred colormap
+%[text] ### Overlay the Label
+%[text] drag planes to scrub through the volume
+volshow(medVolCT, ...
+    OverlayData=medVolLabel.Voxels, ...
+    RenderingStyle="SlicePlanes", ...
+    OverlayAlpha=0.5)
 %%
-%[text] %[text:anchor:H_A27230A3] ## matGeom
-%[text] A powerful geometric computing toolbox for 2D/3D. [matGeom Manual](https://mattools.github.io/matGeom/api/index.html).
-%[text] 1. Add the matGeom folder to the search path: /Matlab Drive/Mastering-MATLAB/matGeom-master/matGeom
-%[text] 2. If you can't find matGeom, install using the following [Instructions for matGeom installation](https://salcedoe.github.io/MtMdocs/setup/githubRepoInstallation/#add-matgeom-using-matlab).- This was part of the MATLAB setup at start of semester.
-%[text] 3. Try the following code \
-setupMatGeom
-%[text] - if you see a bunch of output, then congratulations, you've properly installed matGeom \
+function [amap, cmap] = getAlphaColorMap
+% Create custom alpha settings for LungCT01
+alpha = [0 0 0.01 .25]; % alpha seeds for interpolation
+color = [0 0 0; 186 65 77; 231 208 141; 255 255 255] ./ 255; % color seeds for interpolation
+intensity = [-3024 100 400 1499];
+queryPoints = linspace(min(intensity),max(intensity),256);
+amap = interp1(intensity,alpha,queryPoints)'; % alphamap
+cmap = interp1(intensity,color,queryPoints); % colormap
+end
 %%
-%[text] The following code uses matGeom to rotate our model around the x-axis
-theta = deg2rad(45); %converts degrees into radians
-rotx = createRotationOx(theta) % create our 3D rotation matrix
-p.Vertices = transformPoint3d(p.Vertices,rotx); % linear algebra happening in here somewhere
-%[text] 
+[amap, cmap] = getAlphaColorMap;
+hvs = volshow(medVolCT,OverlayData=medVolLabel.Voxels,Colormap=cmap,Alphamap=amap,RenderingStyle="VolumeRendering",OverlayAlpha=0.75);
 %%
-%[text] %[text:anchor:H_02C43AE5] ### Course function
-%[text] The function **mmRotateSurfaceVertices** packages the above code and allows you to select the axis of rotation. Remember, you need to **setupMatGeom** to use this function (once per  MATLAB session)
-%[text] For example, the following code
-p.Vertices = mmRotateSurfaceVertices(p.Vertices,'z',45);
-%[text] - Try different rotations
-%[text] - Add sliders and input boxes \
+tform = intrinsicToWorldMapping(medVolLabel.VolumeGeometry);
 %%
-%[text] %[text:anchor:H_774A6BE9] ## Measure your diamond
-%[text] Make sure you rotate the diamond back so that it aligned to the xy plane. Once our diamond is nicely aligned to the cardinal axes, we can easily measure the extent of our diamond using simple math
-range(p.Vertices)
-%[text] - The range tells the width, depth, and height of our diamond \
+fv = isosurface(medVolLabel.Voxels,0.5) % create a surface
 %%
-%[text] We can also formalize these measurements with a bounding box 
-box3d = boundingBox3d(p.Vertices) % part of matGeom
-%[text] - This function is part of matGEOM
-%[text] - It returns the min and max for the X, Y, and Z extents \
-%%
-diff(reshape(box3d,2,3))
-%[text] - So, subtracting the first two elements returns 1, the next two elements returns a 2, and the next two elements a 1 \
-%%
-%[text] - Move the vertices up 5 and over 5
-%[text] - re-calculate bounding box \
-p.Vertices = p.Vertices + [5 5 0]
-range(p.Vertices)
-%%
-%[text] 
-box3d = boundingBox3d(p.Vertices) % part of matGeom
-hb = drawBox3d(box3d)
-%%
-%[text] %[text:anchor:H_FC689FF7] ### Pythagorean for measuring
-%[text] %[text:anchor:H_936E9349] We can calculate the distance between vertices using Euclidean Distances (just as we did for the triangles). We just need to include a third term in our calculations
-%[text] $\\textrm{Distance}=\\sqrt{{\\left(x\_2 -x\_1 \\right)}^2 +{\\left(y\_2 -y\_1 \\right)}^2 +{\\left(z\_2 -z\_1 \\right)}^2 }${"editStyle":"visual"}
-%[text] %[text:anchor:H_A69B020A] What is the distance between
-%[text] - V1 and V2, V3, V4, and V5? \
-%[text] %[text:anchor:H_00AE96B7] How far is V1 from V2? V3-5?
-d = V(2:5,:) - V(1,:) % subtract the first row from the rest of the matrix (x and y distances from V1 to the rest)
-sqrt(sum(d.^2,2)) % pythogorean for all distances
-sqrt(sum(V(1,:).^2)) % pythogorean for distance from 0,0,0
-%%
-%[text] %[text:anchor:H_9AB8C59A] ### Challenge: vertex separation 
-%[text] %[text:anchor:H_44CD7C04] What is the distance between V1 and V6?
-d = V(1,:) - V(6,:)
-sqrt(sum(d.^2,2))
-%[text] - does our result make sense? \
-%%
-%[text] %[text:anchor:T_8EB44798] # **Challenges**
-%[text] %[text:anchor:H_59F975D7] ### **Challenge 1: rotate by 180˚**
-%[text] 1. Rotate the vertices V  by 180˚, counter clockwise
-%[text] 2. Shrink the triangle by 1/2
-%[text] 3. Translate the triangle so that its lowest vertices are 0,0 \
+figure
+hp = patch(fv, ...
+    'FaceColor','cyan',...
+    'FaceAlpha', 0.5,...
+    'EdgeColor','k');
 
+mmSetSurfacePlotProps
+%%
+hp.Vertices = hp.Vertices .* medVolLabel.VoxelSpacing % correct voxel spacing
+%%
+%[text] ### Decimate Surface
+%[text] Often, isosurface creates too many triangles. The function reducepatch reduces the number of triangles while maintaining the overall shape of the surfaces
+reducepatch(hp,0.15) % reduce number of triangles (patches) by 85%
+%%
+hp
+%[text] - compare the number of Vertices before and after `reducepatch`. \
 %%
 %[text] %[text:anchor:T_F69B48DE] # Local Functions
 %[text] %[text:anchor:H_95B0506D] ## label patches

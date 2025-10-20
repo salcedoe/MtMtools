@@ -6,14 +6,13 @@
 clearvars;
 close all;
 clc;
-mmfig;
 %%
 %[text] %[text:anchor:H_10910D06] ## Remember, sine and cosine?
 %[text] SOHCAHTOA: Sin (theta) = opposite over hypotenuse, Cos (theta) = adjacent over hypotenuse 
 %[text] The following plots the sine and cosine of pi/4
 rad = pi/4; % radian
 
-clf;
+figure;
 plot_annotated_triangle(rad)
 %[text] - sin(θ) - the length of the opposite side of the triangle \
 %%
@@ -35,7 +34,7 @@ title('sine vs cosine')
 axis on
 %%
 %[text] Notice what happens to length of the sine side of the triangle as you go around the circle
-mmfig
+figure
 bar(theta,sin(theta));
 ylabel('sine(\theta)')
 xlabel('\theta (radians)')
@@ -52,7 +51,7 @@ t = 0 : 1/Fs : T; %samples vector
 freq = 200; %Frequency [Hz]
 y = sin(freq*2*pi*t)*1; % sine wave
 
-mmfig;
+figure;
 
 % Plot sine wave
 plot(t(1:100),y(1:100)) % plot a subset of the points
@@ -65,8 +64,7 @@ title(sprintf('Frequency = %d',freq))
 %%
 %[text] Here's the full 1 second of data
 plot(t,y)
-xlabel(seconds)
-
+xlabel('seconds')
 %%
 %[text] %[text:anchor:H_C0348656] ## Sounds are waves
 %[text] Simple tones can be modeled as sine waves. Here we play our sound wave as a sound
@@ -109,7 +107,7 @@ plot(x)
 xlabel('Sample Number')
 ylabel('Amplitude')
 title('{\bf Blue Whale Call}','Interpreter','Tex')
-sound(x,fs)
+sound(x,Fs)
 %[text] A complex waveform!
 %%
 %[text] %[text:anchor:H_04F3E9F8] ## Whale Call analysis
@@ -119,7 +117,7 @@ sound(x,fs)
 %[text] - We'll correct the time base for the factor of 10 speed-up in the data: \
 
 bCall = x(2.45e4:3.10e4);
-tb = 10*(0:1/fs:(length(bCall)-1)/fs); % Time base
+tb = 10*(0:1/Fs:(length(bCall)-1)/Fs); % Time base
 
 figure;
 plot(tb,bCall)
@@ -152,7 +150,7 @@ imshow(slice,[])
 %[text] treat each row like a sine wave
 %[text] Bright colors are high values
 %[text] Dark colors are low values
-figure('Visible','on')
+figure
 
 subplot(1,3,1)
 imshow(slice,[])
