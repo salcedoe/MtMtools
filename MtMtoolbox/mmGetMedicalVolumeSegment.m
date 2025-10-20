@@ -14,7 +14,7 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 % OUTPUTS
 %
 % - S: A structure with the following fields
-%      - name: Name of selected segment
+%      - segName: Name of selected segment
 %      - mask: binary mask containing the selected segment
 %      - color: color of the segmentation as set in Slicer
 %      - tform: transformation matrix to properly orient segmentation 
@@ -22,7 +22,7 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 % ---
 % AUTHOR: Ernesto Salcedo, PhD
 % SITE: University of Colorado Modern Human Anatomy
-% UPDATED: 10/27/2023
+% UPDATED: 10/20/2025
 
 arguments
     mV medicalVolume
@@ -31,20 +31,20 @@ arguments
 end
 
 if isempty(options.segName)
-    names = segT.Name;
-    [row,tf] = listdlg('ListString',names);
+    segNames = segT.SegName;
+    [row,tf] = listdlg('ListString',segNames);
     
     if tf
-        options.segName = names(row);
+        options.segName = segNames(row);
     else
         S = [];
         disp('mmMedicalVolume2Surface canceled...')
         return
     end
-    S.name = names{row};
+    S.segName = segNames{row}; % changed from name to segName
 else
-    S.name = options.segName;
-    row = find(lower(segT.Name)==lower(S.name));
+    S.segName = options.segName;
+    row = find(lower(segT.Name)==lower(S.segName));
 end
 
 % index out relevant segmentation

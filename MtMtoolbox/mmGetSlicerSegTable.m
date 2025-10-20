@@ -2,10 +2,15 @@ function T = mmGetSlicerSegTable(file_name)
 %MMGETSLICERSEGNAMES Returns the segmentation names found in seg.nrrd files
 %   INPUTS: file_name of a segmentation file
 %   OUTPUT: a table with segmentation names, layer, label, and color values
+%
+% EXAMPLE
+%
+% segT = mmGetSlicerSegTable(seg_file)
+%
 % Works with Slicer 4.11.2020 and higher
 % ---
 % Ernesto Salcedo, PhD
-% Updated: 12-31-2022
+% Updated: 10-20-2025
 % University of Colorado Modern Human Anatomy
 
 if ~contains(file_name,".seg.nrrd")
@@ -27,10 +32,10 @@ FNsegment = FN(~cellfun(@isempty, regexp(FN,'segment\d+')));
 seg_count = max(str2double(string(regexp(FNsegment,'(?<=segment)\d+','match'))))+1;
 
 T = table(strings(seg_count,1), zeros(seg_count,1), zeros(seg_count,1), zeros(seg_count,3),...
-    'VariableNames',{'Name','Layer','LabelValue','Color'});
+    'VariableNames',{'SegName','Layer','LabelValue','Color'}); % changed Name to Segment
 
 for n = 1:seg_count
-    T.Name(n) = meta.(sprintf('segment%d_name',n-1));
+    T.SegName(n) = meta.(sprintf('segment%d_name',n-1)); % changed to SegName
     T.Layer(n) = str2double(meta.(sprintf('segment%d_layer',n-1)))+1; % convert to mlb index
     T.LabelValue(n) = str2double(meta.(sprintf('segment%d_labelvalue',n-1)));
     T.Color(n,:) = str2num(meta.(sprintf('segment%d_color',n-1)));
