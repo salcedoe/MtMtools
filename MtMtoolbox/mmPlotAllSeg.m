@@ -54,7 +54,7 @@ name = extractBefore(name,(" "|"_"));
 hp = gobjects(count,1);
 for n=1:count
     % disp(n)
-    sname = segT.Name(n);
+    sname = segT.SegName(n);
     S = mmGetMedicalVolumeSegment(mV,segT,segName=sname);
 
     if options.smooth % smooth boolean
@@ -67,7 +67,7 @@ for n=1:count
     if ~isempty(fv.vertices)
         % plot surface
         hp(n) = mmPlotSurface(fv, segT.Color(n,:), options.falpha);
-        hp(n).Tag =  name + "-" + segT.Name(n);
+        hp(n).Tag =  name + "-" + segT.SegName(n);
     end
 
 end

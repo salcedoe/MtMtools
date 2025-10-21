@@ -44,28 +44,36 @@ if isempty(options.segName)
     S.segName = segNames{row}; % changed from name to segName
 else
     S.segName = options.segName;
-    row = find(lower(segT.Name)==lower(S.segName));
+    row = find(lower(segT.SegName)==lower(S.segName));
 end
 
 % index out relevant segmentation
 
-if ndims(mV.Voxels)>3 % 4D arrays are created when overlap is allowed in Slicer
+if isstruct(mV.Voxels)
+    VOX = mV.Voxels.pixelData;
+elseif isnumeric(mV.Voxels)
+    VOX = mV.Voxels;
+else
+    error('Invalid input: mV.Voxels must be a struct or numeric array.');
+end
+    
+
+if ndims(VOX)>3 % 4D arrays are created when overlap is allowed in Slicer
     layer = segT.Layer(row);
     label = segT.LabelValue(row);
 
     try
-        vol = squeeze(mV.Voxels(:,:,:,layer));
+        vol = squeeze(VOX(:,:,:,layer));
         S.mask = vol == label;
     catch
-        warning('%s. Indexing %d layer of the mV.Voxels failed',segT.File(1),layer)
-        S.mask = false(size(mV.Voxels,1:3));
+        warning('%s. Indexing %d layer of the voxel data failed',segT.File(1),layer)
+        S.mask = false(size(VOX,1:3));
     end
 
 else
-    S.mask = mV.Voxels == segT.LabelValue(row);
+    S.mask = VOX == segT.LabelValue(row);
 end
 S.color = segT.Color(row,:);
-
 
 S.tform = intrinsicToWorldMapping(mV.VolumeGeometry);
 
