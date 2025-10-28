@@ -74,7 +74,9 @@ else
     S.mask = VOX == segT.LabelValue(row);
 end
 S.color = segT.Color(row,:);
-
 S.tform = intrinsicToWorldMapping(mV.VolumeGeometry);
+S.spacing = mV.VoxelSpacing;
+rp = regionprops3(S.mask,'Volume');
+S.volume = rp.Volume;
 
 end
