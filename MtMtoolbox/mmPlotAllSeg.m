@@ -43,7 +43,7 @@ arguments
 end
 
 if options.new_figure
-    figure(Visible="on",Color="white")
+    figure(Color="white")
 end
 
 count = height(segT);

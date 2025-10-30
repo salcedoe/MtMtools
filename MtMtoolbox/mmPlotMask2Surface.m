@@ -57,7 +57,7 @@ if options.smooth % smooth boolean
 end
 
 if options.new_figure
-    figure(Visible="on")
+    figure
 end
 
 % generate isosurface 

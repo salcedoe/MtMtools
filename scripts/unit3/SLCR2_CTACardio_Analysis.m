@@ -68,17 +68,7 @@ robustHD(mySeg.hp.Vertices,totSeg.hp.Vertices,5,'euclidean') % calculate differe
 %[text] ### Plot Kidneys using volshow
 %[text] If we plot each kidney using volshow, we can use the volshow tools to slice the kidney and inspect the interior. We are going to use a different figure call, **`uifigure,`** so we can place our figures in the same figure. After the volumes are displayed:
 %[text] -  add a clipping plane and clip both volumes: \
-volshowComp(totSeg,mySeg)
-
-function  volshowComp(seg1,seg2)
-% creates a uifigure with 2 tiles and displays the inputted medicalVolumes
-fig = uifigure(Name="Kidney Comparison"); % special figure that can hold volshow viewers
-g = uigridlayout(fig,[1 2],Padding=[0 0 0 0]); % like tiledlayout, but different. 1x2 tiles
-hvr1 = viewer3d(parent=g,BackgroundColor="white",BackgroundGradient="off",CameraZoom=1); % set background color to white and turn off gradient
-hvr2 = viewer3d(parent=g,BackgroundColor="white",BackgroundGradient="off",CameraZoom=1); % set background color to white and turn off gradient
-volshow(seg1.mask,Parent=hvr1,Transformation=seg1.tform);
-volshow(seg2.mask, Parent=hvr2,Transformation=seg2.tform);
-end
+mmVolShowPair(totSeg,mySeg,"Kidney Compare")
 %[text] - So, as we can see, my kidney is riddled with holes (the medulla), while the total segmentator is more whole — this is why the volumes differ. \
 %%
 %[text] #### Use Scissors tool to remove vasculature
@@ -158,9 +148,9 @@ segName = "aorta";
 mySeg = mmGetMedicalVolumeSegment(myMV,myT,segName=segName);
 totSeg = mmGetMedicalVolumeSegment(totalMV,totT,segName=segName);
 %%
-volshowComp(mySeg,totSeg) % display segmentations side by side
-%[text] - Our segmentation looks much nicer than the lego-ass one created by the total segmentator. This is because we used the fast segmentation (because we don't got all day). 
-%[text] - But how accurate, shape wise, is the segmentation? \
+mmVolShowPair(mySeg,totSeg,"Aortas in Space") % display segmentations side by side
+%[text] - Our segmentation looks much nicer than the lego-ass one created by the total segmentator. This is because we used the fast segmentation (because we don't got all day).
+%[text] - But how accurate, shape wise, is our segmentation? \
 %%
 %[text] ### Overlay surfaces
 %[text] Here we overlay the two segmentations
@@ -178,7 +168,7 @@ mySeg.maskCrop(~totSeg.mask) = false; % remove any mask outside the inverse of t
 figure;
 mySeg.hp =  mmPlotMask2Surface(mySeg.maskCrop,fcolor='m');
 totSeg.hp = mmPlotMask2Surface(totSeg.mask,fcolor='cyan',smooth=true);
-%[text] - So the two segmentations actually pretty close. 
+%[text] - So the two segmentations actually pretty close.
 %[text] - Sure, the tot seg aorta is longer, but this is not a contest \
 %%
 %[text] ### Volume comparison
@@ -222,12 +212,13 @@ ylim([172.5 210.3])
 %[text] Adjust the Alpha Map as follows and use the parula colormap
 %[text] ![](text:image:3057)
 volumeViewer(mySeg.edt)
-%[text] - you should set a gold core in the center of the volume render (theses are the highest values found in the distance transform).  \
+%[text] - you should set a gold core in the center of the volume render (these are the highest values found in the distance transform).  \
 %%
 %[text] #### Visualize  SKEL as a surface
 %[text] Here we display the SKEL volume inside the CROP volume as surfaces
 figure;
 tiledlayout("horizontal")
+nexttile
 mmPlotMask2Surface(mySeg.mask,fcolor='c',falpha=0.1);
 mmPlotMask2Surface(mySeg.skel,fcolor='m',falpha=1);
 %%
@@ -275,11 +266,9 @@ nexttile
 plot(movmean(totSeg.R,5))
 ylabel("radius")
 title(sprintf('Mean Diameter = %1.2f',totSeg.diameter))
-%[text] - As expected, tot seg is longer, 
+%[text] - As expected, tot seg is longer,
 %[text] - But it actually has a smaller average girth, go figure
 %[text] - But the values were really close and may have been affected by the offshoot vasculature included on my aorta \
-%%
-
 
 %[appendix]{"version":"1.0"}
 %---

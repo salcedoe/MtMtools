@@ -4,6 +4,8 @@
 %[text] **IMPORTANT**
 %[text] - Create a new folder in your MATLAB drive called MedImaging
 %[text] - Copy this File to the MedImaging folder  \
+%[text:tableOfContents]{"heading":"**Table of Contents**"}
+%[text] 
 %%
 clearvars
 close all
