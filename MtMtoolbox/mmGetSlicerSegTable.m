@@ -1,4 +1,4 @@
-function T = mmGetSlicerSegTable(file_name)
+function T = mmGetSlicerSegTable(file_name,options)
 %MMGETSLICERSEGNAMES Returns the segmentation names found in seg.nrrd files
 %   INPUTS: file_name of a segmentation file
 %   OUTPUT: a table with segmentation names, layer, label, and color values
@@ -13,14 +13,16 @@ function T = mmGetSlicerSegTable(file_name)
 % Updated: 10-20-2025
 % University of Colorado Modern Human Anatomy
 
+
+arguments
+    file_name {mustBeTextScalar}
+    options.addVolInfo logical = false
+end
+
 if ~contains(file_name,".seg.nrrd")
-    beep
-    disp("Slicer *.seg.nrrd files only")
-    return
+    error("Slicer *.seg.nrrd files only")    
 elseif ~exist("nrrdinfo","file")
-    beep
-    disp("Medical Toolbox required")
-    return
+    error("Medical Toolbox required")    
 end
 
 info = nrrdinfo(file_name);
@@ -39,6 +41,11 @@ for n = 1:seg_count
     T.Layer(n) = str2double(meta.(sprintf('segment%d_layer',n-1)))+1; % convert to mlb index
     T.LabelValue(n) = str2double(meta.(sprintf('segment%d_labelvalue',n-1)));
     T.Color(n,:) = str2num(meta.(sprintf('segment%d_color',n-1)));
+end
+
+if options.addVolInfo
+    T.ImageSize = repmat(info.ImageSize,height(T),1);
+    T.PixelDimensions = repmat(info.PixelDimensions,height(T),1);
 end
 
 T = sortrows(T,"LabelValue");

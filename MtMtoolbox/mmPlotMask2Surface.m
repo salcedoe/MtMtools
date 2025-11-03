@@ -48,8 +48,9 @@ arguments
     options.decimator (1,1) double = 0.15;
     options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
     options.new_figure logical = false;
-    options.tag char='';
-    options.title char='';
+    options.tag char ='';
+    options.title char ='';
+    options.centerVerts logical = false;
 end
 
 if options.smooth % smooth boolean
@@ -74,6 +75,10 @@ end
 
 % plot surface
 hp = mmPlotSurface(fv, options.fcolor, options.falpha);
+
+if options.centerVerts
+    hp.Vertices = hp.Vertices - mean(hp.Vertices); % Center the vertices around the origin
+end
 
 if ~isempty(options.title)
     title(options.title)

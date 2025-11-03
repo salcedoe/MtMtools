@@ -4,7 +4,7 @@
 %[text] **IMPORTANT**
 %[text] - Create a new folder in your MATLAB drive called MedImaging
 %[text] - Copy this File to the MedImaging folder  \
-%[text:tableOfContents]{"heading":"**Table of Contents**"}
+%[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 %%
 clearvars
@@ -20,7 +20,8 @@ ls(paths.project) % display folder contents %[output:6cf76cb3]
 paths.intensity = fullfile(paths.project,"CTACardio Crop.nrrd");
 paths.segment = fullfile(paths.project,"Lung Segmentation.seg.nrrd") %[output:06b9e275]
 %[text] path check
-structfun(@(x) exist(x,"file"),paths) % make sure paths exist - a zero mean the indicated file does not exist %[output:63439cbb]
+table(fieldnames(paths),structfun(@(x) exist(x,"file"),paths),VariableNames=["path" "X"]) % make sure paths exist 
+%[text] 
 %%
 %[text] ## Load Volumes
 %[text] ### Load the intensity volume
@@ -95,9 +96,6 @@ rp.VolumeMM = rp.Volume * prod(mVseg.VoxelSpacing) %[output:6667cbeb]
 %---
 %[output:06b9e275]
 %   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"paths","value":"      project: \"\/Users\/ernesto\/MATLAB-Drive\/MtMdata\/unit3\/CTACardio\"\n    intensity: \"\/Users\/ernesto\/MATLAB-Drive\/MtMdata\/unit3\/CTACardio\/CTACardio Crop.nrrd\"\n      segment: \"\/Users\/ernesto\/MATLAB-Drive\/MtMdata\/unit3\/CTACardio\/Lung Segmentation.seg.nrrd\"\n"}}
-%---
-%[output:63439cbb]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"name":"ans","rows":3,"type":"double","value":[["7"],["2"],["2"]]}}
 %---
 %[output:64b5f9ac]
 %   data: {"dataType":"textualVariable","outputData":{"name":"mVint","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 int16]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}

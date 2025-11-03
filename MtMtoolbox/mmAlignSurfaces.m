@@ -1,4 +1,4 @@
-function [Surf2Move,rmse] = mmAlignSurfaces(SurfFixed, Surf2Move,options)
+function [Surf2Move] = mmAlignSurfaces(SurfFixed, Surf2Move,options)
 %%MMALIGNSURFACES registers two point clouds using an iterative closest point
 %algorithm
 %   This function requires the Computer Vision Toolbox. The inputs and
@@ -24,7 +24,7 @@ fixed = pcdownsample(PCr, 'gridAverage',options.gridSize);
 moving = pcdownsample(PCl,'gridAverage',options.gridSize);
 
 % transform
-[tform,~,rmse] = pcregistericp(moving, fixed, 'Metric',"pointToPoint","Extrapolate",true);
+[tform] = pcregistericp(moving, fixed);
 PCl_aligned = pctransform(PCl,tform);
 
 % return
