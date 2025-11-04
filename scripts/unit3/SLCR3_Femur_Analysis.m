@@ -5,7 +5,7 @@
 %[text] %[text:anchor:H_467406A6] ## Load Data
 close all hidden
 clearvars
-setupMatGeom %[output:8004e948]
+%[output:8004e948]
 paths.project = "/Users/ernesto/MATLAB-Drive/MtMdata/unit3/Femur"; %[control:filebrowser:51e3]{"position":[17,66]}
 ls(paths.project) % display folder contents %[output:7bb5b54f]
 %%

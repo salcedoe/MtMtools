@@ -1,4 +1,4 @@
-function [Surf2Move] = mmAlignSurfaces(SurfFixed, Surf2Move,options)
+function [vertMoving,rmse] = mmAlignSurfaces(vertFixed, vertMoving,options)
 %%MMALIGNSURFACES registers two point clouds using an iterative closest point
 %algorithm
 %   This function requires the Computer Vision Toolbox. The inputs and
@@ -11,22 +11,22 @@ function [Surf2Move] = mmAlignSurfaces(SurfFixed, Surf2Move,options)
 % - Surf2Move: NX3 vertices matrix of registered surface
 
 arguments
-    SurfFixed (:,3) {mustBeNumeric}
-    Surf2Move (:,3) {mustBeNumeric}
+    vertFixed (:,3) {mustBeNumeric}
+    vertMoving (:,3) {mustBeNumeric}
     options.gridSize (1,1) {mustBeNumeric} = 0.1
     options.MaxIterations (1,1) {mustBeInteger} = 30;
 end
 
-PCr = pointCloud(SurfFixed); % creates a point cloud object of the Right femur
-PCl = pointCloud(Surf2Move);
+PCr = pointCloud(vertFixed); % creates a point cloud object of the Right femur
+PCl = pointCloud(vertMoving);
 
 fixed = pcdownsample(PCr, 'gridAverage',options.gridSize);
 moving = pcdownsample(PCl,'gridAverage',options.gridSize);
 
 % transform
-[tform] = pcregistericp(moving, fixed);
+[tform,~,rmse] = pcregistericp(moving, fixed, 'Metric',"pointToPoint","MaxIterations",options.MaxIterations);
 PCl_aligned = pctransform(PCl,tform);
 
 % return
-Surf2Move = PCl_aligned.Location;
+vertMoving = PCl_aligned.Location;
 end
