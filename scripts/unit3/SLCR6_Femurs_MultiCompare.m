@@ -1,34 +1,12 @@
 close all hidden
-clearvars
+clearvars %[output:36c0c3da]
 %%
-contents = dir(fullfile(matlabdrive,"ANAT6205_Dropbox","Femurs",'*.seg.nrrd')) % returns info on *.seg.nrrd files %[output:36c0c3da]
+%[text] ## Load all Segmentation metadata
+%[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
+file_path = fullfile(matlabdrive,"ANAT6205_Dropbox","Femurs",'*.seg.nrrd'); % note the use of a wild card in the file name %[output:76c29fc2]
+segT = mmGetAllSegTables(file_path) %[output:3112c3c3] %[output:02e71dcc]
 %%
-%[text] ### Confirm Seg content
-%[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure they match
-segT = getSegTables(contents) %[output:3112c3c3] %[output:02e71dcc]
-
-function T = getSegTables(contents)
-% concatenate segmentation tables
-
-T = table; % segmentation metadata
-for n=1:numel(contents)
-    filepath = fullfile(contents(n).folder,contents(n).name); % construct file path
-    t = mmGetSlicerSegTable(filepath,addVolInfo=true);
-    t.ID = repmat(n, height(t),1);
-    t.Filename = repmat(string(contents(n).name),height(t),1);
-    t.LastName = extractBefore(t.Filename,("_"|" ")); % extract before an underscore or a space    
-   
-    t = movevars(t,{'ID' 'LastName'},'Before','SegName');   
-
-    try
-        T = [T; t];
-    catch ME
-        fprintf('%d. %s. %s',n,t.LastName(1), ME.message)
-        continue
-    end
-end
-T.Properties.UserData.Content = contents;
-end
+mmGetSlicerSegTable
 %%
 function RP = getFemurLength(contents)
 
@@ -62,6 +40,9 @@ mVseg = medicalVolume(paths.segment) %[output:94db5e03] %[output:6638bdd1]
 %---
 %[output:36c0c3da]
 %   data: {"dataType":"tabular","outputData":{"columnNames":["name","folder","date","bytes","isdir","datenum"],"columns":6,"cornerText":"Fields","dataTypes":["char","char","char","double","logical","double"],"header":"9×1 struct array with fields:","name":"contents","rows":9,"type":"struct","value":[["'Anderson Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'03-Nov-2025 13:02:06'","119677","0","7.3992e+05"],["'Buchanan Femur Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'03-Nov-2025 19:56:46'","132530","0","7.3992e+05"],["'DeBaets Femuh Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'24-Oct-2025 09:02:39'","154522","0","7.3991e+05"],["'Fridrich Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'03-Nov-2025 13:08:34'","127635","0","7.3992e+05"],["'Huchthausen Femur Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'23-Oct-2025 15:24:01'","161953","0","7.3991e+05"],["'Mackawi Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'23-Oct-2025 15:23:56'","193953","0","7.3991e+05"],["'Powers Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'30-Oct-2025 15:17:25'","70476","0","7.3992e+05"],["'Salcedo Segmentation.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'23-Oct-2025 07:05:30'","319308","0","7.3991e+05"],["'Solomon Seg.seg.nrrd'","'\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs'","'30-Oct-2025 15:05:35'","146724","0","7.3992e+05"]]}}
+%---
+%[output:76c29fc2]
+%   data: {"dataType":"textualVariable","outputData":{"name":"file_path","value":"\"\/Users\/ernesto\/MATLAB-Drive\/ANAT6205_Dropbox\/Femurs\/*.seg.nrrd\""}}
 %---
 %[output:3112c3c3]
 %   data: {"dataType":"text","outputData":{"text":"7. Powers. An error occurred when concatenating the table variable 'ImageSize' using vertcat.","truncated":false}}
