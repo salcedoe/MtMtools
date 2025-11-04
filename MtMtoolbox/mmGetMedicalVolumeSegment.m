@@ -13,11 +13,13 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 %
 % OUTPUTS
 %
-% - S: A structure with the following fields
+% S: A structure with the following fields
 %      - segName: Name of selected segment
 %      - mask: binary mask containing the selected segment
 %      - color: color of the segmentation as set in Slicer
 %      - tform: transformation matrix to properly orient segmentation 
+%      - spacing: Voxel spacing
+%      - volume: calculated using regionprops3 
 %
 % ---
 % AUTHOR: Ernesto Salcedo, PhD
@@ -55,8 +57,7 @@ elseif isnumeric(mV.Voxels)
     VOX = mV.Voxels;
 else
     error('Invalid input: mV.Voxels must be a struct or numeric array.');
-end
-    
+end    
 
 if ndims(VOX)>3 % 4D arrays are created when overlap is allowed in Slicer
     layer = segT.Layer(row);
@@ -77,6 +78,6 @@ S.color = segT.Color(row,:);
 S.tform = intrinsicToWorldMapping(mV.VolumeGeometry);
 S.spacing = mV.VoxelSpacing;
 rp = regionprops3(S.mask,'Volume');
-S.volume = rp.Volume;
+S.volume = sum(rp.Volume); % get total volume
 
 end

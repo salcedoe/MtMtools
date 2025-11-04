@@ -95,38 +95,16 @@ lkSeg.bbox = range(hp2.Vertices)
 drawcuboid('Position',[min(hp1.Vertices) range(hp1.Vertices)]);
 %%
 %[text] ## Multiple file Analyses
-%[text] Use `dir` to get the names of the files
-contents = dir(fullfile(matlabdrive,"ANAT6205_Dropbox","Kidneys",'*.seg.nrrd')) % returns info on *.seg.nrrd files
-%%
 %[text] ### Confirm Segmentation Table contents
-%[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure they match
-segT = getSegTables(contents)
-
-function T = getSegTables(contents)
-% concatenate segmentation tables
-
-T = table; % segmentation metadata
-for n=1:numel(contents)
-    filepath = fullfile(contents(n).folder,contents(n).name); % construct file path
-    t = mmGetSlicerSegTable(filepath,addVolInfo=true); % load current segmentation table
-    t.Filename = repmat(string(contents(n).name),height(t),1);
-    t.LastName = extractBefore(t.Filename,("_"|" ")); % extract before an underscore or a space
-    ln = replace(contents(n).name,' ','_');
-    % t.LastName = repmat(string(extractBefore(ln,'_')),height(t),1);
-    t = movevars(t,'LastName','Before','SegName');
-    
-    try
-        T = [T; t];
-    catch ME
-        fprintf('%d. %s. %s',n,t.LastName(1), ME.message)
-        continue
-    end
-end
-
-end
+%[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
+paths.folder = fullfile(matlabdrive,"ANAT6205_Dropbox","Kidneys"); % path to folder
+paths.fileWC = '*.seg.nrrd'; % wild card filename to load just segmentation files
+segT = mmGetAllSlicerSegTables(fullfile(paths.folder, paths.fileWC))
 %%
 %[text] ### Calculate Kidney Properties
 %[text] Here we calculate the kidney properties for all the segmentation files
+contents = segT.Properties.UserData.contents; % a contents structure with info on seg files 
+
 rpK = getKidneyProps(contents)
 
 function RP = getKidneyProps(contents)
@@ -171,10 +149,10 @@ function [bbox] = getBoundingBox(mv, st)
 tform = intrinsicToWorldMapping(mv.VolumeGeometry); % create transformation matrix (scale, rotate, translate)
 bbox = zeros(height(st),3);
 clrs = 'cm'; % cyan magenta
-hwb = waitbar(0,'Calculating...');
 
 nexttile
 for n=1:height(st)
+
     seg = mmGetMedicalVolumeSegment(mv,st,"segName",st.SegName(n));
     fv = mmGetSurface(seg.mask,"affTrfm",tform.A); % create a surface of the volume without plotting
     fv.vertices = fv.vertices - mean(fv.vertices); % center
@@ -185,12 +163,12 @@ for n=1:height(st)
     bbox(n,:) = range(fv.vertices);
 
     mmPlotSurface(fv,clrs(n),0.5); % display surface
+
 end
 [~,fname] = fileparts(st.Properties.UserData.Filename);
 fname = extractBefore(fname,("_"|" "));
 title(fname)
 mmSetSurfacePlotProps % properly format surface display
-
 end
 %%
 %[text] ## Calculate Aorta Properties

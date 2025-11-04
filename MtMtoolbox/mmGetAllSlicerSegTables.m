@@ -9,7 +9,7 @@ arguments (Input)
 end
 
 contents = dir(filePath);
-
+si = []; % successful indices
 T = table; % segmentation metadata
 for n=1:numel(contents)
     filepath = fullfile(contents(n).folder,contents(n).name); % construct file path
@@ -22,11 +22,15 @@ for n=1:numel(contents)
 
     try % test if data can be concatenated with previous data
         T = [T; t];
+        si = [si; n]; % concatenate successful indices
     catch ME
-        fprintf('%d. %s. %s',n,t.LastName(1), ME.message)
+        fprintf('%d. %s. %s\n',n,t.LastName(1), ME.message)
+        disp(t)
         continue
     end
 end
-T.Properties.UserData.Content = contents; % add contents to table
-
+T.LastName = categorical(T.LastName);
+T.SegName = categorical(T.SegName);
+T.Properties.UserData.contents = contents; % add contents to table
+T.Properties.UserData.si = si; % successfully indices
 end
