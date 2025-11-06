@@ -1,4 +1,4 @@
-function T = mmGetAllSlicerSegTables(filePath)
+function [T, contentT] = mmGetAllSlicerSegTables(filePath)
 %MMGETALLSEGTABLES Loads the metadata from Slicer segmentation files found
 %in the same folder
 %   Input the file path to the folder. Use a wild card for the file name
@@ -9,16 +9,26 @@ arguments (Input)
 end
 
 contents = dir(filePath);
+contentT = struct2table(contents);
+contentT = convertvars(contentT,["name" "folder"],"string");
+contentT.LastName = strings(height(contentT),1);
+contentT.VolDim = zeros(height(contentT),1);
+contentT.PixelSpacing = zeros(height(contentT),3);
+contentT = movevars(contentT,["LastName" "VolDim" "PixelSpacing"],'Before',1);
+
 si = []; % successful indices
 T = table; % segmentation metadata
 for n=1:numel(contents)
     filepath = fullfile(contents(n).folder,contents(n).name); % construct file path
-    t = mmGetSlicerSegTable(filepath,addVolInfo=true);
+    t = mmGetSlicerSegTable(filepath);
     t.ID = repmat(n, height(t),1);
     t.Filename = repmat(string(contents(n).name),height(t),1);
-    t.LastName = extractBefore(t.Filename,("_"|" ")); % extract before an underscore or a space    
-   
+    t.LastName = extractBefore(t.Filename,("_"|" ")); % extract before an underscore or a space       
     t = movevars(t,{'ID' 'LastName'},'Before',1);   
+
+    contentT.LastName(n) = t.LastName(1);
+    contentT.VolDim(n) = numel(t.Properties.UserData.ImageSize);
+    contentT.PixelSpacing(n,:) = t.Properties.UserData.PixelDimensions;
 
     try % test if data can be concatenated with previous data
         T = [T; t];

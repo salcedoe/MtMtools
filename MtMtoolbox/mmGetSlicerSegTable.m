@@ -44,8 +44,8 @@ for n = 1:seg_count
 end
 
 if options.addVolInfo
-    T.ImageSize = repmat(info.ImageSize,height(T),1);
-    T.PixelDimensions = repmat(info.PixelDimensions,height(T),1);
+    T.VolumeDimensions = repmat(numel(info.ImageSize),height(T),1);
+    T.PixelSpacing = repmat(info.PixelDimensions,height(T),1);
 end
 
 T = sortrows(T,"LabelValue");
