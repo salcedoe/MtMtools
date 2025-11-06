@@ -164,6 +164,24 @@ seg.fv.vertices = mmAlignSurface2Axes(seg.fv.vertices); % align to xy plane
 seg.fv.vertices = mmRotateSurfaceVertices(seg.fv.vertices,'y',-90);  % rotate back to align with zplane
 end
 
+function seg = getFemurDiameter(seg)
+% Finds centroid of femur and spans from the 
+
+rp = regionprops3(seg.mask,"Volume","Centroid"); % center of femur - should be in shaft
+[~,maxIdx] = max.rp.Volume; % if any noise, use largest volume
+cntrz = rp.Centroid(maxIdx,3); % centroid of largest volume
+span = 50; % span from centroid
+seg.shaft = seg.mask(:,:,cntrz-span:cntrz+span); % crop femur down to shaft
+
+seg.edt = bwdist(~seg.shaft); % Euclidean Distance Transform of cropped volume
+seg.skel = bwskel(seg.shaft,MinBranchLength=20); % skeletonize
+seg.Radii = seg.edt(seg.skel) * seg.spacing(1) ; % get radii and convert to mm
+seg.diameter = median(seg.Radii)*2; % double
+
+end
+
+
+
 %[appendix]{"version":"1.0"}
 %---
 %[metadata:view]
