@@ -9,6 +9,11 @@ arguments (Input)
 end
 
 contents = dir(filePath);
+
+if isempty(contents)
+    error('Incorrect path or no Slicer files found')
+end
+
 contentT = struct2table(contents);
 contentT = convertvars(contentT,["name" "folder"],"string");
 contentT.LastName = strings(height(contentT),1);
