@@ -2,7 +2,16 @@
 %[text] Each markup measurement made in Slicer, like length or angle, is saved as a JSON file (extension .JSON), which is a structured data format used by the internet. If you review your slicer folder, each folder will have a series of .MRK.JSON files that have the same name as the measurement that you made  in slicer. 
 %[text] Storing every measurement in a separate file makes our data incredibly [UNTIDY](https://salcedoe.github.io/MtMdocs/dataProcessing/tidyData/). We need to collate our data in a single table to simplify its analysis. This live script helps you do that.
 %[text] ## Set Project Folder
-%[text] To start, organize your slicer folders in a single project folder. Then, select the project folder using the code below:
+%[text] To start, organize your slicer folders in a single project folder as follows:
+%[text] ```
+%[text] - project_folder
+%[text]     - slicer_folder_1
+%[text]     - slicer_folder_2
+%[text]     - slicer_folder_3
+%[text] ```
+%[text] 
+%%
+%[text] Set the project folder using the code below:
 project_folder = "/Users/ernesto/MATLAB-Drive/Mighty Mandibles" %[control:filebrowser:16c6]{"position":[18,64]} %[output:016814d3]
 folders = dir(project_folder); % find contents in the project folder
 foldersT = struct2table(folders); % convert to table
@@ -13,8 +22,8 @@ foldersT = foldersT(~matches(foldersT.name,[".",".."]),:) % remove relative fold
 %[text] - foldersT should contain directory information about your Slicer Folders (e.g. their names, the folder that they in which they are contained, and the date they were modified) \
 %%
 %[text] ## Collating the Markups
-%[text] Next, we import each markup into MATLAB and extract the measurements (e.g. the lengths and angles). We organize the data in a table. The we load the next dataset set, building our table row by row. In the end, our table will have one row per Slicer folder. 
-%[text] **Important**: for this to work properly, you need to use the exact same name for the same measurement across all slicer folders. No typos or variations in spacing. 
+%[text] Next, we import each markup into MATLAB and extract the measurements (e.g. the lengths and angles). We organize the data in a one-row table. Then, we load the next dataset set, building our table row by row. In the end, our table will have one row per Slicer Folder. 
+%[text] **Important**: for this to work properly, you need to use the exact same name for the same measurements across all slicer folders. No typos or variations in spacing. 
 %%
 %[text] ### Set Measurement Names and Column Headers
 %[text] Manually enter the names of your measurements (the exact name you entered in Slicer). You should also be able to see these names as files with the extension .MRK.JSON in your slicer folder.
@@ -24,7 +33,7 @@ varNames = ["Bicondylar" "Bigonal" "ForamenMagnum" "RamusLeft" "RamusRight"]; % 
 %[text] - IMPORTANT: **`varNames`** must have the same number of elements as **`measurementNames`** \
 %%
 %[text] ### Collate the data
-%[text] Run this loop to collate the data
+%[text] Run this loop to collate the data into a table T
 rowCount = height(foldersT);
 
 % preallocate table
@@ -35,7 +44,8 @@ t = getMeasurements(fullfile(foldersT.folder{n},foldersT.name{n}),measurementNam
 T(n,:) = t;
 end %[output:group:08df1cd9]
 T %[output:3164913f]
-%[text] - Any data that was unable to be loaded with have a value of NaN (not a number) \
+%[text] - Any data that was unable to be loaded with have a value of NaN (not a number)
+%[text] - Review the error messages to determine why the data was unable to be loaded \
 %%
 %[text] # Local Function
 %[text] This function loads the measurements from a given folder and returns a one-row table
