@@ -37,6 +37,9 @@ volshow(segMV) %[output:487aac40]
 %%
 %[text] ### Search for a segmentation
 sum(contains({segContents.name},'hip')) %[output:84a8e3fb]
+%%
+url = "https://olucdenver-my.sharepoint.com/:f:/g/personal/ernesto_salcedo_cuanschutz_edu/EkaJ49A9vCFGgahidDtHm8gBf06rsnLdehv_nCNIY8qYug?e=6475bs" %[output:2be77c11]
+dir(url) %[output:6711cf82]
 
 %[appendix]{"version":"1.0"}
 %---
@@ -72,4 +75,10 @@ sum(contains({segContents.name},'hip')) %[output:84a8e3fb]
 %---
 %[output:84a8e3fb]
 %   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"     2\n"}}
+%---
+%[output:2be77c11]
+%   data: {"dataType":"textualVariable","outputData":{"name":"url","value":"\"https:\/\/olucdenver-my.sharepoint.com\/:f:\/g\/personal\/ernesto_salcedo_cuanschutz_edu\/EkaJ49A9vCFGgahidDtHm8gBf06rsnLdehv_nCNIY8qYug?e=6475bs\""}}
+%---
+%[output:6711cf82]
+%   data: {"dataType":"text","outputData":{"text":"'https:\/\/olucdenver-my.sharepoint.com\/:f:\/g\/personal\/ernesto_salcedo_cuanschutz_edu\/EkaJ49A9vCFGgahidDtHm8gBf06rsnLdehv_nCNIY8qYug?e=6475bs' not found. Check the path or file permissions.\n","truncated":false}}
 %---
