@@ -1,5 +1,5 @@
-function [allSegT, contentT] = mmGetAllSlicerSegTables(filePath,options)
-%MMGETALLSEGTABLES Loads the metadata from Slicer segmentation files found
+function [allSegT, contentT] = mmGetSlicerMetadataAll(filePath,options)
+%MMGETALLSEGTABLES Loads the metadata from Slicer segmentation files found mmGetAllSlicerSegTables
 %in the same folder (.SEG.NRRD)
 % INPUT
 %   - the file path to the folder containing slicer segmentation data. Use a wild card for the file name

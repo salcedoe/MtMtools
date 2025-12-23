@@ -4,9 +4,8 @@ function [BW,pLd1] = mmGetWatershed(BW, PixSz, options)
 %
 % INPUTS
 %   - BW:  logical 3D array
-%   - PixSz: Pixel Size of the extended regional minima inside the blob you are 
-%           trying to separate. The smaller the value, the smaller the  
-%           extended regional minima - see imextendedmin
+%   - PixSz: Pixel Size of the extended regional minima inside the blobs being separated. 
+%            The smaller the value, the smaller the extended regional minima - see imextendedmin
 % OPTIONAL
 %   - conn: connectivity  - see imextendedmin
 %   - ShowSteps: boolean - display watershed steps

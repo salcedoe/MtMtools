@@ -1,5 +1,5 @@
 function [cm] = mmGetChannelMap(ch)
-%GET_CHANNEL_MAP This function returns a 256 colormap of the shade indicated by the
+%MMGETCHANNELMAP This function returns a 256 colormap of the shade indicated by the
 %input
 %
 % INPUT: a channel name, letter, or index
@@ -7,8 +7,8 @@ function [cm] = mmGetChannelMap(ch)
 %
 % EXAMPLE
 %
-% red_cm = get_channel_map('red')
-% green_cm = get_channel_map('g')
+% red_cm = mmGetChannelMap('red')
+% green_cm = mmGetChannelMap('g')
 %
 % Author: Ernesto Salcedo, PhD. 2019
 % Created: 18-Sep-2019 using Malab '9.7.0.1190202 (R2019b)'

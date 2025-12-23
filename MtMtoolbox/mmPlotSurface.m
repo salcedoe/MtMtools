@@ -1,6 +1,6 @@
 function hp = mmPlotSurface(fv, fcolor, falpha)
-%PLOT_SURFACE plots the input fv structure as a patch. Lights not added. Use
-%set_seg_plot_props to add lighting and correct aspect ratios
+%MMPLOTSURFACE plots the input fv structure as a patch. Lights not added. Use
+%mmSetSurfacePlotProps to add lighting and correct aspect ratios
 % INPUTS: 
 %   - fv: a faces-vertices structure (output from isosurface)
 %   - fcolor: face color

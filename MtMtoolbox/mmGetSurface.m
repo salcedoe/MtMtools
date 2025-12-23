@@ -8,13 +8,14 @@ function [fv,s] = mmGetSurface(Vol,options)
 %                       to 1). 
 %   - use_fast_march (logical): Use the function extractIsosurface to more
 %                               quickly generate an isosurface. Default = true
+%   - centerSurface (logical): Center the surface to 0,0,0. Default = false
 % OUTPUT: 
 %   - fv: a faces-vertices structure
 %   - s: string reporting the decimation
 %
 % EXAMPLES:
-% fv = get_surface(Vol);
-% fv = get_surface(Vol,0.5,0.1) % good default values to use
+% fv = mmGetSurface(Vol);
+% fv = mmGetSurface(Vol,0.5,0.1) % good default values to use
 %
 % REQUIREMENTS:
 % Medical toolbox required for fast marching isosurface
@@ -29,6 +30,7 @@ arguments
     options.decimator (1,1) double = 0.15
     options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
     options.use_fast_march logical = true; 
+    options.centerSurface = false; % center surface to 0,0,0
 end
 
 if options.use_fast_march && exist('extractIsosurface','file')
@@ -51,6 +53,10 @@ end
 % affinity transform
 if any(options.affTrfm(:)) && ~isempty(fv.vertices)
     fv.vertices = transformPoint3d(fv.vertices, options.affTrfm);
+end
+
+if options.centerSurface
+    fv.vertices = fv.vertices - mean(fv.vertices, 1); % Center the surface
 end
 
 end

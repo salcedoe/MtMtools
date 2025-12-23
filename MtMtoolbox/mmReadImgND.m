@@ -4,6 +4,7 @@ function [IMGND, metadata] = mmReadImgND(file_path)
 %
 % INPUTS (optional)
 % - file_path is a path to a file. If you don't input a file path, you will
+% be prompted for a path
 %
 % OUTPUTS:
 % - IMGND - an XYZCT multidimensional array

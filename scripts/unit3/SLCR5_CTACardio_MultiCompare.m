@@ -99,7 +99,7 @@ drawcuboid('Position',[min(hp1.Vertices) range(hp1.Vertices)]); %[output:13df5d3
 %[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
 paths.folder = fullfile(matlabdrive,"ANAT6205_Dropbox","Kidneys"); % path to folder
 paths.fileWC = '*.seg.nrrd'; % wild card filename to load just segmentation files
-[segT, contentT] = mmGetAllSlicerSegTables(fullfile(paths.folder, paths.fileWC)) %[output:3f3e88a2] %[output:0bd4da94]
+[segT, contentT] = mmGetSlicerMetadataAll(fullfile(paths.folder, paths.fileWC)) %[output:3f3e88a2] %[output:0bd4da94]
 %%
 summary(contentT) %[output:143b5054]
 %[text] - Pixel Spacing somewhat variable

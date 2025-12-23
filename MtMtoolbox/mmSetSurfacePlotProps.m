@@ -1,5 +1,5 @@
 function mmSetSurfacePlotProps
-%SET_SURFACE_PLOT_PROPS - sets the light location and the aspect ratio.
+%MMSETSURFACEPLOTPROPS - sets the light location and the aspect ratio.
 %Labels the axes 
 %Use after surface plot or after a FOR LOOP with multiple surface plots
 % INPUT:

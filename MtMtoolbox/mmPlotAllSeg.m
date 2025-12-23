@@ -18,7 +18,7 @@ function hp = mmPlotAllSeg(mV,segT,options)
 %                   original volume. Requires matGEOM - plugged into transformPoint3d
 %
 % OUTPUT
-%   - hp: handle to patch
+%   - hp: array of patch handles to surface plots
 % ---
 % EXAMPLES
 % hp = mmPlotAllSeg(Vol,segT);

@@ -1,5 +1,5 @@
 function T = mmGetSlicerSegTable(file_name,options)
-%MMGETSLICERSEGNAMES Returns the segmentation names found in seg.nrrd files
+%mmGetSlicerSegTable Returns the segmentation names found in seg.nrrd files
 %   INPUTS: file_name of a segmentation file
 %   OUTPUT: a table with segmentation names, layer, label, and color values
 %

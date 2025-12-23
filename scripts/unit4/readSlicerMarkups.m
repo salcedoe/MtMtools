@@ -23,7 +23,7 @@ foldersT = foldersT(~matches(foldersT.name,[".",".."]),:) % remove relative fold
 %[text] - **`foldersT`** should contain directory information about your Slicer Folders (e.g. their names, the folder that they in which they are contained, and the date they were modified) \
 %%
 %[text] ## Collating the Markups
-%[text] Next, we import each markup into MATLAB and extract the measurements (e.g. the lengths and angles). We organize the data in a one-row table. Then, we load the next dataset set, building our table row by row. In the end, our table will have one row per Slicer Folder. 
+%[text] Next, we import each markup into MATLAB and extract the measurements (e.g. the lengths and angles). We organize the data into a one-row table. We then load the next dataset set, building our table row by row. In the end, our table will have one row per Slicer Folder. 
 %[text] **Important**: for this to work properly, you need to use the exact same name for the same measurements across all slicer folders. No typos or variations in spacing. 
 %%
 %[text] ### Set Measurement Names and Column Headers
@@ -45,11 +45,11 @@ t = getMeasurements(fullfile(foldersT.folder{n},foldersT.name{n}),measurementNam
 T(n,:) = t;
 end %[output:group:08df1cd9]
 T %[output:3164913f]
-%[text] - Any data that was unable to be loaded with have a value of NaN (not a number)
+%[text] - Data unable to be loaded will have a value of NaN (not a number)
 %[text] - Review the error messages to determine why the data was unable to be loaded \
 %%
 %[text] # Local Function
-%[text] This function loads the measurements from a given slicer folder and returns a one-row table, t
+%[text] This function loads the measurements from a given slicer folder and returns a one-row table, `t`
 function t = getMeasurements(slicerFolder, measureNames, varNames)
 
 num = numel(measureNames); % number of measurements to load
@@ -71,7 +71,6 @@ for n = 1:num
 
         values(n) = nan; % not a number
     end
-
 end
 
 t = array2table(values,"VariableNames",varNames); % create a table from the values array

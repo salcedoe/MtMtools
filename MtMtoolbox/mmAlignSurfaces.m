@@ -2,7 +2,7 @@ function [vertMoving,rmse] = mmAlignSurfaces(vertFixed, vertMoving,options)
 %%MMALIGNSURFACES registers two point clouds using an iterative closest point
 %algorithm
 %   This function requires the Computer Vision Toolbox. The inputs and
-%   outputs of this function are a matrix of 3D corrinate points (xyz) 
+%   outputs of this function are a matrix of 3D coordinate points (xyz) 
 % INPUTS 
 % - SurfFixed: NX3 vertices matrix of Fixed Surface 
 % - Surf2Move: NX3 vertices matrix of Surface to be moved (registered to

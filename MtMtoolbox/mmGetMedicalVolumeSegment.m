@@ -6,7 +6,7 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 %
 % - mV   (required):    medicalVolume of a slicer Segmentation dataset
 % - segT (required):    table - table created by mmGetSlicerSegTable
-% - segName (optional): string - Name of Segment to return. 
+% - segName (optional): string - Name of Segment to index out. 
 %
 % If segName not provided, the function prompts for a segmentation to be
 % selected from the inputted segT table
@@ -15,7 +15,7 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 %
 % S: A structure with the following fields
 %      - segName: Name of selected segment
-%      - mask: binary mask containing the selected segment
+%      - mask: binary mask of selected segment
 %      - color: color of the segmentation as set in Slicer
 %      - tform: transformation matrix to properly orient segmentation 
 %      - spacing: Voxel spacing
