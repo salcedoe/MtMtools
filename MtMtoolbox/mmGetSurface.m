@@ -28,7 +28,8 @@ arguments
     Vol (:,:,:) 
     options.iv (1,1) double = 0.5
     options.decimator (1,1) double = 0.15
-    options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
+    options.transform affinetform3d = affinetform3d; % 3D affinity transformation
+    % options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
     options.use_fast_march logical = true; 
     options.centerSurface = false; % center surface to 0,0,0
 end
@@ -50,9 +51,8 @@ if options.decimator
         [size(fv.faces,1) size(fv.vertices,1)]);
 end
 
-% affinity transform
-if any(options.affTrfm(:)) && ~isempty(fv.vertices)
-    fv.vertices = transformPoint3d(fv.vertices, options.affTrfm);
+if ~isequal(options.transform.A, eye(4))
+    fv.vertices = transformPointsForward(options.transform,fv.vertices);
 end
 
 if options.centerSurface

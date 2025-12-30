@@ -19,9 +19,9 @@ segMV = medicalVolume(paths.segment) %[output:84526984] %[output:26150820]
 %[text] - Notice the voxels in the segmentation array are 4D - this means the segmentations were stored in different layers
 %[text] - So, you have to be careful how you process this data. \
 %%
-%[text] ### Get segmentation table
-%[text] The segmentation table lists both the layer and the label value
-segT = mmGetSlicerSegTable(paths.segment) %[output:1a872a38]
+%[text] ### Get segmentation metadata
+%[text] The segmentation metadata lists both the layer and the label value
+segT = mmGetSlicerMetadata(paths.segment) %[output:1a872a38]
 %[text] - Notice we have three layers, and in every layer, the segmentation has a label of 1
 %[text] - Since we have 3 different layers, we can't just plug-in segmentation volume into volshow.
 %[text] - We need to index out each segmentation \
@@ -55,12 +55,12 @@ hvol.RenderingStyle="GradientOpacity";
 %%
 tform = intrinsicToWorldMapping(segMV.VolumeGeometry); % create transformation matrix (scale, rotate, translate)
 figure %[output:6e607a30]
-mmPlotMask2Surface(brainSeg.mask,"fcolor",'#f7f5d0','affTrfm',tform.A,'smooth',true,'lightEMup',false); %[output:6e607a30]
-mmPlotMask2Surface(t1Seg.mask,"fcolor",'cyan','affTrfm',tform.A,'smooth',false, 'lightEMup',true); %[output:6e607a30]
+mmPlotMask2Surface(brainSeg.mask,"fcolor",'#f7f5d0','transform',tform,'smooth',true,'lightEMup',false); %[output:6e607a30]
+mmPlotMask2Surface(t1Seg.mask,"fcolor",'cyan','transform',tform,'smooth',false, 'lightEMup',true); %[output:6e607a30]
 %%
 figure;  %[output:76fb0be7]
-t1Seg.hp = mmPlotMask2Surface(t1Seg.mask,"fcolor",'cyan','affTrfm',tform.A,'smooth',false, 'lightEMup',false); %[output:76fb0be7]
-t2Seg.hp = mmPlotMask2Surface(t2Seg.mask,"fcolor",'green','affTrfm',tform.A,'smooth',false, 'lightEMup',true); %[output:76fb0be7]
+t1Seg.hp = mmPlotMask2Surface(t1Seg.mask,"fcolor",'cyan','transform',tform,'smooth',false, 'lightEMup',false); %[output:76fb0be7]
+t2Seg.hp = mmPlotMask2Surface(t2Seg.mask,"fcolor",'green','transform',tform,'smooth',false, 'lightEMup',true); %[output:76fb0be7]
 %%
 %[text] ### Calculate extent of tumors
 %[text] Since we transformed the tumors, the measurements are in mm and match pretty close to what we measured in Slicer

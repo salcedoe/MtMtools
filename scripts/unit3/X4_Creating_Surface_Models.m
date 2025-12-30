@@ -291,7 +291,8 @@ end
 [amap, cmap] = getAlphaColorMap;
 hvs = volshow(medVolCT,OverlayData=medVolLabel.Voxels,Colormap=cmap,Alphamap=amap,RenderingStyle="VolumeRendering",OverlayAlpha=0.75); %[output:3dfb756b]
 %%
-tform = intrinsicToWorldMapping(medVolLabel.VolumeGeometry);
+tform = mVseg.VolumeGeometry.intrinsicToWorldMapping; % get the transformation matrix
+
 %%
 fv = isosurface(medVolLabel.Voxels,0.5) % create a surface %[output:784b1497]
 %%

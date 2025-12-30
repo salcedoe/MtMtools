@@ -1,11 +1,14 @@
-function T = mmGetSlicerSegTable(file_name,options)
-%mmGetSlicerSegTable Returns the segmentation names found in seg.nrrd files
-%   INPUTS: file_name of a segmentation file
-%   OUTPUT: a table with segmentation names, layer, label, and color values
+function T = mmGetSlicerMetadata(file_name,options)
+%MMGETSLICERMETADATA Reads in the metadata from a Slicer Segmentation file (seg.nrrd) 
+% Returns a subset of the metadata as a formatted table,T, including the
+% segmentation names and colors set in Slicer (formerly mmGetSlicerSegTable)
+%
+% INPUTS: file_name of a segmentation file
+% OUTPUT: a table with segmentation names, layer, label, and color values
 %
 % EXAMPLE
 %
-% segT = mmGetSlicerSegTable(seg_file)
+% segT = mmGetSlicerMetadata(file_name)
 %
 % Works with Slicer 4.11.2020 and higher
 % ---
@@ -25,8 +28,8 @@ elseif ~exist("nrrdinfo","file")
     error("Medical Toolbox required")    
 end
 
-info = nrrdinfo(file_name);
-meta = info.RawAttributes;
+info = nrrdinfo(file_name); % read in metadata
+meta = info.RawAttributes; % raw metadata
 
 FN = string(fieldnames(meta));
 %     FNsegment = FN(startsWith(FN,"Segment"+digitsPattern(1))); % find Segment FN
@@ -37,8 +40,8 @@ T = table(strings(seg_count,1), zeros(seg_count,1), zeros(seg_count,1), zeros(se
     'VariableNames',{'SegName','Layer','LabelValue','Color'}); % changed Name to Segment
 
 for n = 1:seg_count
-    T.SegName(n) = meta.(sprintf('segment%d_name',n-1)); % changed to SegName
-    T.Layer(n) = str2double(meta.(sprintf('segment%d_layer',n-1)))+1; % convert to mlb index
+    T.SegName(n) = meta.(sprintf('segment%d_name',n-1)); 
+    T.Layer(n) = str2double(meta.(sprintf('segment%d_layer',n-1)))+1; % convert to MATLAB index
     T.LabelValue(n) = str2double(meta.(sprintf('segment%d_labelvalue',n-1)));
     T.Color(n,:) = str2num(meta.(sprintf('segment%d_color',n-1)));
 end

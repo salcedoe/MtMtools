@@ -24,8 +24,8 @@ totalMV = medicalVolume(paths.total) % totalsegmentator segmentations %[output:9
 %%
 %[text] ### Get slicer tables
 %[text] These tables contain the information that you set in Slicer (Segmentation Name and Color)
-myT = mmGetSlicerSegTable(paths.segment) %[output:6201817c]
-totT = mmGetSlicerSegTable(paths.total) %[output:78157678]
+myT = mmGetSlicerMetadata(paths.segment) %[output:6201817c]
+totT = mmGetSlicerMetadata(paths.total) %[output:78157678]
 %%
 %[text] ### Index out a Kidney and Compare
 %[text] The function **`mmGetMedicalVolumeSegment`** indexes out the indicated segment and returns a structure containing the mask, the color, and the transformation matrix.

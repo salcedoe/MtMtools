@@ -30,21 +30,10 @@ end
 if options.centerVerts
     centroid = mean(vertices);
     vertices = vertices - centroid; % Center the vertices around the origin
+    origin = [0 0 0];
+else
+    origin = mean(vertices);
 end
 
-theta = deg2rad(angl);
-
-switch lower(ax)
-    case 'x'
-        tform = createRotationOx(theta); % rotate z angle
-    case 'y'
-        tform = createRotationOy(theta); % rotate y angle
-    case 'z'
-        tform = createRotationOz(theta); % rotate y angle
-    otherwise
-        disp('axis not found')
-        return
-end
-
-tform = affine3d(tform);
-vertices = transformPointsForward(tform, vertices);
+tform = mmCreateRotationMat(angl,ax,"origin",origin); % create rotation matrix
+vertices = transformPointsForward(tform, vertices); % transform vertices

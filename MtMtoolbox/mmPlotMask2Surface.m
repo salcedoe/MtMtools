@@ -18,7 +18,7 @@ function hp = mmPlotMask2Surface(MSK,options)
 %   - report:    boolean (default=false) - print a report of settings to command window
 %   - smooth:    boolean (default=false). True means Smooth volume
 %   - decimator: decimation factor (0-1, default=0.15) of the generated surface 
-%   - affTrfm:   4X4 3D affinity transformation matrix (default = [], no transformation)
+%   - tform:   4X4 3D affinity transformation matrix (default = [], no transformation)
 %                Used to transform the vertices to match the orientation and size of the  
 %                original volume. Requires matGEOM - plugged into
 %                transformPoint3d
@@ -31,8 +31,7 @@ function hp = mmPlotMask2Surface(MSK,options)
 % hp = mmPlotMask2Surface(BW,fcolor='cyan');
 % hp = mmPlotMask2Surface(BW,fcolor='magenta',falpha=0.25, lightEMup=true, decimator=0.2);
 %
-% tform = createScaling3d(Sseg.xyz)
-% hp = mmPlotMask2Surface(BW,'magenta',transform_mat=tform); 
+% hp = mmPlotMask2Surface(BW,'magenta',transform=tform); 
 % ---
 % AUTHOR: Ernesto Salcedo, PhD
 % SITE: University of Colorado Modern Human Anatomy
@@ -46,7 +45,7 @@ arguments
     options.report logical = false;
     options.smooth logical = false;
     options.decimator (1,1) double = 0.15;
-    options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
+    options.transform affinetform3d = affinetform3d; % 3D affinity transformation
     options.new_figure logical = false;
     options.tag char ='';
     options.title char ='';
@@ -65,7 +64,7 @@ end
 % [fv, report_s] = mmGetSurface(MSK, iv=0.5, decimator=options.decimator);
 [fv, report_s] = mmGetSurface(MSK, ...
     iv=0.5, ...
-    affTrfm=options.affTrfm, ...
+    transform=options.transform, ...
     decimator=options.decimator);
 
 if ~isempty(options.tag)

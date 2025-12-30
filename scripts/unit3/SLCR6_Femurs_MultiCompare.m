@@ -4,8 +4,7 @@ clearvars
 %[text] ## Load all Segmentation metadata
 %[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
 paths.folder = fullfile(matlabdrive,"ANAT6205_Dropbox","Femurs"); % folder containing .seg.nrrd files
-paths.fileWC = '*.seg.nrrd'; % wild card file name to load just segmentation files
-[segT,contentT] = mmGetSlicerMetadataAll(fullfile(paths.folder, paths.fileWC)) %[output:1c26c067] %[output:65f413c5]
+[segT,contentT] = mmGetSlicerMetadataAll(paths.folder) %[output:1c26c067] %[output:65f413c5]
 %%
 summary(segT) %[output:1dca90cb]
 %[text] - review Volume Dimensions (a dimension of 4 indicates a slicer segmentation with layers) \
@@ -96,7 +95,7 @@ RP = table(strings(num,1), ...
 if options.rowIdx % align all femurs to indicated femur
         [mv,st] = getMVst(contentT(options.rowIdx,:)); % load medical volume and seg table
         SEG1 = mmGetMedicalVolumeSegment(mv,st, segName=options.segName); % select indicated femur
-        SEG1.fv = mmGetSurface(SEG1.mask,"affTrfm",SEG1.tform.A); % create surface in mm space without plotting (saves time)
+        SEG1.fv = mmGetSurface(SEG1.mask,"transform",SEG1.tform); % create surface in mm space without plotting (saves time)
         SEG1 = alignFemur2Axis(SEG1);
         fprintf('aligning all segments to %s segment',contentT.LastName(options.rowIdx))
 end
@@ -112,7 +111,7 @@ for n=1:num
     
     try % let's see if this works
         seg = mmGetMedicalVolumeSegment(mv,st, segName=options.segName); % select indicated femur
-        seg.fv = mmGetSurface(seg.mask,"affTrfm",seg.tform.A); % create surface in mm space without plotting (saves time)
+        seg.fv = mmGetSurface(seg.mask,"transform",seg.tform); % create surface in mm space without plotting (saves time)
         seg = alignFemur2Axis(seg);
 
         if options.rowIdx
@@ -164,7 +163,7 @@ function [mv,st,lastName] = getMVst(ct)
 filepath = fullfile(ct.folder,ct.name); % construct file path
 lastName = extractBefore(ct.name,("_"|" "));
 mv = medicalVolume(filepath); % load segmentation volume
-st = mmGetSlicerSegTable(filepath);  % get slicer segmentation
+st = mmGetSlicerMetadata(filepath);  % get slicer segmentation
 end
 
 function seg = alignFemur2Axis(seg)
