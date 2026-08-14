@@ -23,10 +23,6 @@ arguments
     options.centerVerts logical = false
 end
 
-if ~exist('createRotationOx','file')
-    error('MatGeom Required. Try running setupMatGeom')    
-end
-
 if options.centerVerts
     centroid = mean(vertices);
     vertices = vertices - centroid; % Center the vertices around the origin

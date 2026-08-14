@@ -30,9 +30,14 @@ end
 cols = 3;
 
 if options.ShowSteps
-    figure(Visible="on")
-    tiledlayout(numel(PixSz),cols,"TileSpacing","none")
-    ax = gobjects(numel(PixSz)*cols);
+    if ismatrix(BW)
+        figure(Visible="on")
+        tiledlayout(numel(PixSz),cols,"TileSpacing","none")
+        ax = gobjects(numel(PixSz)*cols);
+    else
+        options.ShowSteps = false;
+        warning('Can''t Show Steps for 3D volumes')
+    end
 end
 
 tile_idx = 1;

@@ -5,7 +5,7 @@ function S = mmGetMedicalVolumeSegment(mV,segT,options)
 % INPUTS
 %
 % - mV   (required):    medicalVolume of a slicer Segmentation dataset
-% - segT (required):    table - table created by mmGetSlicerMetadata
+% - segT (required):    table - table created by mmGetSlicerSegmentInfo
 % - segName (optional): string - Name of Segment to index out. 
 %
 % If segName not provided, the function prompts for a segmentation to be

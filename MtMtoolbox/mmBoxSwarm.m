@@ -5,7 +5,6 @@ function chart_handle = mmBoxSwarm(x,y,options)
 %
 %   - x: Optional Enter empty brackets to generate a series of ones
 %   - y: Vector of Numeric ata
-
 % OPTIONS
 %   - PlotType - default is 'swarm', enter 'violin' for a violin plot
 %

@@ -21,7 +21,7 @@ end
 % paths.scripts = fullfile(paths.repo,'scripts');
 % paths.unit = fullfile(paths.scripts,sprintf('unit%d',unit_num));
 
-dp = fullfile(matlabdrive,"MtMdata", sprintf("unit%d",unit_num));
+dp = fullfile(matlabdrive,"MtMresources","data", sprintf("unit%d",unit_num));
 
 if ~exist(dp,"dir")
     beep
