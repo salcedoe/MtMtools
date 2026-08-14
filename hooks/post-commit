@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+#
+# post-commit hook: publish MtMtoolbox to the shared MATLAB Drive folder
+# whenever a commit lands on main. Tracked in-repo under hooks/ (not
+# .git/hooks/) so it travels with the repo; activate it once per clone with:
+#
+#   git config core.hooksPath hooks
+#
+# Silent no-op on any branch other than main, and on any commit that didn't
+# touch MtMtoolbox/, so unrelated commits don't trigger a publish.
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+if [[ "$BRANCH" != "main" ]]; then
+  exit 0
+fi
+
+if ! git diff --name-only HEAD~1 HEAD -- MtMtoolbox/ 2>/dev/null | grep -q .; then
+  # No changes under MtMtoolbox/ in this commit (or this is the first commit
+  # in the repo, where HEAD~1 doesn't exist) - nothing to publish.
+  if git rev-parse HEAD~1 >/dev/null 2>&1; then
+    exit 0
+  fi
+fi
+
+"$REPO_ROOT/scripts/publish_toolbox.sh"

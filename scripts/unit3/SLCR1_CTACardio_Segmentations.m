@@ -17,7 +17,7 @@ close all
 paths.project = "/Users/ernesto/MATLAB-Drive/MtMresources/MtMdata/unit3/CTACardio"; %[control:filebrowser:3f76]{"position":[17,83]}
 ls(paths.project) % display folder contents %[output:4091f575]
 paths.intensity = fullfile(paths.project,"CTACardio Crop.nrrd");
-paths.segment = fullfile(paths.project,"Lung Segmentation.seg.nrrd") %[output:50086581]
+paths.segment = fullfile(paths.project,"Salcedo Segmentation.seg.nrrd") %[output:50086581]
 %[text] path check
 table(fieldnames(paths),structfun(@(x) exist(x,"file"),paths),VariableNames=["path" "X"]) % make sure paths exist  %[output:50664aae]
 %[text] 
@@ -25,15 +25,15 @@ table(fieldnames(paths),structfun(@(x) exist(x,"file"),paths),VariableNames=["pa
 %[text] ## Load Volumes
 %[text] ### Load the intensity volume
 %[text] Here we load the volume as a medicalVolume, which is an object that stores both the Volumetric data and the metadata in one variable
-mVint = medicalVolume(paths.intensity) %[output:64b5f9ac]
+ctMV = medicalVolume(paths.intensity) % load intensity volume %[output:64b5f9ac]
 %[text] - Notice that the class of the Voxels here is a signed 16-bit integer (can have negative values, since there are houndsfield units) \
 %%
 %[text] - Although this looks like a Structure, you can't add fields to this medicalVolume like you would a structure  \
-mVint.myField = 'my secret data' %[output:4f510230]
+ctMV.myField = 'my secret data' %[output:4f510230]
 %[text] - medicalVolumes require special functions to be modified (but we won't be doing much of that) \
 %%
 %[text] ### Load the segmentation volume
-mVseg = medicalVolume(paths.segment) %[output:28e0e764] %[output:9492085d]
+segMV = medicalVolume(paths.segment) %[output:28e0e764] %[output:9492085d]
 %[text] - Segmentation volumes look similar, but the class of the voxels is only 8-bit \
 %%
 %[text] ### Visualize a Intensity Segmentation Overlay
@@ -41,22 +41,22 @@ mVseg = medicalVolume(paths.segment) %[output:28e0e764] %[output:9492085d]
 hvr3 = viewer3d(BackgroundColor="white",BackgroundGradient="off",CameraZoom=1); % set background color to white and turn off gradient
 %[text] - The function **`viewer3d`** is like `figure`, but for `volshow`.
 %[text] - Nothing plots yet, but we set the properties of  the figure, like background \
-volshow(mVint,Parent=hvr3, ...
+volshow(ctMV,Parent=hvr3, ...
     RenderingStyle="GradientOpacity", ... % makes intensity volume transparent
-    OverlayData=mVseg.Voxels) % add Segmentations
+    OverlayData=segMV.Voxels) % add Segmentations
 %[text] - volshow actually displays the volumes \
 %[text] - right-click on image to add a scale bar
 %[text] - right-click on image to save a screenshot to file \
 %%
-volshow(mVseg)
+volshow(segMV)
 %%
 %[text] ### Use Slicer colors
 %[text] The .SEG.NRRD file includes the segmentation information that you saved in Slicer. The following function loads that data
-segT = mmGetSlicerMetadata(paths.segment) %[output:2a130be2]
+segT = mmGetSlicerSegmentInfo(paths.segment) %[output:2a130be2]
 %%
 %[text] ### Volume transformation
 %[text] medicalVolume objects contain both a **Voxels** field, which is the actual volume (typically a 3D array), and a VolumeGeometry field, which contains the transformation information necessary to arrange the voxel data in 3D space. The function **`instrinsicToWorldMapping`** converts that field into a affine transformation matrix. 
-tform = mVseg.VolumeGeometry.intrinsicToWorldMapping; % get the transformation matrix (mm space, correct orientation) %[output:7245e76c]
+tform = segMV.VolumeGeometry.intrinsicToWorldMapping; % get the transformation matrix (mm space, correct orientation) %[output:7245e76c]
 %[text] - tform can be used to apply an affine transformation to the volume \
 %%
 %[text] ### Plot Segmentations as Surfaces
@@ -64,7 +64,7 @@ tform = mVseg.VolumeGeometry.intrinsicToWorldMapping; % get the transformation m
 %[text] ### Plot Aorta
 figure %[output:009eb352]
 lval = 3; % set label that you want to plot
-MASK = mVseg.Voxels == lval; % Create mask
+MASK = segMV.Voxels == lval; % Create mask
 hp = mmPlotMask2Surface(MASK,... %[output:group:266d7874] %[output:009eb352]
     fcolor=segT.Color(lval,:),... %[output:009eb352]
    transform=tform); % apply transformation %[output:group:266d7874] %[output:009eb352]
@@ -74,15 +74,15 @@ hp %[output:5ff96991]
 %%
 %[text] ### Plot all Segmentations
 figure; %[output:232d38db]
-hp = mmPlotAllSeg(mVseg,segT) %[output:232d38db] %[output:7290da38]
+hp = mmPlotAllSeg(segMV,segT) %[output:232d38db] %[output:7290da38]
 %%
 %[text] ## Region Properties
 %[text] We can easily capture the region properties of our segments. First, we convert to a categorical, to clearly label our properties. Notice how we can use the data from the segT table to properly convert the volume to a categorical volume.
-segCat = categorical(mVseg.Voxels,segT.LabelValue,segT.SegName);
+segCat = categorical(segMV.Voxels,segT.LabelValue,segT.SegName);
 rp = regionprops3(segCat,'Volume') %[output:79b34d2a]
 %%
 %[text] Convert to mm
-rp.VolumeMM = rp.Volume * prod(mVseg.VoxelSpacing) %[output:6667cbeb]
+rp.VolumeMM = rp.Volume * prod(segMV.VoxelSpacing) %[output:6667cbeb]
 
 %[appendix]{"version":"1.0"}
 %---
@@ -96,13 +96,13 @@ rp.VolumeMM = rp.Volume * prod(mVseg.VoxelSpacing) %[output:6667cbeb]
 %   data: {"dataType":"text","outputData":{"text":"2025-10-21-Scene.mrml\t\t\t2025-10-21-Scene.png\t\t\taorta.mtl\t\t\t\taorta.obj\t\t\t\tCTACardio Crop segmentation.seg.nrrd\tCTACardio Crop.nrrd\t\t\tCTACardio.nrrd\t\t\t\tL.mrk.json\t\t\t\tleft kidney.mtl\t\t\t\tleft kidney.obj\t\t\t\tLung segmentation preview.seg.nrrd\tLung segmentation.seg.nrrd\t\tR.mrk.json\t\t\t\tResampled Volume.nrrd\t\t\tright kidney.mtl\t\t\tright kidney.obj\t\t\tSalcedo Segmentation.seg.nrrd\t\tT.mrk.json\t\t\t\tTable.schema.tsv\t\t\tTable.tsv\t\t\t\tVolume rendering ROI.mrk.json\t\tVolumeProperty_1.vp\t\t\tVolumeProperty.vp\n\n","truncated":false}}
 %---
 %[output:50086581]
-%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"paths","value":"      project: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\"\n    intensity: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\/CTACardio Crop.nrrd\"\n      segment: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\/Lung Segmentation.seg.nrrd\"\n"}}
+%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"paths","value":"      project: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\"\n    intensity: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\/CTACardio Crop.nrrd\"\n      segment: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/MtMdata\/unit3\/CTACardio\/Salcedo Segmentation.seg.nrrd\"\n"}}
 %---
 %[output:50664aae]
 %   data: {"dataType":"tabular","outputData":{"columnNames":["path","X"],"columns":2,"dataTypes":["cellstr","double"],"header":"3×2 table","name":"ans","rows":3,"type":"table","value":[["'project'","7"],["'intensity'","2"],["'segment'","2"]]}}
 %---
 %[output:64b5f9ac]
-%   data: {"dataType":"textualVariable","outputData":{"name":"mVint","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 int16]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
+%   data: {"dataType":"textualVariable","outputData":{"name":"mvCT","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 int16]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
 %---
 %[output:4f510230]
 %   data: {"dataType":"error","outputData":{"errorType":"runtime","text":"Unrecognized property 'myField' for class 'medicalVolume'."}}
@@ -111,7 +111,7 @@ rp.VolumeMM = rp.Volume * prod(mVseg.VoxelSpacing) %[output:6667cbeb]
 %   data: {"dataType":"warning","outputData":{"text":"Warning: Missing 'endian' value in the file metadata. Using host endian. Use swapbytes if necessary."}}
 %---
 %[output:9492085d]
-%   data: {"dataType":"textualVariable","outputData":{"name":"mVseg","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [512×512×321 uint8]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [0.93359 0.93359 1.25]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 512\n       NumSagittalSlices: 512\n     NumTransverseSlices: 321\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"left\"    \"posterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
+%   data: {"dataType":"textualVariable","outputData":{"name":"mvLabel","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 uint8]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
 %---
 %[output:2a130be2]
 %   data: {"dataType":"tabular","outputData":{"columnNames":["SegName","Layer","LabelValue","Color","Color","Color"],"columns":6,"dataTypes":["string","double","double","double","double","double"],"groupedColumnIndices":[null,null,null,1,2,3],"header":"3×4 table","name":"segT","rows":3,"type":"table","value":[["\"right lung\"","1","1","0.5","0.68","0.5"],["\"left lung\"","1","2","0.95","0.84","0.57"],["\"other\"","1","3","0.39","0.39","0.5"]]}}

@@ -21,14 +21,14 @@ mvInt = medicalVolume(paths.intensity) %[text:anchor:TMP_7e79] %[output:330cce3c
 mVseg = medicalVolume(paths.segment) %[output:7d78dbca] %[output:8eb7ccb6]
 %%
 %[text] %[text:anchor:H_393065D7] ### Next load segmentation metadata
-%[text] The segmentation metadata contains the segmentation names and properties that you set in 3D Slicer. We use the course function **`mmGetSlicerMetadata`** to read this metadata.
-segT = mmGetSlicerMetadata(paths.segment) %[output:8b258835]
+%[text] The segmentation metadata contains the segmentation names and properties that you set in 3D Slicer. We use the course function **mmGetSlicerSegmentInfo** to load this information into a MATLAB table
+segT = mmGetSlicerSegmentInfo(paths.segment) %[output:8b258835]
 %[text] - Notice that in this segmentation volume, there are six different segmentations, labeled by the label values 1-6 \
 %%
 %[text] %[text:anchor:H_498901FE] ## Plot all Segmentations
 %[text] We can plot all of the segmentations, using the **mmPlotAllSeg** function, which takes the following inputs:
 %[text] - A segmentation volume — ***mv.Voxels*** (from the Medical Volume object)
-%[text] - A segmentation table — ***segT*** (loaded using **`mmGetSlicerMetadata`**) \
+%[text] - A segmentation table — ***segT*** (loaded using **`mmGetSlicerSegmentInfo`**) \
 mmPlotAllSeg(mVseg,segT,smooth=true,new_figure=true); %[output:1b3baa1d]
 %[text] - my Segmentation contains the tibia, which we didn't segment in class.  \
 %%

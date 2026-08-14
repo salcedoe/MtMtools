@@ -21,7 +21,7 @@ segMV = medicalVolume(paths.segment) %[output:84526984] %[output:26150820]
 %%
 %[text] ### Get segmentation metadata
 %[text] The segmentation metadata lists both the layer and the label value
-segT = mmGetSlicerMetadata(paths.segment) %[output:1a872a38]
+segT = mmGetSlicerSegmentInfo(paths.segment) %[output:1a872a38]
 %[text] - Notice we have three layers, and in every layer, the segmentation has a label of 1
 %[text] - Since we have 3 different layers, we can't just plug-in segmentation volume into volshow.
 %[text] - We need to index out each segmentation \

@@ -22,7 +22,7 @@ intMV = medicalVolume(paths.intensity);
 myMV = medicalVolume(paths.segment); % load segmentation volume as a medical volume %[output:3360125d]
 tform = mVseg.VolumeGeometry.intrinsicToWorldMapping; % get the transformation matrix (mm space, correct orientation)
 
-segT = mmGetSlicerMetadata(paths.segment) % get slicer segmentation data %[output:53c7c02c]
+segT = mmGetSlicerSegmentInfo(paths.segment) % get slicer segmentation data %[output:53c7c02c]
 %%
 %[text] ### Display using volshow
 hvr = viewer3d("BackgroundColor",'white',BackgroundGradient='off'); %[output:1d5e7961]
@@ -99,7 +99,7 @@ drawcuboid('Position',[min(hp1.Vertices) range(hp1.Vertices)]); %[output:13df5d3
 %[text] ### Confirm Segmentation Table contents
 %[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
 paths.folder = fullfile(matlabdrive,"ANAT6205_Dropbox","Kidneys"); % path to folder
-[segT, contentT] = mmGetSlicerMetadataAll(paths.folder) %[output:8bf25f29]
+[segT, contentT] = mmGetSlicerSegmentInfoAll(paths.folder) %[output:8bf25f29]
 %%
 summary(contentT) %[output:143b5054]
 %[text] - Pixel Spacing somewhat variable
@@ -165,7 +165,7 @@ function [mv,st,ID] = getMVst(ct)
 filepath = fullfile(ct.folder,ct.name); % construct file path
 ID = extractBefore(ct.name,(" "));
 mv = medicalVolume(filepath); % load segmentation volume
-st = mmGetSlicerMetadata(filepath);  % get slicer segmentation
+st = mmGetSlicerSegmentInfo(filepath);  % get slicer segmentation
 end
 
 

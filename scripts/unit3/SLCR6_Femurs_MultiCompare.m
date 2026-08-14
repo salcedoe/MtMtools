@@ -4,7 +4,7 @@ clearvars
 %[text] ## Load all Segmentation metadata
 %[text] The slicer Segmentation table contains the names of the segmentations, so its good to load all the names to ensure the data formats match. 
 paths.folder = fullfile(matlabdrive,"ANAT6205_Dropbox","Femurs"); % folder containing .seg.nrrd files
-[segT,contentT] = mmGetSlicerMetadataAll(paths.folder) %[output:1c26c067] %[output:65f413c5]
+[segT,contentT] = mmGetSlicerSegmentInfoAll(paths.folder) %[output:1c26c067] %[output:65f413c5]
 %%
 summary(segT) %[output:1dca90cb]
 %[text] - review Volume Dimensions (a dimension of 4 indicates a slicer segmentation with layers) \
@@ -163,7 +163,7 @@ function [mv,st,lastName] = getMVst(ct)
 filepath = fullfile(ct.folder,ct.name); % construct file path
 lastName = extractBefore(ct.name,("_"|" "));
 mv = medicalVolume(filepath); % load segmentation volume
-st = mmGetSlicerMetadata(filepath);  % get slicer segmentation
+st = mmGetSlicerSegmentInfo(filepath);  % get slicer segmentation
 end
 
 function seg = alignFemur2Axis(seg)
