@@ -8,7 +8,7 @@ function [ hl ] = mmAddScaleBar(ax, width, widthPERpixel, Color,LineThickness, p
 %
 % OPTIONAL INPUTS
 %   - Color: the color of the scale bar
-%   - Line Thickness: thickness of the scale bar (in points)
+%   - LineThickness: thickness of the scale bar (in points)
 %   - pos: a row vector containing the X and Y coordinates where
 %           you want the scale bar. You can enter empty brackets to skip
 %   - unit: a character array indicating the unit of measure. If
@@ -16,8 +16,8 @@ function [ hl ] = mmAddScaleBar(ax, width, widthPERpixel, Color,LineThickness, p
 %
 % EXAMPLES
 %
-% add_scale_bar(gca,100, 2.3);
-% add_scale_bar(gca,50,0.23,'white', 4, [],'µm');
+% mmAddScaleBar(gca,100, 2.3);
+% mmAddScaleBar(gca,50,0.23,'white', 4, [],'µm');
 %
 % NOTE: the measurements don't have to be in microns. They just have
 % be consistent between width and widthPERpixel

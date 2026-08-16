@@ -8,8 +8,8 @@ function mmShowBurnImage(img,mask,options)
 % - color: the color of the burned image (default = yellow)
 % 
 % EXAMPLES
-% mmShowBurn(rgb,mask)
-% mmShowBurn(rgb,mask,color='white')
+% mmShowBurnImage(rgb,mask)
+% mmShowBurnImage(rgb,mask,color='white')
 
 % Author: Ernesto Salcedo, PhD
 % Site: University of Colorado Modern Human Anatomy

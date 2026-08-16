@@ -5,7 +5,7 @@ function hp = mmPlotAllSeg(mV,segT,options)
 %   Default plots surface as a patch in one simple function call
 %
 % INPUTS:
-%   - Vol:       3D array
+%   - mV:        medicalVolume of a Slicer Segmentation dataset
 %   - segT:      Table containing the following slicer info — Name, Layer,
 %                   LabelValue, Color
 %
@@ -13,16 +13,13 @@ function hp = mmPlotAllSeg(mV,segT,options)
 %   - new_figure:   logical (default = true). Create new figure if true
 %   - falpha:       scalar (0-1, default = 0.5) - transparency of the faces
 %   - smooth:       boolean (default=false). True means Smooth volume
-%   - transform:      4X4 3D affinity transformation matrix (default = no transformation)
-%                    Used to transform the vertices to match the orientation and size of the
-%                   original volume. Requires matGEOM - plugged into transformPoint3d
 %
 % OUTPUT
 %   - hp: array of patch handles to surface plots
 % ---
 % EXAMPLES
-% hp = mmPlotAllSeg(Vol,segT);
-% hp = mmPlotAllSeg(Vol,segT, falpha=0.25);
+% hp = mmPlotAllSeg(mV,segT);
+% hp = mmPlotAllSeg(mV,segT, falpha=0.25);
 %
 % ---
 % AUTHOR: Ernesto Salcedo, PhD

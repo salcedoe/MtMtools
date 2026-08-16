@@ -9,7 +9,7 @@ function hp = mmPlotSurface(fv, fcolor, falpha)
 % OUTPUT:
 %   -  hp: handle to the patch
 % EXAMPLES:
-% hp = plot_surface(fv,'cyan',0.5)
+% hp = mmPlotSurface(fv,'cyan',0.5)
 % ---
 % Author: Ernesto Salcedo, PhD
 % Site: University of Colorado Modern Human Anatomy

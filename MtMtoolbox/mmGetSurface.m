@@ -9,6 +9,7 @@ function [fv,s] = mmGetSurface(Vol,options)
 %   - use_fast_march (logical): Use the function extractIsosurface to more
 %                               quickly generate an isosurface. Default = true
 %   - centerSurface (logical): Center the surface to 0,0,0. Default = false
+%   - transform (affinetform3d): 3D affine transformation (default = no transformation)
 % OUTPUT: 
 %   - fv: a faces-vertices structure
 %   - s: string reporting the decimation
@@ -29,8 +30,7 @@ arguments
     options.iv (1,1) double = 0.5
     options.decimator (1,1) double = 0.15
     options.transform affinetform3d = affinetform3d; % 3D affinity transformation
-    % options.affTrfm (4,4) double = zeros(4,4); % 3D affinity transformation
-    options.use_fast_march logical = true; 
+    options.use_fast_march logical = true;
     options.centerSurface = false; % center surface to 0,0,0
 end
 

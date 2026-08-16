@@ -4,7 +4,6 @@
 % Ernesto Salcedo, PhD
 % Version 1.0, 15-Aug-2026
 %
-% test
 % Volume & image I/O
 %   mmReadImgND                 - Read a multidimensional image stack (via Bio-Formats)
 %   mmReadRAWimage              - Read a raw image captured with a Sony DSLR camera (.dng)
