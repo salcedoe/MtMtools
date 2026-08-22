@@ -169,7 +169,7 @@ b = [ 1 2 3 4; 1 2 3; 1 2]
 b = 1:5; 6:10
 %[text] - This syntax works, but may not do what you expect it to do
 %[text] - Review ***b*** and ***ans***
-%[text] - Can you see what happened? 
+%[text] - Can you see what happened?
 %[text]     - ***b*** was assigned the first row vector with values 1 through 5
 %[text]     - ***ans*** was the second row vector with values 6 through 10 \
 %%
@@ -241,7 +241,7 @@ m(2,2)
 %%
 %[text] %[text:anchor:H_2698D1D0] ### Assignment vs Indexing
 %[text] Remember:
-%[text] 1. Indexing pulls data from the indicated element. 
+%[text] 1. Indexing pulls data from the indicated element.
 %[text] 2. Data is stored in the variable (or element) to the left of the equal sign \
 %[text] So, what's the difference between the following two statements?
 data = m(5)
@@ -256,7 +256,7 @@ m([5 7 9]) = 99
 %%
 %[text] Compare with
 m(9:11) = 101:103
-%[text] - Here we explicitly set the data we want where \
+%[text] - Here we explicitly create a vector of data to insert into the matrix at the indicated locations \
 %%
 %[text] %[text:anchor:H_590B7685] ### Range Indexing
 %[text] %[text:anchor:H_4F170349] The colon can  be used to indicate a range of indices. For example
