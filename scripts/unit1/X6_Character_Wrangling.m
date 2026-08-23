@@ -1,4 +1,4 @@
-%[text] %[text:anchor:T_0F6EF352] # Wrangling Characters: Character and String arrays
+%[text] %[text:anchor:T_0F6EF352] # Wrangling Characters: Character and String Arrays
 %[text] Online Documentation
 %[text] - [Character Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Character/)
 %[text] - [String Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Strings/) \
@@ -9,26 +9,26 @@
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %%
 %[text] ## Character vs String Arrays
-%[text] Character arrays are the fundamental variable type to store characters. They operate similar to numeric arrays but with each element of the array storing a character instead of a number. String arrays were designed to simply handling a series of character arrays, like a series of words or descriptions. 
-%[text] Read more about [Character arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Character/) and [String Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Strings/) in the Course Documentation.
-%[text] ### *Any* character can be a character array
+%[text] Character arrays are the fundamental variable type to store characters. They operate similarly to numeric arrays but with each element of the array storing a character instead of a number. String arrays were designed to simplify handling a series of character arrays, like a series of words or descriptions.
+%[text] Read more about [Character Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Character/) and [String Arrays](https://salcedoe.github.io/MtMdocs/matlabBasics/Strings/) in the Course Documentation.
+%[text] ### Any character can be a character array
 clc
 clearvars
 %[text] %[text:anchor:H_71E8486D] ### Even spaces are technically characters
 %[text] Consider the following:
-ch1 = 'connected' %[output:4a6bb980]
-ch2 = 'c o n n e c t e d' %[output:617f531f]
-%[text] - Notice the size differences between *d* and *e* \
+ch1 = 'connected'
+ch2 = 'c o n n e c t e d'
+%[text] - Notice the size differences between `ch1` and `ch2` \
 %%
 %[text] %[text:anchor:H_B8BA881D] ### Commas, periods, and other such symbols are all characters
-ch1 = 'a.#-b,?! $' %[output:7942be96]
+ch1 = 'a.#-b,?! $'
 %[text] - again, review the size and class of the array in the workspace \
 %%
-%[text] %[text:anchor:H_DB39ACDC] ### Numeric Characters  
+%[text] %[text:anchor:H_DB39ACDC] ### Numeric Characters
 %[text] Consider the following:
-ch1 = '12345' %[output:1f64113f]
-num1 = 12345 %[output:5245c819]
-%[text] - `ch1` is a 1x5 character array (characters '1':'5'
+ch1 = '12345'
+num1 = 12345
+%[text] - `ch1` is a 1x5 character array (characters '1':'5')
 %[text] - `num1` is a 1x1 numeric array (the value 12,345) \
 %%
 %[text] ### String Arrays
@@ -37,44 +37,44 @@ num1 = 12345 %[output:5245c819]
 %[text] - Greatly simplifies concatenating character arrays
 %[text] - Uses the **special character**: " "   \
 %[text] String arrays package character arrays into single elements using the double-quotes
-str = "connected" %[output:10713fe3]
-%[text] - here, `str` is a `1x1` string array. The whole character array '`connected`' has been packaged into a single element of the string array \
+str = "connected"
+%[text] - here, `str` is a `1x1` string array. The whole character array 'connected' has been packaged into a single element of the string array \
 %%
-%[text] With string arrays, we can use similar syntax as with numeric arrays. For example, we can add multilple elements to a string array using the square brackets. 
-str = ["connected" "disconnected"] %[output:1a8b3f20]
+%[text] With string arrays, we can use similar syntax as with numeric arrays. For example, we can add multiple elements to a string array using the square brackets.
+str = ["connected" "disconnected"]
 %[text] - this syntax creates a `1x2` string array \
 %%
 %[text] Using similar syntax, we combine character arrays with the string array
-str = [str 'a.#-b,?! $'] %[output:4f85da92]
-%[text] - Now we have a `1X3` string array: The character array was added to the third element of the string array
+str = [str 'a.#-b,?! $']
+%[text] - Now we have a `1x3` string array: The character array was added to the third element of the string array
 %[text] - Notice the syntax is similar to numeric arrays (uses square brackets for concatenation) \
 %%
 %[text] We can similarly concatenate character and string arrays using the square brackets, as follows:
-str = [ch1 str] %[output:9a432801]
-%[text] - here the contents from `ch1` is added in an element before the contents from the string array `str`
-%[text] - `Now we have a 1x4 string array` \
+str = [ch1 str]
+%[text] - here the content from `ch1` is added in an element before the contents from the string array `str`
+%[text] - Now we have a 1x4 string array \
 %[text] 
 %%
 %[text] ### Indexing Strings
 %[text] When indexing strings with parentheses, we get smaller strings
-str(2) %[output:7eec35f6]
+str(2)
 %[text] - here we get a smaller `1x1` string \
 %%
 %[text] We can index out a subset of the string elements, as follows:
-str(2:3) %[output:43dfc4be]
+str(2:3)
 %[text] - this returns a `1x2` string array \
 %%
 %[text] We can use the keyword `end`
-str(end) %[output:641d5d56]
+str(end)
 %%
 %[text] And we can use the empty bracket syntax to delete elements, as follows
-str(1) = [] %[output:9a33f861]
+str(1) = []
 %%
-%[text] ### Unpackaging String elements
-%[text] If we want the character array inside of the string element, we use the curly brackets. (Sometimes, you need the character array). 
-str{2} %[output:3cd2e7f9]
+%[text] ### Unpacking String elements
+%[text] If we want the character array inside the string element, we use the curly brackets. (Sometimes, you need the character array).
+str{2}
 %[text] - notice `ans` is now a `1x5` character array and there are single quotes instead of double quotes
-%[text] - We'll get into why we need this  later. \
+%[text] - We'll get into why we need this later. \
 %%
 %[text] #### In summary
 %[text] - Use Character arrays for single words
@@ -83,22 +83,22 @@ str{2} %[output:3cd2e7f9]
 %[text] %[text:anchor:T_63D9AC61] ![](text:image:4d6a)
 %[text] ![](text:image:3471)![](text:image:9fe6)
 %[text] ## Fun with Strings
-%[text] The utility of String Arrays becomes evident when you have a bunch of words you need to wrangle. In this case, we are going to wrangle greetings from different languages
+%[text] The utility of string arrays becomes evident when you have a bunch of words you need to wrangle. In this case, we are going to wrangle greetings from different languages.
 %[text] ### Creating string arrays manually
 %[text] We can use a combination of the square brackets and double quotes to manually create a string array as follows:
 clearvars
-Greetings = ["hello" "bonjour" "aloha" "ciao" "namaste"] %[output:8c8c115e]
+Greetings = ["hello" "bonjour" "aloha" "ciao" "namaste"]
 %%
 %[text] We can transpose `Greetings` with the apostrophe, as follows
-Greetings = Greetings' %[output:0b43ae0a]
+Greetings = Greetings'
 %%
 %[text] ### Logical operations
-%[text] %[text:anchor:H_24E4DEF1] You can use the logical operator 'is equal to'  on string arrays to find matching elements, just as you would with numeric arrays. For example, the following finds the element in `Greetings` that contains character array 'bonjour' and returns a logical array, *la*
-la = Greetings == 'bonjour' %[output:04abc301]
+%[text] %[text:anchor:H_24E4DEF1] You can use the logical operator 'is equal to' on string arrays to find matching elements, just as you would with numeric arrays. For example, the following finds the element in `Greetings` that contains character array 'bonjour' and returns a logical array, `la`
+la = Greetings == 'bonjour'
 %[text] - notice that there is a 1 corresponding to the element in `Greetings` where 'bonjour' is located (element 2) \
 %%
 %[text] You can use logical arrays to index string arrays, just like numeric arrays
-Greetings(la) %[output:06a4ff6b]
+Greetings(la)
 %[text] - and here the output is a 1x1 string array \
 %%
 %[text] How would you index out all the greetings that are not 'bonjour'?
@@ -106,178 +106,179 @@ Greetings(la) %[output:06a4ff6b]
 %[text] - what size is the output? \
 %%
 %[text] ### Cross-reference String Array
-%[text] Here we create a second string array containing the the corresponding languages to the greetings found in `Greetings.`
-Languages = ["English" "French" "Hawaiian" "Italian" "Hindu" ]' %[output:7509546f]
+%[text] Here we create a second string array containing the corresponding languages to the greetings found in `Greetings`.
+Languages = ["English" "French" "Hawaiian" "Italian" "Hindi"]'
 %[text] - notice that the language order matches the rearranged greetings from the previous steps \
 %%
-%[text] We can use logical arrays to cross-reference the two string arrays. For example, the logical array `la` indexes the greeting "bonjour" from the `Greetings` string. When you use it to index the `Languages` array, you get out the corresponding language
-Languages(la) %[output:4d020d47]
+%[text] We can use logical arrays to cross-reference the two string arrays. For example, the logical array `la` indexes the greeting "bonjour" from the `Greetings` string. When you use it to index the `Languages` array, you get out the corresponding language:
+Languages(la)
 %%
 %[text] ### String 'Math'
-%[text] We can add quickly add characters to elements in a string using 'addition', as follows
-Greetings + '!' %[output:41af265f]
+%[text] We can quickly add characters to elements in a string using 'addition', as follows
+Greetings + '!'
 %[text] - Now every element contains an exclamation point \
 %%
-%[text] Similarly, we can add digits to our stings, if we were so inclined
-Greetings + 1 %[output:4ed2f6e7]
+%[text] Similarly, we can add digits to our strings, if we were so inclined
+Greetings + 1
 %%
 %[text] Or, if we wanted to number our languages, we would add a column vector of digits. Plus some punctuation. Plus the Languages array
-(1:5)' + ". " + Languages %[output:1dd977f3]
+(1:5)' + ". " + Languages
 %%
 %[text] We can also merge the two string arrays into one glorious array:
-Languages + Greetings %[output:4bff4be0]
+Languages + Greetings
 %[text] - but that looks a little crowded without the spacing \
 %%
-%[text] No problem, here's  the syntax to add a space between the two arrays. 
-Languages + " " + Greetings %[output:716b5dfe]
+%[text] No problem, here's the syntax to add a space between the two arrays.
+Languages + " " + Greetings
 %%
-%[text] You Try: 
-%[text]  try adding a  'dash' between the words
-Languages+'-'+Greetings %[output:1c3f9398]
+%[text] You Try:
+%[text] try adding a 'dash' between the words
+
 %%
 %[text] ## Useful functions for Character Wrangling
-%[text] MATLAB comes with [many useful functions](https://www.mathworks.com/help/matlab/characters-and-strings.html) for string and character arrays. These functions can be used to identify character patterns, such as a matching character array or a sub-string within that array, or simply a complex pattern of characters. 
+%[text] MATLAB comes with [many useful functions](https://www.mathworks.com/help/matlab/characters-and-strings.html) for string and character arrays. These functions can be used to identify character patterns, such as a matching character array or a substring within that array, or simply a complex pattern of characters.
 %[text] ### Formatting strings like a champ
-%[text] Using the **fprintf** and **sprintf** functions, you can format a string array with embedded data on the fly. This is accomplished by including **placeholder characters** in the original character array. Placeholder characters are prepended with a **percent sign (%)**. 
-%[text] For example, **%s** is the placeholder for a character array. These placeholders are replaced by the inputs following the character in the function call. 
+%[text] Using the **`fprintf`** and **`sprintf`** functions, you can format a string array with embedded data on the fly. This is accomplished by including **placeholder characters** in the original character array. Placeholder characters are prepended with a **percent sign (%)**.
+%[text] For example, **`%s`** is the placeholder for a character array. These placeholders are replaced by the inputs following the character in the function call.
 %%
-%[text] #### **The function fprintf**
-%[text] The function **fprintf** creates a string array that includes the provide text and replaces the %s placeholder characters with the content from second input.
-fprintf("My favorite language is %s", Languages(2))  %[output:9a2b05d7]
-%[text] Then, **fprintf** dumps the results into the command window. Notice that the variable *ans* has not changed. **fprintf** does NOT return a character array. It "prints" the new character array to the command window.
-%[text] **You try:** change index for `Languages` for the above code
+%[text] #### The function `fprintf`
+%[text] The function **`fprintf`** creates a string array that includes the provided text and replaces the `%s` placeholder characters with the content from the second input.
+fprintf("My favorite language is %s", Languages(2))
+%[text] Then, **`fprintf`** dumps the results into the Command Window. Notice that the variable `ans` has not changed. **`fprintf`** does NOT return a character array. It "prints" the new character array to the Command Window.
+%[text] **You Try:** change the index for `Languages` in the above code.
 %%
-%[text] #### **The function sprintf**
-%[text] If you want to create a new character array and assign it to a new variable, use the function **sprintf.** The syntax is virtually identical to `fprintf`:
-cha2 = sprintf("But I love the %s greeting '%s'!", Languages(3),Greetings(3)) %[output:96584c1d]
-%[text] - Here we include two %s placeholders, so we need two inputs after the string \
+%[text] #### The function `sprintf`
+%[text] If you want to create a new character array and assign it to a new variable, use the function **`sprintf`**. The syntax is virtually identical to `fprintf`:
+cha2 = sprintf("But I love the %s greeting '%s'!", Languages(3), Greetings(3))
+%[text] - Here we include two `%s` placeholders, so we need two inputs after the string \
 %%
 %[text] #### Embedding numeric data in a string
-%[text] For integers, use the place holder %d
+%[text] For integers, use the placeholder `%d`
 count = 23 %[control:slider:8527]{"position":[9,11]}
-ch = sprintf("I have %d apples",count)
-%[text] What happens when you change the value of count?
+ch = sprintf("I have %d apples", count)
+%[text] What happens when you change the value of `count`?
 %%
-%[text] For floating point numbers, there are several different placeholders you can use. The simplest is the **%f** placeholder. However, you have to include more information to get the formatting right. In this example, we are going to show the value pi to ten significant digits. So, we have one whole number and ten decimals. The place holder looks like this:
-fprintf("Pi to the tenth decimal is %1.10f.",pi)
+%[text] For floating point numbers, there are several different placeholders you can use. The simplest is the **`%f`** placeholder. However, you have to include more information to get the formatting right. In this example, we are going to show the value of pi to ten significant digits. So, we have one whole number and ten decimals. The placeholder looks like this:
+fprintf("Pi to the tenth decimal is %1.10f.", pi)
 %[text] So, how would you change this function call so that pi is shown to the 20th decimal?
-fprintf("Pi to the tenth decimal is %1.22f.",pi)
+
 %%
 %[text] ### Search functions
 %[text] There are several functions written for string arrays that return a logical array after they perform their search.
-%[text] #### endsWith
-%[text] %[text:anchor:H_063DC8AA]  For example, the function  **endsWith** searches elements in a string array and returns a true for those elements in which the final character matches the specified character.
-%[text] The following creates a new logical array (*la2)* using the function **endsWith** to find all languages that end with the letter 'h'
-la2 = endsWith(Languages,'h') %[output:7793fa99]
+%[text] #### `endsWith`
+%[text] %[text:anchor:H_063DC8AA] For example, the function **`endsWith`** searches elements in a string array and returns a true for those elements in which the final character matches the specified character.
+%[text] The following creates a new logical array (`la2`) using the function **`endsWith`** to find all languages that end with the letter 'h'
+la2 = endsWith(Languages, 'h')
 %%
-%[text] Index Languages with *la2* to return the 2 languages that end with the letter 'h'
-Languages(la2)
+%[text] Index `Languages` with `la2` to return the 2 languages that end with the letter 'h'
+
 %%
-%[text] #### contains
-%[text] The function **contains** searches for specified characters and returns trues corresponding to the elements that contain them. 
-%[text] %[text:anchor:H_925164F5] Create a logical array using **contains** to find all the greetings in Greetings that contain the letter ‘o’. Assign to *la.*
-la=contains(Greetings,'o')
+%[text] #### `contains`
+%[text] The function **`contains`** searches for specified characters and returns trues corresponding to the elements that contain them.
+%[text] %[text:anchor:H_925164F5] Create a logical array using **`contains`** to find all the greetings in `Greetings` that contain the letter 'o'. Assign to `la`.
+
 %%
-%[text] - What simple logical operation would you use to find the greetings in Greetings that contain the letter 'o', assuming you already completed the previous step? \
-Greetings(la)
+%[text] - What simple logical operation would you use to find the greetings in `Greetings` that contain the letter 'o', assuming you already completed the previous step? \
+
 %%
-%[text] Use logical indexing to return the greeting in Greetings that does NOT contain the letter 'o'
-Greetings(~la)
+%[text] Use logical indexing to return the greeting in `Greetings` that does NOT contain the letter 'o'
+
 %[text] - there should be only one \
 %%
-%[text] Use logical indexing to return all of the Languages (Languages) for which their greeting does contains the letter 'o'
-Languages(la)
-%[text] - as long as the logical array is the correct size, you can use it on any other array as an index. Both Greetings and Languages are the same same (and have elements that somewhat correspond) \
+%[text] Use logical indexing to return all of the elements in `Languages` for which their greeting contains the letter 'o'
+
+%[text] - as long as the logical array is the correct size, you can use it on any other array as an index. Both `Greetings` and `Languages` are the same size (and have elements that somewhat correspond) \
 %%
-%[text] ### String Comparison - strcmp
-%[text] The function `strcmp` can be used to match character arrays. For example, if you want to determine if your user responded 'yes', you can code something like the following: 
-user_input = "no" % change answer to yes %[control:editfield:2286]{"position":[14,18]} %[output:9a54477a]
-result = strcmp(user_input,'yes') % checks if answer contains a 'yes' %[output:4d214479]
+%[text] ### String Comparison - `strcmp`
+%[text] The function `strcmp` can be used to match character arrays. For example, if you want to determine if your user responded 'yes', you can code something like the following:
+user_input = "no" % change answer to yes %[control:editfield:2286]{"position":[14,18]}
+result = strcmp(user_input, 'yes') % checks if answer contains a 'yes'
 %[text] - `strcmp` returns a 1 if there is a match, and a 0 if there is not a match
-%[text] - Is the result Case Sensitive? \
+%[text] - Is the result case sensitive? \
 %%
 %[text] ### Character Pattern Matching
 %[text] Other functions can identify character patterns. For example, consider the following character array:
-date1 = 'March 19, 1970' %[output:472e215c]
+date1 = 'March 19, 1970'
 %[text] The function `isletter` returns a logical array with trues for every letter:
-la = isletter(date1) %[output:5549ca39]
+la = isletter(date1)
 %[text] - notice here that we get a result for each element in `date1`.
 %[text] - This is because we are asking whether or not a given character is a letter \
 %%
-%[text] We can the use logical indexing to extract the Month, as follows
-date1(la) %[output:2e075fb5] %[output:29cd50eb]
+%[text] We can then use logical indexing to extract the month, as follows
+date1(la)
 %%
-%[text] Or if we just wanted to confirm that the date contains the year `1970` we can use the function `contains` as follows:
-la = contains(date1,'March') %[output:3651e097]
-%[text] The possibilities are endless. Review the [MATLAB documentation](https://www.mathworks.com/help/matlab/characters-and-strings.html) for more ideas. 
+%[text] Or, if we just wanted to confirm that the date contains the year `1970`, we can use the function `contains` as follows:
+la = contains(date1, '1970')
+%[text] The possibilities are endless. Review the [MATLAB documentation](https://www.mathworks.com/help/matlab/characters-and-strings.html) for more ideas.
 %%
 %[text] ### Regular Expressions
-%[text] Regular Expressions are Super-powered string finders that use  arcane expression patterns to match character patterns. Here are some example regular expressions:
+%[text] Regular Expressions are super-powered string finders that use arcane expression patterns to match character patterns. Here are some example regular expressions:
 %[text] - `\d` - match any digits
 %[text] - `^dog` - begins with dog
-%[text] - `gr[ae]y -` contains either gray or grey \
-%[text] Regular Expressions are not MATLAB — they are used across all programming languages, and you can find them in certain word processing software as well. MATLAB just has a few functions that can handle regular expressions
+%[text] - `gr[ae]y` - contains either gray or grey \
+%[text] Regular Expressions are not MATLAB — they are used across all programming languages, and you can find them in certain word processing software as well. MATLAB just has a few functions that can handle regular expressions.
 %[text] For example, back to our date character array, if we wanted to match the year, we could use `regexp` to identify 4 sequential digits using the arcane expression `'\d{4}'`
 clearvars
-date1 = 'March 19, 1970' %[output:0bb55d7c]
-regexp(date1,'\d{4}','Match') %[output:6a52ae21]
-%[text] - the syntax for `regexp` is a little complicated, but that's what chat gpt is for.
-%[text] - What happens if you change the {4} to a {2}?
-%[text] - You could ask for more complicated patterns, like  two digits precede a comma, or something like that  \
+date1 = 'March 19, 1970'
+regexp(date1, '\d{4}', 'Match')
+%[text] - the syntax for `regexp` is a little complicated, but that's what MATLAB Copilot is for.
+%[text] - What happens if you change the `{4}` to a `{2}`?
+%[text] - You could ask for more complicated patterns, like two digits precede a comma, or something like that \
 %%
-%[text] Regular Expressions are very useful for dealing with Strings with formatting issues. Consider the following string of "funny" names:
-funny_names = ["Amy Stake (A mistake)"; %[output:group:2dac08c0] %[output:81ec8610]
-"Barb Dwyer (Barbed wire)"; %[output:81ec8610]
-"Chris P Bacon (Crispy bacon)"; %[output:81ec8610]
-"Chris P Baker (Crispy baker)"; %[output:81ec8610]
-"Jacqueline Hyde (Jekyll and Hyde)"; %[output:81ec8610]
-"Jed I Knight (Jedi Knight)"; %[output:81ec8610]
-"Laura Lynn Hardy (Laurel and Hardy)"; %[output:81ec8610]
-"Ophelia Pane (I feel your pain)"; %[output:81ec8610]
-"Robyn Banks (Robbing banks)"; %[output:81ec8610]
-"Tim Burr (Timber)"] %[output:group:2dac08c0] %[output:81ec8610]
+%[text] Regular Expressions are very useful for dealing with strings with formatting issues. Consider the following string of "funny" names:
+funny_names = ["Amy Stake (A mistake)";
+"Barb Dwyer (Barbed wire)";
+"Chris P Bacon (Crispy bacon)";
+"Chris P Baker (Crispy baker)";
+"Jacqueline Hyde (Jekyll and Hyde)";
+"Jed I Knight (Jedi Knight)";
+"Laura Lynn Hardy (Laurel and Hardy)";
+"Ophelia Pane (I feel your pain)";
+"Robyn Banks (Robbing banks)";
+"Tim Burr (Timber)"]
 %[text] - We have the name, followed by an explanation of the name in parentheses
-%[text] - If we want to split these string into first and last names, we first need to remove the parentheses and deal with the middle initials. \
+%[text] - If we want to split these strings into first and last names, we first need to remove the parentheses and deal with the middle initials. \
 %%
 %[text] #### Find Characters inside parentheses and remove them
-%[text] Regular Expressions are complicated. As such, its best to resort to AI to figure out the expression you need. For example, I used the following MATLAB Copilot Prompt to create this example:
+%[text] Regular Expressions are complicated. As such, it's best to resort to AI to figure out the expression you need. For example, I used the following MATLAB Copilot prompt to create this example:
 %[text] ```
 %[text] Use regexp to find characters bracketed by parentheses. Match the parentheses as well.
 %[text] ```
-%[text] Copilot will return a coding example. You just copy out the expression, which you plug into `regexp`, as follows
+%[text] MATLAB Copilot will return a coding example. You just copy out the expression, which you plug into `regexp`, as follows
 expression = '\((.*?)\)'; % find characters inside parentheses
-names_in_parentheses = regexp(funny_names,expression,"match") %[output:56929938]
-%[text] - here we find all the words inside the parenthesis, along with the parentheses themselves \
+names_in_parentheses = regexp(funny_names, expression, "match")
+%[text] - here we find all the words inside the parentheses, along with the parentheses themselves \
 %%
-%[text] The function `regexprep` replaces the found pattern with the inputted new character array. Here we replace the parenthetical name explainers with nothing (we effective remove all characters inside parentheses. )
-S = regexprep(funny_names,expression,'') % replace the characters inside the parentheses with an empty string %[output:61bec881]
+%[text] The function `regexprep` replaces the found pattern with the inputted new character array. Here we replace the parenthetical name explainers with nothing (we effectively remove all characters inside parentheses).
+S = regexprep(funny_names, expression, '') % replace the characters inside the parentheses with an empty string
 %[text] ### 
+%%
 %[text] ## Character Wrangling Example: Pangram
-%[text] We finish with a fun little example to highlight the power of these character wrangling functions. 
-%[text] A pangram is a sentence that uses every letter of the alphabet at least once. Like the following famous pangram, used by typists around the world"
-s = 'The quick brown fox jumps over the lazy dog!' %[output:5de4cc96]
-%[text] The following example shows how to create an algorithm to determine whether a sentence is a pangram or not. To detect a pangram, we need to know the frequency of each individual letter of the alphabet - we need at least one instance of each letter for the sentence to be a pangram. So this algorithm is best tackled with a character array (as opposed to a string array, where the whole sentence would be one element in the string).
+%[text] We finish with a fun little example to highlight the power of these character wrangling functions.
+%[text] A pangram is a sentence that uses every letter of the alphabet at least once. Like the following famous pangram, used by typists around the world:
+s = 'The quick brown fox jumps over the lazy dog!'
+%[text] The following example shows how to create an algorithm to determine whether a sentence is a pangram or not. To detect a pangram, we need to know the frequency of each individual letter of the alphabet - we need at least one instance of each letter for the sentence to be a pangram. So, this algorithm is best tackled with a character array (as opposed to a string array, where the whole sentence would be one element in the string).
 %[text] The pseudocode for detecting a pangram is as follows:
 %[text] 1. Convert all the letters to lowercase, since upper and lower case are considered to be different
 %[text] 2. Keep only the letters in the array
 %[text] 3. Find the unique characters in the array
 %[text] 4. Count up the unique characters. Do they add up to 26? Pangram! \
 %%
-%[text] The following are a series of MATLAB code that accomplish these tasks
+%[text] The following is a series of MATLAB code snippets that accomplish these tasks:
 %[text] #### 1) Lowercase
-s = lower(s) % convert to lower case %[output:9ba16b4f]
+s = lower(s) % convert to lower case
 %[text] - what function would capitalize all the letters? \
 %%
 %[text] #### 2) Find and keep just the letters
 la = isletter(s); % find the letters in s
-s = s(la) % keep only the letters %[output:74f4e9d3]
+s = s(la) % keep only the letters
 %[text] - here we index out all characters that are not letters \
 %%
-%[text] #### 3) Keep only the unique letters  
-s = unique(s) % return unique letters %[output:72eee2ff]
+%[text] #### 3) Keep only the unique letters
+s = unique(s) % return unique letters
 %%
 %[text] #### 4) Count the number of unique letters
-count = numel(s) % count the number of elements %[output:41f4c217]
+count = numel(s) % count the number of elements
 %[text] - Since we have 26 unique letters, we have a pangram! \
 %%
 %[text] [Back to top](internal:T_0F6EF352)
@@ -304,142 +305,4 @@ count = numel(s) % count the number of elements %[output:41f4c217]
 %---
 %[control:editfield:2286]
 %   data: {"defaultValue":"\"no\"","label":"answer","run":"Section","valueType":"String"}
-%---
-%[output:4a6bb980]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch1","value":"'connected'"}}
-%---
-%[output:617f531f]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch2","value":"'c o n n e c t e d'"}}
-%---
-%[output:7942be96]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch1","value":"'a.#-b,?! $'"}}
-%---
-%[output:1f64113f]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ch1","value":"'12345'"}}
-%---
-%[output:5245c819]
-%   data: {"dataType":"textualVariable","outputData":{"name":"num1","value":"       12345\n"}}
-%---
-%[output:10713fe3]
-%   data: {"dataType":"textualVariable","outputData":{"name":"str","value":"\"connected\""}}
-%---
-%[output:1a8b3f20]
-%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"1×2 string array","name":"str","rows":1,"type":"string","value":[["connected","disconnected"]]}}
-%---
-%[output:4f85da92]
-%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"1×3 string array","name":"str","rows":1,"type":"string","value":[["connected","disconnected","a.#-b,?! $"]]}}
-%---
-%[output:9a432801]
-%   data: {"dataType":"matrix","outputData":{"columns":4,"header":"1×4 string array","name":"str","rows":1,"type":"string","value":[["12345","connected","disconnected","a.#-b,?! $"]]}}
-%---
-%[output:7eec35f6]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"\"connected\""}}
-%---
-%[output:43dfc4be]
-%   data: {"dataType":"matrix","outputData":{"columns":2,"header":"1×2 string array","name":"ans","rows":1,"type":"string","value":[["connected","disconnected"]]}}
-%---
-%[output:641d5d56]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"\"a.#-b,?! $\""}}
-%---
-%[output:9a33f861]
-%   data: {"dataType":"matrix","outputData":{"columns":3,"header":"1×3 string array","name":"str","rows":1,"type":"string","value":[["connected","disconnected","a.#-b,?! $"]]}}
-%---
-%[output:3cd2e7f9]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'connected'"}}
-%---
-%[output:8c8c115e]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"header":"1×5 string array","name":"Greetings","rows":1,"type":"string","value":[["hello","bonjour","aloha","ciao","namaste"]]}}
-%---
-%[output:0b43ae0a]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"Greetings","rows":5,"type":"string","value":[["hello"],["bonjour"],["aloha"],["ciao"],["namaste"]]}}
-%---
-%[output:04abc301]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"header":"1×5 logical array","name":"la","rows":1,"type":"logical","value":[["0","1","0","0","0"]]}}
-%---
-%[output:06a4ff6b]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"\"bonjour\""}}
-%---
-%[output:7509546f]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"Languages","rows":5,"type":"string","value":[["English"],["French"],["Hawaiian"],["Italian"],["Hindu"]]}}
-%---
-%[output:4d020d47]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"\"French\""}}
-%---
-%[output:41af265f]
-%   data: {"dataType":"matrix","outputData":{"columns":5,"header":"1×5 string array","name":"ans","rows":1,"type":"string","value":[["hello!","bonjour!","aloha!","ciao!","namaste!"]]}}
-%---
-%[output:4ed2f6e7]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"ans","rows":5,"type":"string","value":[["hello1"],["bonjour1"],["aloha1"],["ciao1"],["namaste1"]]}}
-%---
-%[output:1dd977f3]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"ans","rows":5,"type":"string","value":[["1.English"],["2.French"],["3.Italian"],["4.Hindu"],["5.Hawaiian"]]}}
-%---
-%[output:4bff4be0]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"ans","rows":5,"type":"string","value":[["Englishhello"],["Frenchbonjour"],["Italianaloha"],["Hinduciao"],["Hawaiiannamaste"]]}}
-%---
-%[output:716b5dfe]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"ans","rows":5,"type":"string","value":[["English hello"],["French bonjour"],["Italian aloha"],["Hindu ciao"],["Hawaiian namaste"]]}}
-%---
-%[output:1c3f9398]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 string array","name":"ans","rows":5,"type":"string","value":[["English-hello"],["French-bonjour"],["Italian-aloha"],["Hindu-ciao"],["Hawaiian-namaste"]]}}
-%---
-%[output:9a2b05d7]
-%   data: {"dataType":"text","outputData":{"text":"My favorite language is French","truncated":false}}
-%---
-%[output:96584c1d]
-%   data: {"dataType":"textualVariable","outputData":{"name":"cha2","value":"\"But I love the Hawaiian greeting 'aloha'\""}}
-%---
-%[output:7793fa99]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"5×1 logical array","name":"la2","rows":5,"type":"logical","value":[["1"],["1"],["0"],["0"],["0"]]}}
-%---
-%[output:9a54477a]
-%   data: {"dataType":"textualVariable","outputData":{"name":"user_input","value":"\"no\""}}
-%---
-%[output:4d214479]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"result","value":"   0\n"}}
-%---
-%[output:472e215c]
-%   data: {"dataType":"textualVariable","outputData":{"name":"date1","value":"'March 19, 1970'"}}
-%---
-%[output:5549ca39]
-%   data: {"dataType":"matrix","outputData":{"columns":14,"header":"1×14 logical array","name":"la","rows":1,"type":"logical","value":[["1","1","1","1","1","0","0","0","0","0","0","0","0","0"]]}}
-%---
-%[output:2e075fb5]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"'March'"}}
-%---
-%[output:29cd50eb]
-%   data: {"dataType":"textualVariable","outputData":{"header":"1×1 cell array","name":"ans","value":"    {'1970'}\n"}}
-%---
-%[output:3651e097]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"la","value":"   1\n"}}
-%---
-%[output:0bb55d7c]
-%   data: {"dataType":"textualVariable","outputData":{"name":"date1","value":"'March 19, 1970'"}}
-%---
-%[output:6a52ae21]
-%   data: {"dataType":"textualVariable","outputData":{"header":"1×1 cell array","name":"ans","value":"    {'1970'}\n"}}
-%---
-%[output:81ec8610]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"10×1 string array","name":"funny_names","rows":10,"type":"string","value":[["Amy Stake (A mistake)"],["Barb Dwyer (Barbed wire)"],["Chris P Bacon (Crispy bacon)"],["Chris P Baker (Crispy baker)"],["Jacqueline Hyde (Jekyll and Hyde)"],["Jed I Knight (Jedi Knight)"],["Laura Lynn Hardy (Laurel and Hardy)"],["Ophelia Pane (I feel your pain)"],["Robyn Banks (Robbing banks)"],["Tim Burr (Timber)"]]}}
-%---
-%[output:56929938]
-%   data: {"dataType":"tabular","outputData":{"columns":1,"header":"10×1 cell array","name":"names_in_parentheses","rows":10,"type":"cell","value":[["\"(A mistake)\""],["\"(Barbed wire)\""],["\"(Crispy bacon)\""],["\"(Crispy baker)\""],["\"(Jekyll and Hyde)\""],["\"(Jedi Knight)\""],["\"(Laurel and Hardy)\""],["\"(I feel your pain)\""],["\"(Robbing banks)\""],["\"(Timber)\""]]}}
-%---
-%[output:61bec881]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"10×1 string array","name":"S","rows":10,"type":"string","value":[["Amy Stake "],["Barb Dwyer "],["Chris P Bacon "],["Chris P Baker "],["Jacqueline Hyde "],["Jed I Knight "],["Laura Lynn Hardy "],["Ophelia Pane "],["Robyn Banks "],["Tim Burr "]]}}
-%---
-%[output:5de4cc96]
-%   data: {"dataType":"textualVariable","outputData":{"name":"s","value":"'The quick brown fox jumps over the lazy dog!'"}}
-%---
-%[output:9ba16b4f]
-%   data: {"dataType":"textualVariable","outputData":{"name":"s","value":"'the quick brown fox jumps over the lazy dog!'"}}
-%---
-%[output:74f4e9d3]
-%   data: {"dataType":"textualVariable","outputData":{"name":"s","value":"'thequickbrownfoxjumpsoverthelazydog'"}}
-%---
-%[output:72eee2ff]
-%   data: {"dataType":"textualVariable","outputData":{"name":"s","value":"'abcdefghijklmnopqrstuvwxyz'"}}
-%---
-%[output:41f4c217]
-%   data: {"dataType":"textualVariable","outputData":{"name":"count","value":"    26\n"}}
 %---
