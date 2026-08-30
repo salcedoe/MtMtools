@@ -67,12 +67,12 @@ d = uint8(a)
 %[text] Consider the following array:
 a = [0 10 100 256 1000 66e3 2097151]
 %[text] - typecast `a` to class **single** and assign to b \
-b = single(a)
+
 %[text] - typecast `a` to an **unsigned 16-bit integer** and assign to c \
-c = uint16(a)
+
 %[text] 
 %[text] - typecast `a` to an **unsigned 8-bit integer** and assign to d \
-d = uint8(a)
+
 %[text] - notice the class of each variable
 %[text] - Notice which values saturate when \
 %[text] 
@@ -93,7 +93,7 @@ clearvars %[text:anchor:H_AD9398D5]
 ch = 'hello'
 %%
 %[text] Typecast the character array to a uint16 numeric array and assign to `n`:
-n = uint16(ch)
+
 %[text] 
 %[text] - So, what do these numbers represent? \
 %[text] 
@@ -112,7 +112,7 @@ uint16('a':'z')
 %%
 %[text] %[text:anchor:H_D9E2EACA] ### Are the ASCII codes different for uppercase characters?
 %[text] Typecast the capital letter characters 'A' through 'Z' into a **uint16** array.
-uint16('A':'Z')
+
 %[text] - Are the ASCII codes different from the lower case characters? \
 %[text] ```
 %[text] 
