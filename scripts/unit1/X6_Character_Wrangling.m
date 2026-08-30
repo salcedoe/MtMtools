@@ -107,7 +107,7 @@ Greetings(la)
 %%
 %[text] ### Cross-reference String Array
 %[text] Here we create a second string array containing the corresponding languages to the greetings found in `Greetings`.
-Languages = ["English" "French" "Hawaiian" "Italian" "Hindi"]'
+Languages = ["English" "French" "Hawaiian" "Italian" "Hindi"]' % transpose to display vertically
 %[text] - notice that the language order matches the rearranged greetings from the previous steps \
 %%
 %[text] We can use logical arrays to cross-reference the two string arrays. For example, the logical array `la` indexes the greeting "bonjour" from the `Greetings` string. When you use it to index the `Languages` array, you get out the corresponding language:
