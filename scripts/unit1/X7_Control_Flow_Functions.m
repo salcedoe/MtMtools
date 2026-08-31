@@ -22,7 +22,7 @@ clearvars % this clears the workspace
 %[text] ![](text:image:2a89)
 %%
 %[text] Run the following code. Be sure to enter an age when prompted (look in the command window).
-%[text] - What happens when age is less than 21? or greater than 21? \
+%[text] - What happens when `age` is less than 21? or greater than 21? \
 age = input('ID?') % requests an input from the command window
 str = 'unknown'; % initialize string
 
@@ -33,7 +33,7 @@ end
 fprintf('%d is %s', age, str)
 %[text] Modify by: 
 %[text] 1. Adding an `else` statement, where the variable `str` is set to  `'legal. Go on in.'`
-%[text] 2. Add a new `elseif` statement  for the elderly (age greater than 50), where str is set to `'really old! Party on, Grandpa.` \
+%[text] 2. Add a new `elseif` statement  for the elderly (`age` greater than 50), where `str` is set to `'really old! Party on, Grandpa.` \
 %%
 %[text] %[text:anchor:T_31290B8B] # LOOPS
 clc
@@ -42,11 +42,11 @@ clearvars
 %[text] %[text:anchor:H_AA3239BE] ## For Loops
 %[text] - FOR LOOPs repeatedly execute the code block inside the loop
 %[text] - The number of times this block runs depends on the size of the array in the array assignment
-%[text] - - specifically, the number of COLUMNS in the array \
+%[text] -  - specifically, the number of COLUMNS in the array \
 %[text] ![](text:image:66e6)
 %%
 %[text] ### Example 1 - For Loops
-%[text] The only thing that changes in this loop is the value of *n.*
+%[text] The only thing that changes in this loop is the value of `n`.
 for n = 1:10
     fprintf('This is loop run #%d\n',n); % runs 10 times
 end
@@ -61,7 +61,7 @@ end
 %[text] ### NOW YOU TRY - FOR LOOPS
 %[text] 1. Create a FOR LOOP using the array assignment  `m=2:2:10`
 %[text] 2. Create an iterator variable, `i` that increase by 1 each time loop iterates. Be sure to set the value of `i` to `1` before starting the loop
-%[text] 3. Inside the LOOP, report the current value of `m` and `i` using fprintf. e.g. `'Current iteration: 2, value of m = 4'` \
+%[text] 3. Inside the LOOP, report the current value of `m` and `i` using `fprintf`. e.g. `'Current iteration: 2, value of m = 4'` \
 
 %%
 %[text] ### Example 3 - FOR LOOP with any vector
@@ -79,13 +79,13 @@ mat = reshape(1:9,3,3)
 %[text] What happens when you run a for loop using a matrix. Try it now
 
 %[text] - The array runs 3 times (only 3 columns)
-%[text] - The variable *o*  changes to a vector on each iteration
+%[text] - The variable `o`  changes to a vector on each iteration
 %[text] - Very rare that you would ever need to do this, but there it is \
 %%
 %[text] %[text:anchor:H_9A64A8F9] ## Example - Fibonacci sequence
-%[text] The [fibonacci](http://www.wikiwand.com/en/Fibonacci_number) sequence is a very famous sequence that forms the basis for the golden rectangle and commonly occurs in nature, seen in such things as the spirals in seashells and galaxies. Even the Human hand comes very close to creating a Fibonacci Sequence.
+%[text] The [Fibonacci](http://www.wikiwand.com/en/Fibonacci_number) sequence is a very famous sequence that forms the basis for the golden rectangle and commonly occurs in nature, seen in such things as the spirals in seashells and galaxies. Even the human hand comes very close to creating a Fibonacci Sequence.
 %[text] ![](text:image:0830)![](text:image:001d)![](text:image:9555)
-%[text] The fibonacci sequence in our hand allows for a perfect curl when we clench our fist.
+%[text] The Fibonacci sequence in our hand allows for a perfect curl when we clench our fist.
 %[text] The sequence itself is simple.  Every term in the sequence is the sum of the two preceding terms
 %[text] ```
 %[text] 1 1 2 3 5 8 13 21...
@@ -93,7 +93,7 @@ mat = reshape(1:9,3,3)
 %[text] 
 %[text] [SciFri - Fibonacci sequence](https://www.sciencefriday.com/educational-resources/fibonacci-sequence-handy-mathematical-approach-looking-evolution/)
 %%
-%[text] %[text:anchor:H_58602348] #### So, how do we build the fibonacci sequence ?
+%[text] %[text:anchor:H_58602348] #### So, how do we build the Fibonacci sequence?
 %[text] %[text:anchor:H_76461C3F] Without a FOR LOOP, building the sequence would look something like this:
 fib = [1 1] % start with the first two terms
 fib(3) = fib(1) + fib(2) % the third term is the sum of the first two terms
@@ -101,7 +101,7 @@ fib(3) = fib(1) + fib(2) % the third term is the sum of the first two terms
 fib(4) = fib(2) + fib(3) % the fourth term is the sum of elements 2 and 3 in the array
 %%
 %[text] **Now you try: Term 5**
-%[text] How would you calculate the fifth term of the fibonacci sequence?
+%[text] How would you calculate the fifth term of the Fibonacci sequence?
 
 %[text] Notice for each term, you sum  the previous two elements.
 %%
@@ -112,25 +112,25 @@ n=6 % current term
 fib(n) = fib(n-2) + fib(n-1)
 %%
 %[text] For Loops are perfect for automating these simple changes. 
-fib = [1 1]; % Preallocate terms 1 and 2 with 1 1
+fib = [1 1]; % Initialize terms 1 and 2 with 1 1
 for n=3:10 % start with the 3rd term
     fib(n) = fib(n-2) + fib(n-1);
     disp(fib) % show progress
 end
 disp(fib) % show final contents
 %[text] - Perfect! It does the exact same thing but all the way up to term 10
-%[text] - Notice that we had to start by adding 1 and 1 to fs, before the FOR LOOP
+%[text] - Notice that we had to start by adding 1 and 1 to `fib`, before the FOR LOOP
 %[text] - Also notice that the number of terms we end up with is 2 plus the number of loop iterations \
 %%
 %[text] ### Calculating the Golden Ratio
 %[text] ![](text:image:592f)
-%[text] The fibonacci sequence is the foundation for the Golden ratio ($\\phi$, Phi, 1.6), which when used in a design, fosters organic and natural-looking compositions that are aesthetically pleasing to the eye.
-%[text] The Golden Ratio is calculated by dividing the sequential terms in the fibonacci sequence, as follows:
+%[text] The Fibonacci sequence is the foundation for the Golden ratio ($\\phi$, Phi, 1.618), which when used in a design, fosters organic and natural-looking compositions that are aesthetically pleasing to the eye.
+%[text] The Golden Ratio is calculated by dividing the sequential terms in the Fibonacci sequence, as follows:
 %[text] $\\frac{\\left(2+3\\right)}{3}=1\\ldotp 667${"editStyle":"visual"}
 %[text]  $\\frac{\\left(3+5\\right)}{5}=1\\ldotp 6${"editStyle":"visual"}
 %[text] $\\frac{\\left(5+8\\right)}{8}=1\\ldotp 625${"editStyle":"visual"}
 %[text] …and so on
-%[text] In `fib`, which contains a series of fibonacci terms, we can calculate the golden ratio for any pair of terms using some indexing:
+%[text] In `fib`, which contains a series of Fibonacci terms, we can calculate the golden ratio for any pair of terms using some indexing:
 %[text] $\\frac{\\mathrm{fib}\\left(3\\right)+\\mathrm{fib}\\left(4\\right)}{\\mathrm{fib}\\left(4\\right)}${"editStyle":"visual"}
 %[text] 
 %[text] **You try:** Calculate the Golden Ratio for terms 6 and 7 in `fib` 
@@ -139,7 +139,7 @@ disp(fib) % show final contents
 %[text] - how about terms 7 and 8? \
 
 %%
-%[text] - How would you create a FOR LOOP to calculate $\\phi$ all of the term pairs in `fib`?
+%[text] - How would you create a FOR LOOP to calculate $\\phi$ for all of the term pairs in `fib`?
 %[text] - Remember, when dealing with pairs, you want to run the FOR LOOP one iteration fewer than the total number of elements in `fib`. \
 num = numel(fib) % number of elements in fib
 % phi = zeros(num-1,1)
@@ -149,23 +149,22 @@ for n=1:num-1
 end
 disp(phi)
 %%
-%[text] In this example, the Current Term is indexed by `n`, while the Next Term is indexed by `n+1`. We stop the loop one iteration early (`-1`), because there is no term after the final term.
-
+%[text] - In this example, the Current Term is indexed by `n`, while the Next Term is indexed by `n+1`. We stop the loop one iteration early (`-1`), because there is no term after the final term. \
 %%
 %[text] %[text:anchor:H_C10F4A8D] ### Preallocation
 %[text] Great, so we can scale this up and get lots of terms, like the first 1,000 terms. However, we could run into memory issues if we are not careful. When dealing with large arrays, it's usually a good idea to preallocate the array (even if we don't want to). 
-%[text] What's the big deal? Well, let's see by timing it. The functions **tic** and **toc** start and stop a timer, and then report the time it takes to execute a certain block of code. Let's time the for loop for 1,000 terms (998 loops)
+%[text] What's the big deal? Well, let's see by timing it. The functions `tic` and `toc` start and stop a timer, and then report the time it takes to execute a certain block of code. Let's time the for loop for 1,000 terms (998 loops)
 clearvars
 num_terms = 1000; % number of terms to generate
 
 tic % start timer (to see how fast the code runs)
 fib = [1 1]; % create the first two terms of the sequence
-for n=3:num_terms % run the loop 10 times
+for n=3:num_terms % run the loop 998 times
     fib(n) = fib(n-2) + fib(n-1);
 end
 toc % end timer
 disp(fib)
-%[text] - The problem with this approach to be building the sequence that MATLAB has to create a copy of the array (somewhere in memory) on every iteration of the loop
+%[text] - The problem with this approach to building the sequence is that MATLAB has to create a copy of the array (somewhere in memory) on every iteration of the loop
 %[text] - the bigger and bigger this array gets, the more and more memory you are going to need to use and the slower the code will run
 %[text] - You may even run out of memory \
 %[text] #### Preallocated
@@ -173,9 +172,9 @@ disp(fib)
 %[text] Preallocation takes a little work. You have to decide *beforehand* how big your array is going to get.
 %[text]  In the previous example, the array ended up being 2 plus the number of iterations of the FOR loop. Ok, let's use that information
 fib = zeros(1,num_terms); % the Preallocation step
-fib(1:2) = 1; % fill the first two terms of fs with 1s
-%[text] - Ok, so now the size of `fs` is predetermined to be `2 + the number of the loops`
-%[text] - We used the function `zero` to create an "empty" array that we will fill on each iteration of the loop \
+fib(1:2) = 1; % fill the first two terms of fib with 1s
+%[text] - Ok, so now the size of `fib` is predetermined to be `2 + the number of the loops`
+%[text] - We used the function `zeros` to create an "empty" array that we will fill on each iteration of the loop \
 %[text] Now we're ready to run the for loop
 tic;
 for n=3:num_terms
@@ -184,7 +183,7 @@ end
 toc
 disp(fib)
 %[text] 
-%[text] - Notice here that instead of simply tacking on a new element to *fs* on each iteration of the loop,  we are  replacing the 0's in the preallocated array `fs` with the numbers of the sequence
+%[text] - Notice here that instead of simply tacking on a new element to `fib` on each iteration of the loop,  we are  replacing the 0's in the preallocated array `fib` with the numbers of the sequence
 %[text] - Also notice that the orange squiggle is now gone
 %[text] - Let's compare speeds (try raising `num_terms` to 10,000 in both blocks to see the gap widen) \
 %[text] Thus,
@@ -196,18 +195,17 @@ disp(fib)
 %[text] WHILE Loops keep running until the conditional statement turns FALSE
 %[text] - So, on every iteration of the loop, it checks the value of a variable against a logical condition, and keeps running as long as that condition stays true.
 %[text] - Basically, it asks on every loop, 'Are we done yet?, Are we done yet?, ... \
-%%
-%[text] This simple while loop replicates the action of a single die, using the function **randi** to simulate a roll of the dice by generating a random integer between 1 and 6.. We set the conditional statement to be: "keep rolling until you get a 5. 
+%[text] This simple while loop replicates the action of a single die, using the function `randi` to simulate a roll of the dice by generating a random integer between 1 and 6. We set the conditional statement to be: "keep rolling until you get a 5."
 die = 0;
 while die ~= 5
     die = randi(6,1,1)
 end
-%[text] - notice, for this to work, you create the variable *die* before the start of the loop \
+%[text] - notice, for this to work, you create the variable `die` before the start of the loop \
 %%
 %[text] %[text:anchor:H_4D2AA353] ### Example: Craps
 %[text] %[text:anchor:H_89D9F29D] ![](text:image:6a89)
 %[text] %[text:anchor:H_007EFA4C] In craps, you roll two dice and you want to get a `7` or `11`, I think, most of the time, or something like that. I always forget. 
-%[text] So, this WHILE LOOP will continue to roll the dice until you get a `7`. The dice here being the output from the **randi** function, with a maximum value of 12 (since we're rolling two dice). Here, we also add a loop reporter, `roll`, which starts at 1 and increase by 1 for every roll of the dice. 
+%[text] So, this WHILE LOOP will continue to roll the dice until you get a `7`. The dice here being the output from the `randi` function, with a maximum value of 12 (since we're rolling two dice). Here, we also add a loop reporter, `roll`, which starts at 1 and increase by 1 for every roll of the dice.
 %[text] Try it now:
 dice = 0;
 roll = 1;
@@ -224,7 +222,7 @@ end
 %[text] # Functions
 %[text] ![](text:image:53c7)
 %[text] Functions are great ways to package algorithms. Functions are often stored as files. Most of the included MATLAB functions are files. 
-%[text] For example, we can open the **`mean`** function as follows:
+%[text] For example, we can open the `mean` function as follows:
 open mean.m
 %%
 %[text] %[text:anchor:H_D79B849F] ### Roll your own functions
@@ -235,17 +233,17 @@ in = in + 10;
 out = in;
 end
 %[text] The first line contains
-%[text] - the keyword **function**
+%[text] - the keyword `function`
 %[text] - the output: `out`
 %[text] - the name of the function: `myFirstFunction`
 %[text] - the input: `in`
-%[text] - The last line contains the key word **end.**  \
-%[text] And in between `function` and `end` is the code of the function. Notice that there is nothing magic about the code inside a function. It looks just like the code that we use in our scripts. .
+%[text] - The last line contains the key word `end`.  \
+%[text] And in between `function` and `end` is the code of the function. Notice that there is nothing magic about the code inside a function. It looks just like the code that we use in our scripts.
 %%
 %[text] Now that we have added this function to this script, we can call it like any other function.
 clearvars
 b = myFirstFunction(20)
-%[text] - notice that *in* and *out* are not added to the workspace - functions have their own secret workspace
+%[text] - notice that `in` and `out` are not added to the workspace - functions have their own secret workspace
 %[text] - Function variables are assigned inside the function and deleted when the function is done
 %[text] - **Try it now:** modify the function to **multiply** the input by 10 (instead of add) and re-execute this code block \
 %%
@@ -253,16 +251,16 @@ b = myFirstFunction(20)
 %[text] Here is the basic code for the Fibonacci Sequence
 num_terms = 10; % redefine after the clearvars above
 fib = zeros(1,num_terms); % the Preallocation step
-fib(1:2) = 1; % fill the first two terms of fs with 1s
+fib(1:2) = 1; % fill the first two terms of fib with 1s
 
 for n=3:num_terms
     fib(n) = fib(n-2) + fib(n-1);
 end
 %[text] Package this code into a function with the following properties
 %[text] 1. **Name of Function**: `myFibonacci`
-%[text] 2. **`Input`**`: num_terms` - a scalar whole number to indicated how many terms of the sequence to create
-%[text] 3. **Output**: `fib` - variable containing the fibonacci sequence up to the number of terms input
-%[text] 4. Don't forget to add an end at the end \
+%[text] 2. **Input**: `num_terms` - a scalar whole number to indicate how many terms of the sequence to create
+%[text] 3. **Output**: `fib` - variable containing the Fibonacci sequence up to the number of terms input
+%[text] 4. Don't forget to add an `end` at the end \
 %[text] **Hot Tip**: Highlight all the code in the above code block and then select "Refactor: Convert to Local Function" from the Live Editor tab
 %%
 %[text] Test your function using the following call
