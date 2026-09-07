@@ -211,48 +211,6 @@ date1(la)
 la = contains(date1, '1970')
 %[text] The possibilities are endless. Review the [MATLAB documentation](https://www.mathworks.com/help/matlab/characters-and-strings.html) for more ideas.
 %%
-%[text] ### Regular Expressions
-%[text] Regular Expressions are super-powered string finders that use arcane expression patterns to match character patterns. Here are some example regular expressions:
-%[text] - `\d` - match any digits
-%[text] - `^dog` - begins with dog
-%[text] - `gr[ae]y` - contains either gray or grey \
-%[text] Regular Expressions are not MATLAB — they are used across all programming languages, and you can find them in certain word processing software as well. MATLAB just has a few functions that can handle regular expressions.
-%[text] For example, back to our date character array, if we wanted to match the year, we could use `regexp` to identify 4 sequential digits using the arcane expression `'\d{4}'`
-clearvars
-date1 = 'March 19, 1970'
-regexp(date1, '\d{4}', 'Match')
-%[text] - the syntax for `regexp` is a little complicated, but that's what MATLAB Copilot is for.
-%[text] - What happens if you change the `{4}` to a `{2}`?
-%[text] - You could ask for more complicated patterns, like two digits precede a comma, or something like that \
-%%
-%[text] Regular Expressions are very useful for dealing with strings with formatting issues. Consider the following string of "funny" names:
-funny_names = ["Amy Stake (A mistake)";
-"Barb Dwyer (Barbed wire)";
-"Chris P Bacon (Crispy bacon)";
-"Chris P Baker (Crispy baker)";
-"Jacqueline Hyde (Jekyll and Hyde)";
-"Jed I Knight (Jedi Knight)";
-"Laura Lynn Hardy (Laurel and Hardy)";
-"Ophelia Pane (I feel your pain)";
-"Robyn Banks (Robbing banks)";
-"Tim Burr (Timber)"]
-%[text] - We have the name, followed by an explanation of the name in parentheses
-%[text] - If we want to split these strings into first and last names, we first need to remove the parentheses and deal with the middle initials. \
-%%
-%[text] #### Find Characters inside parentheses and remove them
-%[text] Regular Expressions are complicated. As such, it's best to resort to AI to figure out the expression you need. For example, I used the following MATLAB Copilot prompt to create this example:
-%[text] ```
-%[text] Use regexp to find characters bracketed by parentheses. Match the parentheses as well.
-%[text] ```
-%[text] MATLAB Copilot will return a coding example. You just copy out the expression, which you plug into `regexp`, as follows
-expression = '\((.*?)\)'; % find characters inside parentheses
-names_in_parentheses = regexp(funny_names, expression, "match")
-%[text] - here we find all the words inside the parentheses, along with the parentheses themselves \
-%%
-%[text] The function `regexprep` replaces the found pattern with the inputted new character array. Here we replace the parenthetical name explainers with nothing (we effectively remove all characters inside parentheses).
-S = regexprep(funny_names, expression, '') % replace the characters inside the parentheses with an empty string
-%[text] ### 
-%%
 %[text] ## Character Wrangling Example: Pangram
 %[text] We finish with a fun little example to highlight the power of these character wrangling functions.
 %[text] A pangram is a sentence that uses every letter of the alphabet at least once. Like the following famous pangram, used by typists around the world:
