@@ -1,6 +1,6 @@
 %[text] %[text:anchor:T_9022C83E] # Introduction to Digital Images
 %[text] In this live script, we will explore the properties of intensity (or grayscale) images by opening them in MATLAB.
-%[text] Images are just numeric matrices. There is no image variable type in MATLAB.  The position of each the element in the matrix corresponds to the position of the pixel in the image, and the value of the element corresponds to the intensity.
+%[text] Images are just numeric matrices. There is no image variable type in MATLAB. The position of each element in the matrix corresponds to the position of the pixel in the image, and the value of the element corresponds to the intensity.
 %[text] This convention makes working with images in MATLAB similar to working with any other type of matrix data and makes the full power of MATLAB available for image processing applications.
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
@@ -14,19 +14,19 @@ close all
 %[text] %[text:anchor:H_B702A7B3] ## Load image 
 %[text] The easiest way to load an image is to first change the Files Viewer to the folder containing the image. Here we change the folder to the unit1 data folder
 mmSetUnitDataFolder(1) % change folder to the unit1 data folder %[output:9b63abc3]
-%[text] - note, if this is not working, just manually change the current folder to `MtMdata/unit1` folder \
+%[text] - note, if this is not working, just manually change the current folder to `MtMresources/data/unit1` folder \
 %%
-%[text] The function **imread** loads the image into the workspace. Here, we just enter the name of the image we want to load.
-img = imread("xray-head.png");  % DON'T FORGET THE SEMICOLON!
-%[text] You should now have the variable *`img`* in the workspace. 
-%[text] - What class is the variable *`img`*?
-%[text] - What are the dimensions of *`img`*? \
-%[text] Notice that *`img`* is indistinguishable from a regular numeric array
+%[text] The function `imread` loads the image into the workspace. Here, we just enter the name of the image we want to load.
+img = imread("xray-head.png"); % DON'T FORGET THE SEMICOLON!
+%[text] You should now have the variable `img` in the workspace.
+%[text] - What class is the variable `img`?
+%[text] - What are the dimensions of `img`? \
+%[text] Notice that `img` is indistinguishable from a regular numeric array
 %%
 %[text] %[text:anchor:H_3A55B9F6] ## Loading Metadata 
-%[text] You can read in an image's metadata using the function **`imfinfo`**. Remember, each image includes metadata that describes the image. Some images have more metadata than others. 
+%[text] You can read in an image's metadata using the function `imfinfo`. Remember, each image includes metadata that describes the image. Some images have more metadata than others.
 meta = imfinfo("xray-head.png") %[output:255d15cb]
-%[text] - What datatype is *meta*?
+%[text] - What datatype is `meta`?
 %[text] - Compare metadata height and width to images rows and columns
 %[text] - Review the bit-depth and ColorType \
 %%
@@ -58,9 +58,9 @@ C = (Imax - Imin)/(Imax+Imin) %[output:0ed16857]
 %[text] A contrast of 1 indicates high contrast. This image appears to have good contrast. 
 %%
 %[text] %[text:anchor:H_4CC908B0] ## Display Image using imageViewer
-%[text] The **`imageViewer`** app has many of the bells-and-whistles of a standard image viewer package.  You can call **`imageViewer`** from the command window as follows
+%[text] The `imageViewer` app has many of the bells-and-whistles of a standard image viewer package. You can call `imageViewer` from the command window as follows
 imageViewer(img) % display x-ray
-%[text] You can also bring up **`imageViewer`** by clicking on the APPs toolbar and then on the image viewer icon.
+%[text] You can also bring up `imageViewer` by clicking on the APPs toolbar and then on the image viewer icon.
 %[text] After opening an image, we now have more information available to us. 
 %[text] If you move the mouse pointer around the image, you will see a live update pixel information tool in the bottom right corner   
 %[text] ```
@@ -81,12 +81,12 @@ web(fullfile(docroot, 'images/interact-with-images-using-image-viewer-app.html')
 %[text] Notice that the tool bar is broken down into sections, like Import, Info, Image display, zoom, etc. There are also several tabs: Contrast, Colormap
 %[text] **Info section**
 %[text] - **Image Overview**: Provides an overview of the image as you zoom in on the pixels
-%[text] - **Image Metadata:** all images come with metadata—information about the properties of the image \
+%[text] - **Image Metadata**: all images come with metadata—information about the properties of the image \
 %[text] **Image Display**
-%[text] - **Interpolation:** Change the Interpolation when you are zoomed in. Which has blocking artifacts? Which one is smoother? \
+%[text] - **Interpolation**: Change the Interpolation when you are zoomed in. Which has blocking artifacts? Which one is smoother? \
 %[text] **Zoom**
 %[text] - Select Show Pixel Values
-%[text] - In the pop-up menu, choose "Zoom to Pixels \
+%[text] - In the pop-up menu, choose "Zoom to Pixels" \
 %[text] **Measurement**
 %[text] - Change the zoom back
 %[text] - Measure something using the ruler and the area tool \
@@ -94,21 +94,21 @@ web(fullfile(docroot, 'images/interact-with-images-using-image-viewer-app.html')
 %[text] - Switch to the **Colormap Tab** and change the colormap (look-up table). Zoom in to the pixel level. If you change the colormap, do the intensity values change? \
 %%
 %[text] %[text:anchor:H_B3A03221] ## Displaying images programmatically
-%[text] Use the function **`imshow`** to display images once they have been loaded into the workspace. *imshow* is a more simplified version of imageViewer
+%[text] Use the function `imshow` to display images once they have been loaded into the workspace. `imshow` is a more simplified version of `imageViewer`
 figure %[output:5f1c0fb4]
 imshow(img) %[output:5f1c0fb4]
 %[text] - notice how the syntax is just a plot—we're just displaying an image instead \
 %[text] 
 %%
 %[text] %[text:anchor:H_F2BA861D] ### Display the Histogram
-%[text] One of the most important ways to inspect the properties of an image is to review its histogram. To display the histogram of an image, you need to use the function **`imhist`****\*\*\*\*\*\*\*\*.**
+%[text] One of the most important ways to inspect the properties of an image is to review its histogram. To display the histogram of an image, you need to use the function `imhist`.
 imhist(img) %[output:48e29630]
 %[text] - A histogram can tell you a lot about an image.
-%[text] - For example, the bit depth of the image can be revealed by looking at the maximum x-value. In this case, we have a max x of around 255, which indicates that this images is an 8-bit image.
+%[text] - For example, the bit depth of the image can be revealed by looking at the maximum x-value. In this case, we have a max x of around 255, which indicates that this image is an 8-bit image.
 %[text] - You can also tell the exposure of the image (good contrast). Well-exposed images use as many of the intensities across the color depth as possible.  \
 %%
 %[text] #### **Adjust Contrast using the Image Viewer**
-%[text] Bring up the **`imageViewer`** 
+%[text] Bring up the `imageViewer`
 %[text] - Switch to the contrast tab
 %[text] - Select Interactive Histogram and mess with the histogram \
 imageViewer(img)
@@ -125,7 +125,7 @@ colorbar % add a colorbar to the display (shows the rainbow colormap) %[output:2
 %[text] Use the special character colon to create a range of indices. In this code, we index a swath of rows from 256 to 512 and all the columns
 rows = 256:512;
 img_strip = img(rows, :);
-imshow((img_strip')') %[output:9b6e9041]
+imshow(img_strip) %[output:9b6e9041]
 %%
 %[text] If we index a swath of columns, it would look like this:
 cols = 256:512;
@@ -133,36 +133,36 @@ img_strip = img(:,cols);
 imshow(img_strip) %[output:6280b9cc]
 %%
 %[text] %[text:anchor:H_F2ED1521] ## Interactive Display tools
-%[text] You can roll your own display tools (the same as found in **`imageViewer`**) using a collection of [interactive tools](https://www.mathworks.com/help/images/building-guis-with-modular-interactive-tools.html).
-%[text] For example, the function **`impixelinfo`** adds a pixel browser to the bottom corner of the image. 
+%[text] You can roll your own display tools (the same as found in `imageViewer`) using a collection of [interactive tools](https://www.mathworks.com/help/images/building-guis-with-modular-interactive-tools.html).
+%[text] For example, the function `impixelinfo` adds a pixel browser to the bottom corner of the image.
 figure %[output:8c1106ba]
 imshow(img) %[output:8c1106ba]
 impixelinfo %[output:8c1106ba]
 %[text] Using these tools, you can add only the functionality you need and nothing more. This helps keep things simple.
 %%
 %[text] %[text:anchor:H_425272FF] ### Changing the colormap
-%[text] As we have mentioned before, color in a grayscale image is arbitrary. The default is a grayscale look-up tale (LUT). But you can use any LUT you want. In MATLAB, these LUTs are known as Colormaps. MATLAB comes with a series of colormaps and the name of the colormap is also a function that creates that colormap. For example, the function **gray,** creates the default grayscale colormap.
+%[text] As we have mentioned before, color in a grayscale image is arbitrary. The default is a grayscale look-up tale (LUT). But you can use any LUT you want. In MATLAB, these LUTs are known as Colormaps. MATLAB comes with a series of colormaps and the name of the colormap is also a function that creates that colormap. For example, the function `gray` creates the default grayscale colormap.
 web(fullfile(docroot, 'matlab/ref/colormap.html'))
 %%
-%[text] %[text:anchor:H_A11F52DB] You can easily change the colormap of an image by adding the name of the colormap you want as a second input into **imshow**
+%[text] %[text:anchor:H_A11F52DB] You can easily change the colormap of an image by adding the name of the colormap you want as a second input into `imshow`
 imshow(img,hot) %[output:14914cbf]
 %[text] 
 %%
 %[text] %[text:anchor:H_43B31A2B] #### Now you try:
 %[text] - change the colormap to parula, hot, and bone \
 %%
-%[text] Notice what happens when you input a colormap into **`imhist`**
+%[text] Notice what happens when you input a colormap into `imhist`
 imhist(img, turbo) %[output:0b3327c7]
 %%
 %[text] %[text:anchor:T_CB6784C0] # Displaying multiple images in the same figure
-%[text] Like plots, you can display multiple images in the same figure using **`nexttile`**. 
+%[text] Like plots, you can display multiple images in the same figure using `nexttile`.
 %[text] First, load another image (choose the Full Moon Image):
 img2 = imread("FullMoonGray.png"); % moon image
 %%
 %[text] Then, display the two images in the same figure using `nexttile`:
 figure %[output:80af3b5d]
 
-tiledlayout("horizontal","TileSpacing","none","Padding","tight") %[output:80af3b5d]
+%tiledlayout("horizontal","TileSpacing","none","Padding","tight") %[output:80af3b5d]
 
 nexttile %[output:80af3b5d]
 imshow(img) % x-ray image %[output:80af3b5d]
@@ -175,7 +175,7 @@ title('Full Moon') %[output:80af3b5d]
 %[text] - What about Padding? \
 %%
 %[text] %[text:anchor:H_72865A17] ## Automating the Opening and Displaying of Multiple Images
-%[text] Say you have a series of images in a folder, and you want to open each of these images and display them in a single figure. To Do this, you need  need the following steps:
+%[text] Say you have a series of images in a folder, and you want to open each of these images and display them in a single figure. To do this, you need the following steps:
 %[text] 1. Create a File Path to each image
 %[text] 2. Load the Image
 %[text] 3. Create new tile
@@ -183,33 +183,33 @@ title('Full Moon') %[output:80af3b5d]
 %[text] 5. Title the image
 %[text] 6. Repeat \
 %[text] ### Exploring the contents in a folder
-%[text] For step 1, we need a way to get information about files in a folder. The function **`dir`** does just that
+%[text] For step 1, we need a way to get information about files in a folder. The function `dir` does just that
 mmSetUnitDataFolder(1) % switch to the unit1 data folder %[output:77c2abc9]
 contents = dir % get information about the contents in the current folder %[output:753aee8e]
-%[text] - notice **dir** returns a structure assigned here as *`contents`*
-%[text] - *`contents`* is a `22 X 1` structure. So, a structure with 22 elements.  \
+%[text] - notice `dir` returns a structure assigned here as `contents`
+%[text] - `contents` is a `23 x 1` structure. So, a structure with 23 elements.  \
 %%
-%[text] Each element in the structure is contains information about one of the items in the folder. For example, the fifth element contains information about the galton CSV file:
-contents(5) %[output:929d88b2]
-%[text] - We have the name, the location, the date of modification, size and whether or not its a folder (isdir). Its not: isdir = 0 \
-%[text] In fact, *`contents`* contains information about 22 different things in the folder, including two things called '.' and '..'. That is a secret programming code that we don't need to worry about right now. There is also information about other spreadsheet files, a matlab file (.MAT extension), and a folder ('weather\_data' is a folder, isdir = 1)
+%[text] Each element in the structure is contains information about one of the items in the folder. For example, the fourth element contains information about the galton CSV file:
+contents(4) %[output:929d88b2]
+%[text] - We have the name, the location, the date of modification, size and whether or not it's a folder (isdir). It's not: isdir = 0 \
+%[text] In fact, `contents` contains information about 23 different things in the folder, including two things called '.' and '..'. That is a secret programming code that we don't need to worry about right now. There is also information about other spreadsheet files, a matlab file (.MAT extension), and a folder ('weather\_data' is a folder, isdir = 1)
 %%
-%[text] If we just wanted to focus on the images, we can  add an input into **dir** to indicate the file extensions for the files that we want information on. Here we specify .PNG files
-contents = dir('*.png')% find only files in current folder with the .png extension %[output:031a0e5f]
+%[text] If we just wanted to focus on the images, we can add an input into `dir` to indicate the file extensions for the files that we want information on. Here we specify .PNG files
+contents = dir('*.png') % find only files in current folder with the .png extension %[output:031a0e5f]
 num_files = numel(contents) % numel returns the number of elements %[output:57d003f7]
 %[text] - the character array '\*' works as wildcard character meaning any name
 %[text] - So, this input means return information only on files with a .PNG extension
-%[text] - Notice that *`contents`* only has seven elements \
+%[text] - Notice that `contents` only has seven elements \
 %[text] -     This means that there are only seven files with a .PNG extension
 %[text] -     With this structure we now have enough information to load each image: we have the folder location and the name of the file.  \
 %[text] 
 %%
 %[text] %[text:anchor:H_99B1090B] ### Automating file path constructions
-%[text] To open a file, you need its file path. So, to automate opening a series of files, you need to first automate the sequential construction of multiple different file paths. The function **`fullfile`** does this for us. We simply enter the folder path and the file name and **`fullfile`** does the rest for us. The function `exist` makes sure that the created path actually points to something:
+%[text] To open a file, you need its file path. So, to automate opening a series of files, you need to first automate the sequential construction of multiple different file paths. The function `fullfile` does this for us. We simply enter the folder path and the file name and `fullfile` does the rest for us. The function `exist` makes sure that the created path actually points to something:
 n = 3 %[control:slider:3195]{"position":[5,6]} %[output:2a59f3a7]
 filepath = fullfile(contents(n).folder, contents(n).name) %[output:455b2018]
 exist(filepath,"file") % make sure this is an actual filepath pointing to an actual file %[output:4598dd08]
-%[text] - the function **`exist`** verifies that a file exists at that location. A output of 2 means that the path points to an actual file \
+%[text] - the function `exist` verifies that a file exists at that location. An output of 2 means that the path points to an actual file \
 %%
 %[text] #### Using a FOR LOOP to generate the file paths
 %[text] In the above code block, the only thing that changes is the index. We can take advantage of that fact and use a FOR LOOP to create file paths to each image on each iteration of the loop, as follows:
@@ -232,9 +232,9 @@ for n=1:numel(contents) %[output:group:79f35d67]
     nexttile % add a new tile %[output:80312aae]
     imshow(img) % display image
 
-    title(contents(n).name,Interpreter="none") % Use filename as title - without setting Interpreter set to none, underscores would indicate subscripts
+    title(contents(n).name,Interpreter="none") % Use filename as title - without setting Interpreter to none, underscores would indicate subscripts
 end %[output:group:79f35d67]
-%[text] - Notice that the only thing that changes in the FOR LOOP is the *`n`* iterator \
+%[text] - Notice that the only thing that changes in the FOR LOOP is the `n` iterator \
 %[text] A Key Concept in CODING is to create reusable code blocks (as opposed to copying the same or similar code over and over). This makes your code:
 %[text] - more compact
 %[text] - easier to change or update
