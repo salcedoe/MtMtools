@@ -5,8 +5,7 @@
 %[text] ### **Learning Objectives**
 %[text] - Define Population and Sample
 %[text] - Differentiate between Normal, Uniform, and Skewed Distributions visually
-%[text] - Understand what a Probability Distribution Function (PDF) does and how its used \
-%[text] ### 
+%[text] - Understand what a Probability Distribution Function (PDF) does and how it's used \
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 %%
@@ -15,18 +14,18 @@ close all
 clearvars
 %%
 %[text] %[text:anchor:H_A3851106] ### Global Font Setting
-%[text] The default font size of plots in MATLAB is rather small and not really suitable for publication. Also, the figure background is gray. The course function **`mmSetFigPublication`** changes the defaults, as follows:
+%[text] The default font size of plots in MATLAB is rather small and not really suitable for publication. Also, the figure background is gray. The course function `mmSetFigPublication` changes the defaults, as follows:
 mmSetFigPublication(14) %[output:26fced23]
 %%
 %[text] %[text:anchor:H_96C63FB6] ## Normal distributions
 %[text] When analyzing data, it is critical to visualize the distribution of the data. Visualizing the data gives you important information on how to proceed with the data analysis.  
-%[text] Let's start with some random data. The function **randn** creates a random set of numbers that are normally distributed.
+%[text] Let's start with some random data. The function `randn` creates a random set of numbers that are normally distributed.
 data_norm = randn(1000,1)*100+300; % vector of random, normally distributed numbers 
 %[text] Our data is a column vector with 1000 rows and 1 column. For fun, we multiply the values by 100 and then add 300 to get the values in the 100s range and mostly greater than 0.
 %[text] So, what does normally distributed mean? Let's find out
 %%
 %[text] ### Start with a Histogram
-%[text] We use the function **histogram** to visualize the distribution of the data. 
+%[text] We use the function `histogram` to visualize the distribution of the data.
 figure %[output:17538cb6]
 histogram(data_norm) %[output:17538cb6]
 xlabel('value'); ylabel('frequency') %[output:17538cb6]
@@ -36,7 +35,7 @@ xlabel('value'); ylabel('frequency') %[output:17538cb6]
 %%
 %[text] %[text:anchor:H_DEDD8A2C] ### Measurements of Central Tendency
 %[text] The following are common measurements used to summarize data
-%[text] - **Mean** - the average or most common value
+%[text] - **Mean** - the average value
 %[text] - **Median** - the middle value
 %[text] - **Mode** - the single most frequent value
 %[text] - **Standard Deviation** - a measure of how dispersed the data is in relation to the mean \
@@ -48,7 +47,7 @@ arguments
     DESC {mustBeText}
 end
 
-% Calculate Measures of Central Tendency and add to Z
+% Calculate Measures of Central Tendency and add to S
 S.data = DATA; % set data 
 S.desc = DESC; % description of the data distribution
 S.mean = mean(S.data); % Calculate the mean
@@ -67,11 +66,11 @@ nD = calcCentralTendencies(data_norm,'Normal') %[output:9f9c9dac]
 %[text] - Now you have a structure, `nD`, that packages the data and its measurements of central tendency
 %[text] - Notice that there is no `S` variable in the workspace? What happened to it?
 %[text] - For Normal distributions, the Mean, the Median, and the Mode should all be equal.
-%[text] - Here, they are  very, very close. They are not exactly equal because of the random variations in the dataset \
+%[text] - Here, they are very, very close. They are not exactly equal because of the random variations in the dataset \
 %[text] 
 %%
 %[text] %[text:anchor:H_7D71B5FA] ### Visualizing Measurements of Central tendency
-%[text] We can add our central tendency measurements to the histogram using the function **xline**, which plots a vertical line at the indicated x-coordinate  
+%[text] We can add our central tendency measurements to the histogram using the function `xline`, which plots a vertical line at the indicated x-coordinate
 figure %[output:33487760]
 histogram(nD.data,FaceAlpha=0.15) % Histogram with the transparency of the bars set to 0.15 %[output:33487760]
 xline(nD.mean,'c',LineWidth=2) % add to the plot a vertical line where the mean falls %[output:33487760]
@@ -82,17 +81,16 @@ xlabel('value'); ylabel('frequency') % label the x- and y- axes %[output:3348776
 %[text] - Change it back to Cyan with no label before continuing \
 %%
 %[text] %[text:anchor:H_93C6FE46] #### Now you try: 
-%[text] - Add an **`xline`** for the **median**. Make it magenta and dashed (`'m--'` )
-%[text] - Add an **`xline`** for the **mode**. Make it blue and dotted ( `'b:'` )  \
+%[text] - Add an `xline` for the **median**. Make it magenta and dashed (`'m--'`)
+%[text] - Add an `xline` for the **mode**. Make it blue and dotted (`'b:'`)  \
 %[text] 
 xline(nD.median,'m--') %[output:58cf2e32]
 xline(nD.mode,'b:') %[output:58cf2e32]
 %[text] 
 %%
-%[text] To add a legend, you use the function **`legend`****\*\*\*\*\*\*\*\*.**
+%[text] To add a legend, you use the function `legend`.
 legend("Data","Mean","Median","Mode",fontsize=12) %[output:8a1a073f]
 %[text] - you should have trouble differentiating between the three lines since the values are so close \
-%[text] ### 
 %%
 %[text] %[text:anchor:H_2B32EDF1] #### Standard deviation
 %[text] Adding Standard Deviation to the plot  
@@ -101,7 +99,7 @@ histogram(nD.data,FaceAlpha=0.15) % Histogram with the transparency of the bars 
 xline(nD.mean,'b',LineWidth=2) % mean %[output:25861a61]
 xline(nD.mean+nD.std,'m','+1SD') % +1SD %[output:25861a61]
 xline(nD.mean-nD.std,'m','-1SD') % -1SD %[output:25861a61]
-%[text] - The mean can be found in the  middle of a normal distribution
+%[text] - The mean can be found in the middle of a normal distribution
 %[text] - The standard deviation is plotted relative to the mean (+1 SD or -1SD from the mean) \
 %%
 %[text] ### The Normal Curve
@@ -119,7 +117,7 @@ plot(pd) %[output:0b4a0f51]
 %[text] 
 %%
 %[text] %[text:anchor:H_2AD001CB] #### The Standard Deviation and the Shape of the Normal Curve
-%[text] All you need to create a normal curve (or PDF)  is the mean and the standard deviation, which determine the position and the shape of the curve. In the following example, we create a normal curve using the **makedist** function, which accepts a mean and a standard deviation as inputs. 
+%[text] All you need to create a normal curve (or PDF)  is the mean and the standard deviation, which determine the position and the shape of the curve. In the following example, we create a normal curve using the `makedist` function, which accepts a mean and a standard deviation as inputs.
 %[text] Move the sliders to change the mean and/or the standard deviation and see how that affects the shape of the curve
 clf %[output:45261fa4]
 slider_mean = 2; % adjust the mean %[control:slider:6ea7]{"position":[15,16]}
@@ -149,10 +147,10 @@ plot(female.pd) % plots the normal curve %[output:00343b53]
 xline(female.mu,'m','mean',LineWidth=2,LabelOrientation='horizontal') %[output:00343b53]
 xline([female.mu-female.sigma female.mu+female.sigma],'k:',{'SD-1' 'SD+1'}) %[output:00343b53]
 grid minor %[output:00343b53]
-%[text] - `pd` contains the normal curve \
+%[text] - `female.pd` contains the normal curve \
 %%
 %[text] #### Probability of a Range of Heights
-%[text] We can use the function **normspec** to determine the probability of the range of heights of women between -1 SD and +1 SD from the mean
+%[text] We can use the function `normspec` to determine the probability of the range of heights of women between -1 SD and +1 SD from the mean
 p = normspec([female.mu-female.sigma female.mu+female.sigma], female.mu, female.sigma); % get probability %[output:6de7134a]
 grid minor %[output:6de7134a]
 fprintf('There is a probability of %1.2f%% that a woman''s height will fall between %1.2f" and %1.2f".', ... %[output:group:9e8fb593] %[output:35fd036a]
@@ -163,7 +161,7 @@ fprintf('There is a probability of %1.2f%% that a woman''s height will fall betw
 %%
 %[text] #### Probability of a Single Height (Percentile)
 %[text] So, how tall (or likely) is a 6'10" woman?
-%[text] The function `cdf` calculates the cumulative probability of a single value in relation to the normal curve. Here we plug in our Normal Curve object for Female Heights,  female.`pd` 
+%[text] The function `cdf` calculates the cumulative probability of a single value in relation to the normal curve. Here we plug in our Normal Curve object for Female Heights, `female.pd`
 p = cdf(female.pd,70) % cumulative probability up to 70" %[output:7f41f8e1]
 fprintf('A 70" woman is taller than %1.2f%% of all women.',p*100) %[output:493616fa]
 %[text] - aka 99th percentile \
@@ -175,7 +173,7 @@ xline(70,'m--',"tall") %[output:9fb6a196]
 %[text] 
 %%
 %[text] %[text:anchor:H_CD844226] ### Example: Men's Height
-%[text] Men, on average are 69 inches  (5' 9") with a standard deviation of 3"
+%[text] Men, on average are 69 inches (5' 9") with a standard deviation of 3"
 male.mu = 69; % mean height
 male.sigma = 3; % std height
 male.pd = makedist("Normal",  "mu",male.mu,"sigma",male.sigma); % create a PDF for male heights
@@ -189,7 +187,7 @@ plot(male.pd) % plot male PDF %[output:1d2a69fe]
 grid minor %[output:1d2a69fe]
 xline(male.mu,'k--','Mean',LineWidth=1) %[output:1d2a69fe]
 
-xline([male.mu-female.sigma male.mu+female.sigma],'k:',{'SD -1' 'SD +1'}) %[output:1d2a69fe]
+xline([male.mu-male.sigma male.mu+male.sigma],'k:',{'SD -1' 'SD +1'}) %[output:1d2a69fe]
 legend("Female","Male") %[output:1d2a69fe]
 %[text] - Notice that there is an overlap in height
 %[text] - Meaning that a certain percentage of women are equal to or taller in stature than men
@@ -199,7 +197,7 @@ legend("Female","Male") %[output:1d2a69fe]
 %[text] %[text:anchor:H_00B04914] #### Where are my Short Kings at?
 %[text] Shorter than one standard deviation of the mean is
 h = male.mu-male.sigma %[output:23e9d9dc]
-%[text] 5 foot 6'
+%[text] 5'6"
 %[text]  The area under the curve for 66 inches for the male PDF is 
 p = cdf(male.pd,h) %[output:893bfdf3]
 %%
@@ -227,7 +225,7 @@ uD= calcCentralTendencies(rand(1000,1)*800, 'Uniform') %[output:9dc1ee32]
 %[text] - What does the function `normrnd` do?
 %[text] - What does the function `rand` do?
 %[text] - notice the data for each distribution is 1000 X 1 vector in each case
-%[text] - Notice how for both distrubtions the Mean, Median, and Mode are NOT very close at all \
+%[text] - Notice how for both distributions the Mean, Median, and Mode are NOT very close at all \
 %%
 %[text] ### Histograms of our data sets
 figure; %[output:64fc6607]
@@ -255,7 +253,7 @@ title(rD.desc) %[output:64fc6607]
 %[text] - What do you think Uniform means? How likely is any given value in the dataset? What Casino Related device might generate a uniform data distribution? \
 %%
 %[text] ### Fit Normal Curves to the Histograms
-%[text] The MATLAB function `histfit plots a histogram and overlays the normal curve`
+%[text] The MATLAB function `histfit` plots a histogram and overlays the normal curve
 figure; %[output:0da73aba]
 
 nexttile % add new tile for normal data %[output:0da73aba]
@@ -274,9 +272,9 @@ nexttile % right skewed %[output:0da73aba]
 histfit(rD.data)  %[output:0da73aba]
 title(rD.desc) %[output:0da73aba]
 %[text] - Which data set is best represented by the Normal Curve?
-%[text] - Which data sets are poorly represented by the Normal Curve \
+%[text] - Which data sets are poorly represented by the Normal Curve? \
 %%
-%[text] The function  **myHistOverlay** plots the histogram and overlays the Summary Statistics
+%[text] The function `myHistOverlay` plots the histogram and overlays the Summary Statistics
 function myHistOverlay(S)
 
 % Plot the data
@@ -323,7 +321,7 @@ errorbar([nD.mean lD.mean rD.mean uD.mean],[nD.std lD.std rD.std uD.std],'k',Lin
 xticklabels({nD.desc lD.desc rD.desc uD.desc}) % labeling the ticks %[output:8d0e003b]
 %[text] - Bar plots give very little information about the distribution of the data and may be misleading
 %[text] - For example, there is no evidence of the skewed nature of the data by just looking at the mean and standard deviation
-%[text] - Bar plots should only be used for normal data, since normal data are best represented by the mean  and standard deviation.  \
+%[text] - Bar plots should only be used for normal data, since normal data are best represented by the mean and standard deviation.  \
 %%
 %[text] #### Box plot of Normal Data
 %[text] A box plot visualizes the summary statistics. Here we compare visualizations of the same data as a box plot and a histogram. We have turned the histogram on its side for comparison
@@ -356,22 +354,22 @@ linkaxes(ax,'y') % match the axes properties for easier comparison %[output:8bb5
 %[text] - Also notice that the whiskers extend to equal lengths on either side of the box
 %[text] - The interquartile range is not the same thing as the standard deviation
 %[text] -     interquartile range contains 50% of the data
-%[text] -     ± 1SD contains 67% of the data \
+%[text] -     ± 1SD contains 68% of the data \
 %[text] ![](text:image:5a3d)
 %%
 %[text] #### Box Plot Comparisons
-%[text] Here are all of our dataset visualized as Box Plots. Note, the following syntax works because each dataset is column vector of the same size (1000x1)
+%[text] Here are all of our dataset visualized as Box Plots. Note, the following syntax works because each dataset is a column vector of the same size (1000x1)
 figure %[output:1b559108]
 boxchart([nD.data lD.data rD.data uD.data]) % create box plots, one column for each plot %[output:1b559108]
 xticklabels({nD.desc lD.desc rD.desc uD.desc}) % change x-axis tick labels %[output:1b559108]
 ylabel('Value') %[output:1b559108]
 %[text] - Notice the location of the median inside the interquartile box are not centered in the skewed data
 %[text] - Notice the distribution of outliers
-%[text] - Notice that Uniform looks pretty symmetric but its not normal data \
+%[text] - Notice that Uniform looks pretty symmetric but it's not normal data \
 %[text] So, while box plots are compact, you still lose some information about the true distribution of the data
 %%
 %[text] ### Swarm, swarm, swarm
-%[text] Swarm charts plot ALL the data,  You get one dot for each data point. This makes it easy to spot distribution trends. 
+%[text] Swarm charts plot ALL the data. You get one dot for each data point. This makes it easy to spot distribution trends.
 %[text] Here is the normal data as a swarm chart with a box chart overlay (using the course function `mmBoxSwarm`)
 figure %[output:5754d5ab]
 tiledlayout("horizontal") %[output:5754d5ab]
@@ -383,7 +381,7 @@ grid on  %[output:5754d5ab]
 
 ax(2) = nexttile; % histogram chart %[output:5754d5ab]
 histogram(nD.data,Orientation="horizontal") % plot histogram %[output:5754d5ab]
-yline(nD.median,'m--',"mean",LineWidth=2,FontSize=9) % add median line %[output:5754d5ab]
+yline(nD.median,'m--',"median",LineWidth=2,FontSize=9) % add median line %[output:5754d5ab]
 grid on % turn on grid %[output:5754d5ab]
 title("Histogram") % add title %[output:5754d5ab]
 xlabel('Frequency') % label the X axis %[output:5754d5ab]
@@ -393,7 +391,7 @@ linkaxes(ax,'y') % match the y-axes properties for comparison %[output:5754d5ab]
 %[text] - Notice that we don't have an x-axis — Swarm charts are 1D plots with random variations along the x-axis (jitter) to illustration distribution trends \
 %%
 %[text] #### Swarm Chart Comparison
-%[text] Here we plot all the datasets has a swarm charts, one axis for each plot
+%[text] Here we plot all the datasets as swarm charts, one axis for each plot
 figure; %[output:46573145]
 tiledlayout("horizontal") %[output:46573145]
 
@@ -415,8 +413,8 @@ mmBoxSwarm([],uD.data) % uniform %[output:46573145]
 title(uD.desc) %[output:46573145]
 %[text] - Swarm Charts are more compact than Histograms
 %[text] - Notice how much easier it is to determine the distribution of the data using a swarm chart, especially when you have a lot of data points
-%[text] - The shape of the swarm chart is determined by  math similar to that used to create Normal Curves (kernel density estimates)
-%[text] - You can clear see the long tails in the skewed data
+%[text] - The shape of the swarm chart is determined by math similar to that used to create Normal Curves (kernel density estimates)
+%[text] - You can clearly see the long tails in the skewed data
 %[text] - The distribution of the uniform data is uniformly distributed along the length of the plot \
 %%
 %[text] ### Violin Plots
@@ -431,7 +429,7 @@ grid on  %[output:9a526256]
 
 ax(2) = nexttile; % histogram chart %[output:9a526256]
 histogram(nD.data,Orientation="horizontal") % plot histogram %[output:9a526256]
-yline(nD.median,'m--',"mean",LineWidth=2,FontSize=9) % add median line %[output:9a526256]
+yline(nD.median,'m--',"median",LineWidth=2,FontSize=9) % add median line %[output:9a526256]
 grid on % turn on grid %[output:9a526256]
 title("Histogram") % add title %[output:9a526256]
 xlabel('Frequency') % label the X axis %[output:9a526256]
@@ -448,7 +446,7 @@ violinplot([nD.data lD.data rD.data uD.data]) %[output:2cebe500]
 xticklabels({nD.desc lD.desc rD.desc uD.desc}) %[output:2cebe500]
 ylabel('Value') %[output:2cebe500]
 grid on %[output:2cebe500]
-%[text] - notice that the shapes are a bit more stylized then the swarm charts \
+%[text] - notice that the shapes are a bit more stylized than the swarm charts \
 %%
 %[text] #### Violin plots take some liberties with the distribution
 %[text] Here we overlay box plots to show where the medians and outliers fall
@@ -458,17 +456,16 @@ boxchart([nD.data lD.data rD.data uD.data],BoxFaceColor='k') %[output:4ead4b1c]
 %[text] - The outliers in the skewed data do not extend past the violin plots \
 %[text] 
 %%
-%[text] #### 
-%%
+%[text] #### IQR vs. Standard Deviation
 %[text] How does the interquartile range compare to ± 1 SD?
 xline(nD.mean+nD.std,'m','+1SD') % +1SD line %[output:474d990c]
 xline(nD.mean-nD.std,'m','-1SD') % -1SD line %[output:474d990c]
-%[text] -  \
 %%
 %[text] %[text:anchor:H_E736EFD0] ### The swarm chart and box plot
-%[text] A swarm chart plots every single data point, jittering the x-position to separate all the points. 
+%[text] A swarm chart plots every single data point, jittering the x-position to separate all the points.
 %[text] - Swarm charts require both an x and y vector
-%[text] - Since we just have one group of data, we can se the x to a vector of ones that are the same size as the data \
+%[text] - Since we just have one group of data, we can set the x to a vector of ones that are the same size as the data \
+data_Normal = nD.data; % rename for use with myBoxSwarmChart below
 figure(Visible="on")
 x = ones(1, numel(data_Normal)); % create a vector of ones %[output:5d3f32da]
 y = data_Normal; % set y to the data
@@ -483,7 +480,7 @@ boxchart(x,y)
 %%
 %[text] %[text:anchor:H_7743439C] ### Box plot Swarm Chart function
 %[text] Just like for the histogram, we can create a function to simplify overlaying box and swarm charts together. 
-%[text] The function is called **myBoxSwarmChart** and it takes one input, Y. Input the data into Y
+%[text] The function is called `myBoxSwarmChart` and it takes one input, Y. Input the data into Y
 function myBoxSwarmChart(Y)
 
 desc = extractAfter(inputname(1),'_'); % get name of inputted variable
@@ -497,7 +494,9 @@ end
 %%
 %[text] %[text:anchor:H_B94BD656] #### **Now you try**
 %[text] - Create a figure with 3 horizontal tiles.
-%[text] - Use **myBoxSwarmChart** to plot the Normal, Nonparametric, and Uniform data \
+%[text] - Use `myBoxSwarmChart` to plot the Normal, Nonparametric, and Uniform data \
+data_Nonparametric = rD.data; % using the right-skewed data as our nonparametric example
+data_Uniform = uD.data;
 figure(Visible="on")
 tiledlayout("horizontal")
 
@@ -511,7 +510,7 @@ myBoxSwarmChart(data_Nonparametric)
 nexttile
 myBoxSwarmChart(data_Uniform)
 %[text] - Easier to represent the data in a tighter space
-%[text] - However, using just the boxplot does accurately represent the distribution of the data
+%[text] - However, using just the boxplot does not accurately represent the distribution of the data
 %[text] - In the nonparametric plot, the median is not in the center of the boxplot \
 %%
 %[text] %[text:anchor:H_A39B64C3] ## Sample Size
