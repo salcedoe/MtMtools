@@ -10,15 +10,15 @@ mmSetUnitDataFolder(1) %[output:036aef60]
 img = imread("xray-head.png");
 %%
 %[text] %[text:anchor:H_B7DD8D6A] ## Display image and histogram
-%[text] The function **mmShowHist** is a function that I wrote to display the image and its histogram in the same figure. This function is part of the Muddling Through MATLAB course functions (MtMfns). 
+%[text] The function `mmShowHist` is a function that I wrote to display the image and its histogram in the same figure. This function is part of the Muddling Through MATLAB course functions (MtMfns).
 fh = figure; %[output:691f9833]
 mmShowHist(img) %[output:691f9833]
 %%
-%[text] Most of the Mastering MATLAB functions start with the prefix mm. You can bring up the help for these functions as follows
+%[text] Most of the Muddling Through MATLAB functions start with the prefix `mm`. You can bring up the help for these functions as follows
 help mmShowHist
 %%
 %[text] %[text:anchor:H_E180C97A] ## Global Pixel Intensity Variation 
-%[text] So, what do you think will happen to an image's histogram if we add 50 to all of the pixel intensities in the  image? Or if we subtract 50?
+%[text] So, what do you think will happen to an image's histogram if we add 50 to all of the pixel intensities in the image? Or if we subtract 50?
 figure % reset figure %[output:3f51c324]
 
 %Set the slider to a value you want to add (or subtract) from img
@@ -65,8 +65,8 @@ for n=1:num_cols %[output:group:992dce9b]
 end %[output:group:992dce9b]
 %%
 %[text] %[text:anchor:H_723BE5CF] ## Bit Depth Considerations
-%[text] Sometimes the lack of contrast in an image can be due to a mismatch between the bit depth of the image and the lookup table. Remember, the smallest bit depth that a variable can have is 8-bits. Everything goes up 8-bits from there: 8-bit, 16-bit, 32-bit, 64-bit, etc. The lookup tables used to display the images are based on this bit depth. So, for an 8-bit image, you'll have a 256 shades of gray. For a 16-bit image, 65,355 shades of gray. 
-%[text] For example, considers what happens when we typecast our image to different classes
+%[text] Sometimes the lack of contrast in an image can be due to a mismatch between the bit depth of the image and the lookup table. Remember, the smallest bit depth that a variable can have is 8-bits. Everything goes up 8-bits from there: 8-bit, 16-bit, 32-bit, 64-bit, etc. The lookup tables used to display the images are based on this bit depth. So, for an 8-bit image, you'll have 256 shades of gray. For a 16-bit image, 65,536 shades of gray.
+%[text] For example, consider what happens when we typecast our image to different classes
 clf %[output:2344e3ae]
 nexttile; imshow(img); title('original'); colorbar %[output:2344e3ae]
 nexttile; imshow(uint16(img)); title('16-bit'); colorbar %[output:2344e3ae]
@@ -93,7 +93,7 @@ for n=1:3
     imhist(imgs{n})
 end
 impixelinfo %[output:94260660]
-%[text] - notice as you move around the images, that there are pixel intensities — They are just not being shown correctly \
+%[text] - notice as you move around the images, that there are pixel intensities — they are just not being shown correctly \
 %%
 %[text] %[text:anchor:H_2409C8C8] ### Example: Low Dynamic Range
 %[text] If the maximum pixel intensity in your image is much smaller than the class maxima, then your image is going to look underexposed. This is known as having a low dynamic range. 
@@ -136,26 +136,26 @@ imageViewer(img)
 %%
 %[text] %[text:anchor:H_99267B16] ### Image Normalization
 %[text] One simple trick you can do when you have low dynamic range is to normalize the image. Normalize basically means to divide all of the intensities by the maximum intensity, so that the pixel intensities range from 0 to 1. A normalized image is converted to a double, so you can effectively have any number of shades of gray you want. 
-%[text] The function **mat2gray** normalizes the image 
+%[text] The function `mat2gray` normalizes the image
 imgn = mat2gray(img);
 figure %[output:439bfd30]
 imshow(imgn) %[output:439bfd30]
 impixelinfo %[output:439bfd30]
 colorbar %[output:439bfd30]
 fprintf('Max Pixel Intensity = %1.2f',max(imgn(:))) %[output:5fb919e4]
-%[text] - notice that ***`imgn`*** is a double
+%[text] - notice that `imgn` is a double
 %[text] - Scrub around the image and notice that the pixel values are now fractions that fall between 0 and 1
 %[text] - The maximum pixel intensity = 1 \
 %%
 %[text] %[text:anchor:H_7BAFF5AF] #### Histogram adjustment (imadjust)
-%[text] For this image, normalizing made the brightest intensities visible.  But the contrast remains low because there are lot of intensity values that still fall in the black zone of the lookup table. 
+%[text] For this image, normalizing made the brightest intensities visible. But the contrast remains low because there are a lot of intensity values that still fall in the black zone of the lookup table.
 %[text] Let's look at the histogram. 
 figure %[output:5ac36c60]
 mmShowHist(imgn) %[output:5ac36c60]
 %[text] - notice where the majority of the pixel intensities are falling \
 %%
 %[text] %[text:anchor:H_CC154637] ### But wait, there's a better way
-%[text] The function **imadjust** can stretch out the histogram to improve the dynamic range
+%[text] The function `imadjust` can stretch out the histogram to improve the dynamic range
 imga = imadjust(imgn);
 
 figure %[output:2a4ee9a5]
@@ -171,12 +171,12 @@ mmShowHist(imga,3,3,"imadjust") %[output:372c415e]
 %[text] - Notice in the imadjust histogram, the blue lines touch both sides of the histogram: 0 and the max value \
 %%
 %[text] %[text:anchor:H_2FFFD1D3] #### Other Histogram adjusting techniques
-%[text] The function **histeq** enhances contrast by binning the intensity values into an set number of bins across the histogram
+%[text] The function `histeq` enhances contrast by binning the intensity values into a set number of bins across the histogram
 clf
 mmShowHist(imgn,1,3,"normalized")
 mmShowHist(histeq(imgn,3), 2,3,"histeq 3 bins")
-mmShowHist(histeq(imgn,30),3,3,"histeq 50 bins")
-%[text] - Instead of a smoother distribution of pixels, the adjusted histograms has a limited set of bins (those sparse blue lines) and there only few set shades of gray \
+mmShowHist(histeq(imgn,30),3,3,"histeq 30 bins")
+%[text] - Instead of a smoother distribution of pixels, the adjusted histograms have a limited set of bins (those sparse blue lines) and there are only a few shades of gray \
 %%
 %[text] %[text:anchor:H_E3699E7C] #### Non-linear histogram adjustment (gamma)
 %[text] %[text:anchor:H_6A779428] We can also adjust the histogram in a non-linear fashion
@@ -188,7 +188,7 @@ mmShowHist(histeq(imgn,30),3,3,"histeq 50 bins")
  imshow(imgg) %[output:760254d3]
 %%
 %[text] %[text:anchor:H_B98FED12] #### GAMMA Histogram comparison 
-%[text] Use more inputs into **imadjust** to change the gamma of the histogram
+%[text] Use more inputs into `imadjust` to change the gamma of the histogram
 clf %[output:3e1add93]
 gamma = [1 .05 0.1 0.5 1.1];
 num_cols = numel(gamma);
@@ -201,12 +201,12 @@ for n=1:num_cols %[output:group:0be341a9]
 end %[output:group:0be341a9]
 %[text] - A gamma of 1 is basically unchanged
 %[text] - Notice the changes in the shape of the histogram
-%[text] - Low gamma values shifts the histogram to the RIGHT
-%[text] - High gamma values shifts the histogram to the LEFT \
+%[text] - Low gamma values shift the histogram to the RIGHT
+%[text] - High gamma values shift the histogram to the LEFT \
 %[text] **YOU TRY:** what would a gamma of 2 look like?
 %%
 %[text] %[text:anchor:H_26E4FE9B] ### Complement
-%[text] The complement of an image is like its digital negative: High intensity are converted to low intensities and vice-versa. 
+%[text] The complement of an image is like its digital negative: High intensities are converted to low intensities and vice versa.
 %[text] Here is the complement of the image
 figure; %[output:8450bdad]
 imshow(imcomplement(imga)) %[output:8450bdad]
@@ -264,22 +264,22 @@ title('original | sharpened') %[output:87155950]
 %[text] - you try it: adjust the radius and the amount \
 %%
 %[text] %[text:anchor:H_5C88AD3B] ### Average filter
-%[text] To create and implement an average filter you use two functions: **fspecial** and **imfilter**
+%[text] To create and implement an average filter you use two functions: `fspecial` and `imfilter`
 avg = fspecial("average",[3 3]);
 moonAvg = imfilter(blurry_moon, avg,"symmetric");
 imshowpair(blurry_moon, moonAvg,'montage') %[output:18aab8f8]
 title('original | average') %[output:18aab8f8]
-%[text] - the average filter has smooth out some of the bumps \
+%[text] - the average filter has smoothed out some of the bumps \
 %%
 %[text] %[text:anchor:H_1AE4C538] ## Gaussian Filter
 %[text] Smears images - helps reduce noise
 img_filt = imgaussfilt(blurry_moon, 3);
 imshowpair(blurry_moon,img_filt,'montage') %[output:4b6c7eab]
 title('original | gaussian blur', 'FontSize',16) %[output:4b6c7eab]
-%[text] - try it yourself: change the second input into **imgaussfilt** \
+%[text] - try it yourself: change the second input into `imgaussfilt` \
 %%
 %[text] %[text:anchor:H_4C282A2F] ## Cleaning up Noise
-%[text] The Median Filter is best used for cleaning up speckled noise. First we will add noise to the image using the **imnoise** function
+%[text] The Median Filter is best used for cleaning up speckled noise. First we will add noise to the image using the `imnoise` function
 img_nz = imnoise(imga,'salt & pepper');
 figure %[output:786bb07e]
 imshow(img_nz) %[output:786bb07e]
@@ -292,7 +292,7 @@ imshowpair(img_nz, img_median,'montage') %[output:4213bb76]
 title('Noisy | Cleaned up') %[output:4213bb76]
 %%
 %[text] %[text:anchor:H_20C6A1A1] ## Uneven Background
-%[text] The function **adapthisteq**  adjusted the histogram using kernel. This is known as Contrast-limited adaptive histogram equalization (CLAHE).
+%[text] The function `adapthisteq` adjusts the histogram using a kernel. This is known as Contrast-limited adaptive histogram equalization (CLAHE).
 %[text] This is especially important for images with uneven background. 
 %[text] Consider the following image
 close all
@@ -305,7 +305,7 @@ imshow(book) %[output:5a9a66b1]
 %[text] - There is extensive shadowing on the pages that affect the contrast of the text
 %[text] - But there are some bright spots as well \
 %%
-%[text] Using the global histogram adjustments  doesn't quite fix the problem
+%[text] Using the global histogram adjustments doesn't quite fix the problem
 % figure(Visible="on")
 clf %[output:14ac91bf]
 tiledlayout("flow",TileSpacing="tight",Padding="tight"); %[output:14ac91bf]
@@ -320,9 +320,9 @@ for n=1:numel(i) %[output:group:32d66e01]
     imshow(i{n})
     title(title_str(n))
 end %[output:group:32d66e01]
-%[text] - there is still extensively shadowing throughout the pages \
+%[text] - there is still extensive shadowing throughout the pages \
 %%
-%[text] But the function **adapthisteq** works quite nicely in this situation
+%[text] But the function `adapthisteq` works quite nicely in this situation
 i{end+1} = adapthisteq(book);
 title_str(end+1) = 'adapthisteq';
 nexttile %[output:0c0c8863]

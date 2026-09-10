@@ -1,7 +1,7 @@
 %[text] %[text:anchor:T_185EE406] # Region properties
 %[text] Great. So we made some masks. Now what?
 %[text] Now we measure stuff. 
-%[text] In the context of measuring stuff, masks are referred to as regions, and the stuff you are measure as the region properties. Properties can be things like count, area, length, or circularity, or image intensity in a given region. 
+%[text] In the context of measuring stuff, masks are referred to as regions, and the stuff you are measuring as the region properties. Properties can be things like count, area, length, or circularity, or image intensity in a given region.
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] %[text:anchor:H_247859AB] ## Measuring Masks
 %[text] ### Example: Estimate Pixel Size in the Moon Image
@@ -20,14 +20,14 @@ figure %[output:12e3608a]
 imshowpair(img,moon_mask) %[output:12e3608a]
 title('Mask Overlay on Moon') %[output:12e3608a]
 %%
-%[text] To estimate the size of the pixel, we need a known distance on the actual moon and the same distance, in pixels, on the image of the moon. One such distance is the [diameter of the moon](https://share.google/LyjnTIcw0lhwth3Uk), which is 2150.1 miles.  On our image, we can measure the sam diameter of the moon in pixels. If we divide the distance in miles by the distance in pixels, then we can use the handy ratio of miles/pixel to estimate the size of a pixel in our image. 
+%[text] To estimate the size of the pixel, we need a known distance on the actual moon and the same distance, in pixels, on the image of the moon. One such distance is the [diameter of the moon](https://share.google/LyjnTIcw0lhwth3Uk), which is 2159.1 miles. On our image, we can measure the same diameter of the moon in pixels. If we divide the distance in miles by the distance in pixels, then we can use the handy ratio of miles/pixel to estimate the size of a pixel in our image. 
 %[text] To measure the diameter of the moon, we could simply draw a line from one edge of the moon to the other, making sure that we pass through the exact center of the moon. Or, for a little more precision, we could capture the mask of the moon, calculate the area of this mask, and then calculate the diameter from the Area, using geometry:
 %[text] $\\begin{array}{l}\nA=\\pi r^2 \\\\\nr^2 =\\frac{A}{\\pi }\\\\\nr=\\sqrt{\\frac{A}{\\pi }}\\\\\nd=r\*2\n\\end{array}${"editStyle":"visual"}
 %[text] Here are those calculations in MATLAB:
 moon_area = sum(moon_mask(:)); % add up all trues in the mask to calculate area
 moon_radius = sqrt(moon_area / pi);  % calculate the radius from area
 moon_diameter_px = moon_radius * 2; % diameter in pixels
-%[text] Plus, we create a new variable called ***moon\_diameter*** that contains the diameter of the moon in miles. 
+%[text] Plus, we create a new variable called `moon_diameter_miles` that contains the diameter of the moon in miles.
 moon_diameter_miles = 2159.1 % in miles %[output:271a5a04]
 %%
 %[text] To estimate the size of a pixel, we need to divide the miles by the pixels to get miles-per-pixel, as follows:
@@ -38,7 +38,7 @@ calculations = table(moon_area, moon_radius, moon_diameter_miles, moon_diameter_
 fprintf('A pixel in the moon image is approx. %1.4f miles wide (and tall)!\n', pixel_size) %[output:3caacc8d]
 %%
 %[text] %[text:anchor:H_808CA1E9] ### Diameter of Tycho Crater
-%[text] Now that we know the size of a pixel, we can use this information to measure things on the moon, like the diameter of the Tycho Crater. Use the ruler in **imageViewer** to measure the longest diameter of the crater. Be sure to measure through the center of the crater.
+%[text] Now that we know the size of a pixel, we can use this information to measure things on the moon, like the diameter of the Tycho Crater. Use the ruler in `imageViewer` to measure the longest diameter of the crater. Be sure to measure through the center of the crater.
 %[text] Tips:
 %[text] 1. Right-click on the ruler added to the image and set "Show Distance Label" to "Label off"
 %[text] 2. Resize the ruler by dragging on the end points
@@ -50,7 +50,7 @@ fprintf('A pixel in the moon image is approx. %1.4f miles wide (and tall)!\n', p
 figure(Visible="on"); %[output:06588946]
 imshow(img) %[output:06588946]
 text(1015, 1863, '*','Color','r') % plot an asterisks on the image %[output:06588946]
-%[text] The function **imdistline** lets you draw a line on the image. 
+%[text] The function `imdistline` lets you draw a line on the image.
 d = imdistline %[output:06588946] %[output:60ce7791]
 %%
 %[text] %[text:anchor:H_97E09439] ### How big is the Tycho Crater?
@@ -81,16 +81,16 @@ imshowpair(img,mask) %[output:8ff5d0cc]
 %[text] - We can use this mask to calculate properties of the coins, like area and location \
 %%
 %[text] %[text:anchor:H_C21BB709] ## Calculate region properties of the mask
-%[text] Once we have create the mask of the coins, we plug the mask into the **regionprops** function to calculate the region properties.
+%[text] Once we have created the mask of the coins, we plug the mask into the `regionprops` function to calculate the region properties.
 %[text] Here we indicate that the function should calculate Area, Bounding Box, Centroid, and Equivalent Diameter. There are many more properties you can calculate, as indicated in the [regionprops documentation](https://www.mathworks.com/help/images/ref/regionprops.html). 
 rp = regionprops('table',mask,["Area", "BoundingBox","Centroid","EquivDiameter"]) %[output:54d118c7]
-%[text] - The first input `table` means that the function should return a table. So, `rp` is a table contain the properties of the coins
+%[text] - The first input `table` means that the function should return a table. So, `rp` is a table that contains the properties of the coins
 %[text] - Since there are 8 rows in the table, there are 8 regions identified, which corresponds to the number of coins in the image
 %[text] - Here we calculate Area, Centroid, and BoundingBox, and Equivalent Diameter \
 %%
 %[text] %[text:anchor:H_EFC8FC84] ### Location of Coins in the Image
 %[text] The Centroid property returns the X and Y coordinates of the centers of each coin. Objects are identified column by column, left to right, so the order of the rows in the table is roughly equivalent to the column major order of the coins. 
-%[text] We can use the centroid to label an object with its row number using the function **`text`**, as follows:
+%[text] We can use the centroid to label an object with its row number using the function `text`, as follows:
 figure %[output:8ae8a482]
 imshow(img) % display image %[output:8ae8a482]
 n=1; % set row number
@@ -99,7 +99,7 @@ y = rp.Centroid(n,2); % Y coordinate of n  object found
 text(x,y,num2str(n),HorizontalAlignment='center',Color='cyan') % adds text to image %[output:8ae8a482]
 %[text] - notice that even though we created the region properties on the mask, the properties are still relevant to the original image. \
 %%
-%[text] A bounding box is basically a box that surrounds the region. We can add a bounding box to the image using the function **`rectangle`**. 
+%[text] A bounding box is basically a box that surrounds the region. We can add a bounding box to the image using the function `rectangle`.
 rectangle('Position',rp.BoundingBox(n,:),EdgeColor='magenta') % adds bounding box to image %[output:22c824c5]
 %%
 %[text] With a FOR LOOP, we can label all the identified objects
@@ -112,10 +112,10 @@ for n=1:height(rp) % iterate for the number of rows in rp %[output:group:0ee7551
     rectangle('Position',rp.BoundingBox(n,:),EdgeColor='magenta') % add bounding box
 end %[output:group:0ee7551c]
 %[text] - notice the ordering is actually a little unexpected
-%[text] - Likely there may be a piece of 3 that is a little further to the left of 4, and 5 of 6 \
+%[text] - This is likely because coin 3 sits slightly lower than coin 4 (and coin 5 slightly lower than coin 6), so MATLAB's column-major scan labels the lower coin first in those columns \
 %%
 %[text] %[text:anchor:H_5692FF35] ### Property visualization
-%[text] Since we calculated  bunch of properties, we should visualize these properties. 
+%[text] Since we calculated a bunch of properties, we should visualize these properties.
 %[text] Since we are about to create figures, we should run our figure publication function to standardize the appearance of our figures
 mmSetFigPublication(14) %[output:46df25ac]
 %[text] - This function sets the default figure color and font size \
@@ -141,10 +141,10 @@ histogram(rp.EquivDiameter,4) %[output:8ae3f83a]
 %%
 %[text] %[text:anchor:H_D7630262] ### Automatically Create Categorical Labels
 %[text] Wouldn't it be nice to label the data by coin? Since the coins have standardized dimensions, we can use the equivalent diameter of the regions to identify the different coins. 
-%[text] The function **discretize** can help with this by binning the properties into different categories.
-%[text] For the function **discretize**, you input the property you want to bin, the number of bins that you want to create, and a list of categories for each bin, and the function does the rest, rather amazingly.
-%[text] We'll use the equivalent diameter column since its values are very different for the different coins, with dimes being the smallest and quarters the largest. These are easy to bin to different categories using our handy **discretrize** function.
-%[text] Here we discretize the Equivalent Diameter column into 4 bins and create a new column called **Coin.**
+%[text] The function `discretize` can help with this by binning the properties into different categories.
+%[text] For the function `discretize`, you input the property you want to bin, the number of bins that you want to create, and a list of categories for each bin, and the function does the rest, rather amazingly.
+%[text] We'll use the equivalent diameter column since its values are very different for the different coins, with dimes being the smallest and quarters the largest. These are easy to bin into different categories using our handy `discretize` function.
+%[text] Here we discretize the Equivalent Diameter column into 4 bins and create a new column called `Coin`.
 rp.Coin = discretize(rp.EquivDiameter,4,"categorical", ... %[output:group:043aa785] %[output:0e41819f]
     {'dime','penny','nickel','quarter'}) %[output:group:043aa785] %[output:0e41819f]
 %[text] - Note, the order of the inputted categories is critical to make this work, since this bins by diameter
@@ -187,10 +187,10 @@ rp.EquivDiameterIn = rp.EquivDiameter*factor %[output:9cab6292]
 %%
 %[text] %[text:anchor:H_134347DA] ### Exercise: Calculate mean intensity of the coin
 %[text] You can also use regionprops to calculate properties on the image being masked. For example, we can calculate the mean intensity of each coin.
-%[text] To do so, you input both the mask and the image into **`regionprops,`** 
+%[text] To do so, you input both the mask and the image into `regionprops`,
 rp = regionprops('table',mask,img,["Area","Centroid","EquivDiameter","MeanIntensity"]) %[output:1d0b9365]
-%[text] 
-%[text] `rp = regionprops(``'table'``,mask,img,``'all'``)`
+%[text]
+%[text] `rp = regionprops('table',mask,img,'all')`
 %[text] - The first input tells regionprops to return a table. If you forget this input, you get a structure (and all confused).
 %[text] - By including the image data as the third input, regionprops can calculate properties like mean and max intensity of the dots. \
 %[text] 

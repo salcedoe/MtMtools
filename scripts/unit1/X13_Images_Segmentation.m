@@ -1,7 +1,7 @@
 %[text] %[text:anchor:T_CD677283] # Segmentation
 %[text] **Segmentation** is used to locate objects or boundaries in an image. You typically segment images to identify objects and other relevant information within an image.
 %[text] **Masks**. Segmentation results in the creation of a mask (typically a logical array) that is the same size as the image being processed. The pixels in these masks contain clusters of the exact same value (typically logical `1s` or an integer value) that can be used to index the original image. These clusters of identical values often correspond to internal regions in the image that represent objects or boundaries. 
-%[text] **Nomenclature**: Small clusters of non-contiguous masks inside an image  are also known as regions, connected components, or blobs. 
+%[text] **Nomenclature**: Small clusters of non-contiguous masks inside an image are also known as regions, connected components, or blobs.
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %%
 %[text] %[text:anchor:H_A5C76033] ## Example: High-Resolution Moon
@@ -17,12 +17,12 @@ imshow(img) %[output:2e6c3517]
 %%
 %[text] %[text:anchor:H_AA679321] ## Manual Segmentation
 %[text] Segmentation is the process of dividing an image into multiple parts of connected pixels. You typically segment images to identify objects and other relevant information within an image. Segmentation results in the creation of a mask (typically a logical array) that is the same size as the image to be processed. This mask can be used to selectively adjust pixel intensities in the original image (using logical imaging) and to calculate the properties of the object identified in the image (properties such as area, length, and circularity)
-%[text] Manual segmentation is a common tool used when automated methods do not work. It basically involves a great deal tracing and can be EXTREMELY labor intensive. 
+%[text] Manual segmentation is a common tool used when automated methods do not work. It basically involves a great deal of tracing and can be EXTREMELY labor intensive.
 %[text] MATLAB has lots of drawing tools. These are all part of the [ROI tool package](https://www.mathworks.com/help/releases/R2018a/images/roi-based-processing.html). 
 %[text] An ROI is a Region of Interest - or a small part of an image in which you are interested.
 %[text] %[text:anchor:H_0846B998] ## Circle Tool
-%[text] The function **drawcircle** allows you to draw a circle on an image. You can then use the ROI to create a logical array (also called a mask). After you draw the circle and double click inside the circle. 
-%[text] Notes about the following code: The function **drawcircle**  returns a handle (`roi`) to the ROI drawn on the image. This handle contains the properties of the ROI. The **wait** function pauses the script and waits for the user to double-click inside the circle before allowing the script to continue executing. In addition to property data for the ROI, ***roi*** also contains functions that can operate on the ROI. One of these functions is called **createMask**. Notice that you use dot notation (and no parentheses) to execute this function. The **roi.createMask** function returns a logical array that can be used as mask on the original image.
+%[text] The function `drawcircle` allows you to draw a circle on an image. You can then use the ROI to create a logical array (also called a mask). After you draw the circle, double-click inside it to confirm the ROI.
+%[text] Notes about the following code: The function `drawcircle` returns a handle (`roi`) to the ROI drawn on the image. This handle contains the properties of the ROI. The `wait` function pauses the script and waits for the user to double-click inside the circle before allowing the script to continue executing. In addition to property data for the ROI, `roi` also contains functions that can operate on the ROI. One of these functions is called `createMask`. Notice that you use dot notation (and no parentheses) to execute this function. The `roi.createMask` function returns a logical array that can be used as a mask on the original image.
 % display the image
 figure(Visible="on"); %[output:1da8b43b]
 nexttile %[output:1da8b43b]
@@ -46,18 +46,18 @@ impixelinfo %[output:1da8b43b]
 %[text] Review the properties of the `img` and `moon_mask`
 %[text] - What class are these variables
 %[text] - What size do these variables have? \
-%[text] The function **imshowpair** allows us to overlay the mask on the original image, as follows
+%[text] The function `imshowpair` allows us to overlay the mask on the original image, as follows
 % display overlay
 figure; %[output:2e5ceb39]
 imshowpair(img, moon_mask) % create composite image %[output:2e5ceb39]
 title('Pink = Mask') %[output:2e5ceb39]
-%[text] - **imshowpair** uses pseudocolor to overlay the images: the first input is shown in shades of green, while the second input is shown in shades of magenta.   \
+%[text] - `imshowpair` uses pseudocolor to overlay the images: the first input is shown in shades of green, while the second input is shown in shades of magenta. \
 %%
 %[text] %[text:anchor:H_7658A978] ## Mask Indexing
 %[text] Once you have created your mask, you can use this mask to select or manipulate intensities inside the ROI, without affecting the intensities outside of the ROI. This is just indexing by any other name
-%[text] For example, we can use our moon mask to select the intensities inside the moon and pass those intensities into **imhist**, so that we show the histogram of just the moon (without all those pesky space pixels):
+%[text] For example, we can use our moon mask to select the intensities inside the moon and pass those intensities into `imhist`, so that we show the histogram of just the moon (without all those pesky space pixels):
 %[text] %[text:anchor:H_4189100C] ### Moon Histogram
-%[text] We can use our mask to selectively input intensities into functions. For example, we could show the histogram of just the moon intensities (with out all of those pesky space pixels) by using moon\_mask as a logical array on the image
+%[text] We can use our mask to selectively input intensities into functions. For example, we could show the histogram of just the moon intensities (without all of those pesky space pixels) by using `moon_mask` as a logical array on the image
 figure; %[output:819ab05c]
 subplot(1,2,1); %[output:819ab05c]
 imhist(img) %[output:819ab05c]
@@ -115,10 +115,10 @@ imshowpair(img, mask) % overlay mask and moon %[output:814e0b76]
 %[text] - These dots were not segmented and not considered part of the moon \
 %%
 %[text] ### Automatic threshold detection
-%[text] The **graythresh** function analyzes an image's histogram using an algorithm known as Otsu's algorithm. 
+%[text] The `graythresh` function analyzes an image's histogram using an algorithm known as Otsu's algorithm.
 lvl = graythresh(img) %[output:578d9180]
 %%
-%[text] The function graythresh returns a value on the 0 - 1 scale (automatically type casts variable). But we can convert ***lvl*** back to 8-bit using **im2uint8**
+%[text] The function `graythresh` returns a value on the 0 - 1 scale (automatically type casts variable). But we can convert `lvl` back to 8-bit using `im2uint8`
 clvl = im2uint8(lvl) %[output:59e10bdc]
 %[text] hmm, a little higher than the value we used before (we used 30)
 %%
@@ -130,19 +130,19 @@ imshow(mask) %[output:8108e569]
 %[text] - No problem, we can clean up this noise with some morphological operations \
 %%
 %[text] %[text:anchor:H_A08682D7] ### One Stop masking
-%[text] The function **imbinarize** figures out the threshold value and creates the mask all in one easy step
+%[text] The function `imbinarize` figures out the threshold value and creates the mask all in one easy step
 mask = imbinarize(img);
 imshowpair(img,mask) %[output:7fc790cb]
 %%
 %[text] ## Morphological Operations 
 %[text] Once you have created a mask, you often need to clean up that mask. Morphological operations and transformations that can modify the images based on the shapes inside of the image. They are often used to clean up masks. 
 %[text] In fact, there are many operations used to clean up masks (aka black and white images aka BW)
-%[text] The function **bwmorph** is a nice, simple, and basic function that can perform many different types of morphological operations (MorphOps). Read the documentation for a description of all that **bwmorph** can do
+%[text] The function `bwmorph` is a nice, simple, and basic function that can perform many different types of morphological operations (MorphOps). Read the documentation for a description of all that `bwmorph` can do
 web(fullfile(docroot, 'images/ref/bwmorph.html'))
 %%
 %[text] ### Fill them holes
-%[text] In addition to **bwmorph**, there are many functions that perform morphological operations. 
-%[text] %[text:anchor:H_21D2EF1F] For example, the function **imfill** fills any holes in a mask. Notice that **imfill** returns a logical array
+%[text] In addition to `bwmorph`, there are many functions that perform morphological operations.
+%[text] %[text:anchor:H_21D2EF1F] For example, the function `imfill` fills any holes in a mask. Notice that `imfill` returns a logical array
 figure; %[output:04903aa5]
 tiledlayout(1,2,"TileSpacing","none") %[output:04903aa5]
 nexttile; imshow(mask) %[output:04903aa5]
@@ -155,13 +155,13 @@ title('filled mask: pink means filled') %[output:04903aa5]
 %[text] 
 %%
 %[text] ### bwmorph - close
-%[text] We use the function **bwmorph** to "close" the image. This simply means to add and then remove pixels from the object edges.
+%[text] We use the function `bwmorph` to "close" the image. This simply means to add and then remove pixels from the object edges.
 nexttile(1);
 imshow(mask_fill); %[output:64e65035]
 nexttile(2);
 mask_close = bwmorph(mask_fill, 'close');
 imshowpair(mask_fill, mask_close); %[output:64e65035]
-%[text] - notice that in each case, we are inputting ***thresh\_mask*** into **bwmorph** and then overwriting the previous ***thresh\_mask*** with the output from **bwmorph** \
+%[text] - notice that we are inputting `mask_fill` into `bwmorph` and assigning the output to a new variable, `mask_close` \
 %%
 %[text] ### Final Result
 %[text] %[text:anchor:H_B631F82A] Compare the original image to the mask
@@ -169,7 +169,6 @@ figure %[output:7c21c0e7]
 imshowpair(img, mask_close) %[output:7c21c0e7]
 %[text] - Remember, Pink is the mask in the pseudocoloring
 %[text] - That looks pretty, pretty good \
-%[text] ## 
 %%
 %[text] ## Preprocessing images 
 %[text] ### Example: Dealing with Uneven illumination 
@@ -186,7 +185,7 @@ imshow(img) %[output:5a78f2b1]
 %[text] - Also notice that there is a bit of a gradient in the background \
 %[text] 
 %%
-%[text] Let's create the mask using **imbinarize**
+%[text] Let's create the mask using `imbinarize`
 mask = imbinarize(img);
 imshowpair(img, mask) %[output:17e6005f]
 %[text] - hmm, that didn't work.
@@ -215,7 +214,7 @@ imshowpair(imgc,mask) %[output:81f402d9]
 %%
 %[text] ## Prototyping Segmentation with the ImageSegmenter
 %[text] %[text:anchor:T_DDB04772] The ImageSegmenter app provides an easy-to-use GUI to prototype the thresholding and is a great tool for troubleshooting thresholding
-%[text] You can launch the ImageSegmenter app by clicking on its icon, which resides in the Apps Tab, under the  "Image Processing and Computer Vision" section
+%[text] You can launch the ImageSegmenter app by clicking on its icon, which resides in the Apps Tab, under the "Image Processing and Computer Vision" section
 %[text] ![](text:image:1950)
 %[text] Or, you can call it programmatically, inputting the variable that you want to segment, as follows:
 imageSegmenter(imgc)
@@ -265,80 +264,17 @@ imageSegmenter(imgc)
 %[text] You can package these steps into a function
 %[text] 1. Click on the Export menu
 %[text] 2. Select "Generate Function"
-%[text] 3. Review the generated code \
-function [BW,maskedImage] = segmentImage(X)
-%segmentImage Segment image using auto-generated code from Image Segmenter app
-%  [BW,MASKEDIMAGE] = segmentImage(X) segments image X using auto-generated
-%  code from the Image Segmenter app. The final segmentation is returned in
-%  BW, and a masked image is returned in MASKEDIMAGE.
+%[text] 3. Review the generated code
+%[text] 4. Paste below and rename as `segmentImage` \
 
-% Auto-generated by imageSegmenter app on 09-Sep-2025
-%----------------------------------------------------
-
-
-% Threshold image with adaptive threshold
-BW = imbinarize(im2gray(X), 'adaptive', 'Sensitivity', 0.750000, 'ForegroundPolarity', 'bright');
-
-% Clear borders
-BW = imclearborder(BW);
-
-% Fill holes
-BW = imfill(BW, 'holes');
-
-% Open mask with disk
-radius = 9;
-decomposition = 0;
-se = strel('disk', radius, decomposition);
-BW = imopen(BW, se);
-
-% Create masked image.
-maskedImage = X;
-maskedImage(~BW) = 0;
-end
 
 
 %%
 %[text] %[text:anchor:H_8F5371C0] ### Use the function
-%[text] I have copied and pasted my version of the function at the bottom of this script. 
-%[text] We can call that function using the following code. Remember to input the complement image, not the original image. Our function won't work on the original image 
+%[text] We can use the function we just created as follows. Remember to input the complement image, not the original image. Our function won't work on the original image 
 mask = segmentImage(imgc);
 clf %[output:2abd28dc]
 imshowpair(img,mask); %[output:2abd28dc]
-%%
-%[text] %[text:anchor:T_C1ED2D17] # Function Section
-%[text] %[text:anchor:T_F9EABB6B] Paste your new function here
-% function [BW,maskedImage] = segmentImage(X)
-% %segmentImage Segment image using auto-generated code from Image Segmenter app
-% %  [BW,MASKEDIMAGE] = segmentImage(X) segments image X using auto-generated
-% %  code from the Image Segmenter app. The final segmentation is returned in
-% %  BW, and a masked image is returned in MASKEDIMAGE.
-% 
-% % Auto-generated by imageSegmenter app on 11-Sep-2023
-% %----------------------------------------------------
-% 
-% 
-% % Adjust data to span data range.
-% X = imadjust(X);
-% 
-% % Threshold image with adaptive threshold
-% BW = imbinarize(im2gray(X), 'adaptive', 'Sensitivity', 0.740000, 'ForegroundPolarity', 'bright');
-% 
-% % Clear borders
-% BW = imclearborder(BW);
-% 
-% % Fill holes
-% BW = imfill(BW, 'holes');
-% 
-% % Open mask with default
-% radius = 8;
-% decomposition = 0;
-% se = strel('disk', radius, decomposition);
-% BW = imopen(BW, se);
-% 
-% % Create masked image.
-% maskedImage = X;
-% maskedImage(~BW) = 0;
-% end
 
 %[appendix]{"version":"1.0"}
 %---
