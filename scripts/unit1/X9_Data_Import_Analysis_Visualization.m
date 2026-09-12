@@ -30,7 +30,7 @@ T = readtable(datapath) %[output:930517f7]
 %[text] We'll also need to change the Student column to a categorical array, which we can do using the `categorical` function
 T.Student = categorical(T.Student);
 %%
-%[text] ## Data Visualization: With data comes Figures
+%[text] ## Data Visualization: With Data comes Figures
 %[text] It's critical to visualize the data when you first load it. This gives an overview of what your data is like—things like distribution (how spread out the data is) and range. You can get a lot of information about your data at a glance.
 %[text] ### On the term figure
 %[text] In a paper, a figure is often the visualization itself, like a line plot or histogram. Or it's a collection of charts, often as a series of panels. In MATLAB, figure means the window into which you add the charts.
@@ -89,7 +89,7 @@ histogram(T.Score)
 % x2
 %%
 %[text] ### Overlay Histograms
-%[text] Now that we have our to groups of scores, we can plot them as two different histograms. The trick is turn `hold` on
+%[text] Now that we have our two groups of scores, we can plot them as two different histograms. The trick is turn `hold` on
 figure
 histogram(x1) % histogram of in person scores
 

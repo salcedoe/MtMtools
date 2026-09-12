@@ -285,31 +285,8 @@ R = groupsummary(T,"Sex",@corr,{["Mother","Father"], ["Height","Height"]})
 %[text] Since we used a function handle, groupsummary doesn't know what stat was performed, so it just entered 'fun1'. We can easily replace 'fun1' in the column headers as follows: 
 R.Properties.VariableNames = replace(R.Properties.VariableNames,'fun1','corr')
 %%
-%[text] ### Analyzing Parents Height
-%[text] What if we want to calculate the average parents' heights? Calculating the mean parents' height is a little trickier since the data for each parent is repeated multiple times. The trick here is to realize that the stat function `mode` will return the most common height for a given set of heights. So then this just becomes a simple `groupsummary` function call where we use "Family" as the grouping variable
-pT = groupsummary(T,"Family","mode",["Father" "Mother"]) % create parent table of heights
-%[text] 
-%[text] - now, we have just the one height per Father and Mother \
-%%
-%[text] We can then use another call to `groupsummary` but on `pT`. Here, though, we don't need a grouping variable. We just want to calculate the mean for all of the data in each column. So, we enter the empty brackets for the grouping variable, as follows:
-pS = groupsummary(pT,[],["mean" "std"],["mode_Father" "mode_Mother"]) % parent stats
-%%
-%[text] %[text:anchor:H_C793FB72] ### Visualize Parent's mean height as bar plots
-%[text] - We don't have a grouping variable, we just have two columns in `pS`
-%[text] - Bar plot accepts vectors, so we can just pull the data as a vector using curly bracket indexing \
-figure
-x = categorical(["F" "M"]); 
-y = pS{1,["mean_mode_Mother" "mean_mode_Father"]}; % curly bracket indexing pulls out mean data as a numeric vector
-bar(x,y,FaceAlpha=0.5) % bar plot
-
-hold on % overlay
-
-e = pS{1,["std_mode_Mother" "std_mode_Father"]};  % curly bracket indexing pulls out std data as a numeric vector
-errorbar(x,y,e,'k',LineStyle='none')
-ylabel("Parents' Heights")
-%%
 %[text] ## Tiled Plots
-%[text] So how would we plot all permutations of the various parent-child correlations?
+%[text] How would we plot all permutations of the various parent-child correlations?
 %[text] - e.g. Father-Son, Father-daughter, Mother-Son, Mother-daughter? \
 %[text] I have packaged the scatter and regression plotting functions into a function called [plot\_height\_corr](internal:M_C6A13C97). Let's review that function now
 %[text] Now that we have a nice function, we can plot all 4 Comparisons. 
@@ -317,7 +294,7 @@ figure
 nexttile
 plot_height_corr(T,"Father","F")
 %%
-%[text] - Try plotting the other 3 comparisons \
+%[text] - Add the other 3 comparisons \
 nexttile
 plot_height_corr(T,"Father","M")
 %%
@@ -326,6 +303,45 @@ plot_height_corr(T,"Mother","M")
 %%
 nexttile
 plot_height_corr(T,"Mother","F")
+%%
+%[text] ### Analyzing Parents Height
+%[text] What if we want to calculate the average parents' heights? Calculating the mean parents' height is a little trickier since the data for each parent is repeated multiple times. The trick here is to realize that the stat function `mode` will return the most common height for a given set of heights. So then this just becomes a simple `groupsummary` function call where we use "Family" as the grouping variable
+pT = groupsummary(T,"Family","mode",["Father" "Mother"]) % create parent table of heights
+%[text] - now, we have just the one height per Father and Mother
+%[text] - Notice there are less rows in this table, than in T
+%[text] - The Number of rows equals the number of families in the dataset (one set of parents per family) \
+%[text] And we can replace 'mode\_' with 'height\_' to make the variable names more clear
+pT.Properties.VariableNames = replace(pT.Properties.VariableNames,'mode_','height_')
+%[text] 
+%[text] 
+%%
+%[text] #### Visualize Parents Heights Distributions
+%[text] What type of plot should we use to visualize the distribution of heights?
+
+%%
+%[text] #### Compare parents heights
+%[text] So, are the parent's heights assortative? Do tall fathers marry tall mothers (and vice versa)?
+%[text] What should we plot to visualize the relationship? And what should we calculate?
+
+%%
+%[text] `We can use groupsummary` to calculate the mean and std heights of the parents. Here, though, we don't need a grouping variable because we want to calculate the stats for all of the data in each column. So, we enter the empty brackets for the grouping variable, as follows:
+pS = groupsummary(pT,[],["mean" "std"],["height_Father" "height_Mother"]) % parent stats
+%%
+%[text] %[text:anchor:H_C793FB72] ### Visualize Parent's mean height as bar plots
+%[text] - We don't have a grouping variable, we just have two columns in `pS`
+%[text] - Bar plot accepts vectors, so we can just pull the data as a vector using curly bracket indexing \
+figure
+x = categorical(["F" "M"]); 
+y = pS{1,["mean_height_Mother" "mean_height_Father"]}; % curly bracket indexing pulls out mean data as a numeric vector
+bar(x,y,FaceAlpha=0.5) % bar plot
+
+hold on % overlay
+
+e = pS{1,["std_height_Mother" "std_height_Father"]};  % curly bracket indexing pulls out std data as a numeric vector
+errorbar(x,y,e,'k',LineStyle='none')
+ylabel("Parents' Heights")
+%[text] - Notice that a bar plot is the visualization of just 2 data points: the mean and standard deviation
+%[text] - Compare to a histogram or boxchart, which is a visualization of all the datapoints.  \
 %%
 %[text] %[text:anchor:T_BE801CA7] # Local Functions
 function plot_height_corr(T,parent,sex) %[text:anchor:M_C6A13C97]
