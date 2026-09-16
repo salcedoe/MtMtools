@@ -1,6 +1,6 @@
 function hp = mmAddBestFitLine2Plot(x,y)
 %MMPLOTREGRESSION Add best fit line to scatter plot
-%   Inputs: x and y should be 
+%   Inputs: x and y should be vectors
 arguments
     x {mustBeNumeric, mustBeVector}
     y {mustBeNumeric, mustBeVector}
