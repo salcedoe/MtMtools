@@ -1,4 +1,4 @@
-function hp = mmPlotRegression(x,y)
+function hp = mmAddBestFitLine2Plot(x,y)
 %MMPLOTREGRESSION Add best fit line to scatter plot
 %   Inputs: x and y should be 
 arguments
