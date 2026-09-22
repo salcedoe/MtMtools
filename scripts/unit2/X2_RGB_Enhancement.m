@@ -2,18 +2,42 @@
 %[text] The methods we learned for enhancing grayscale images also apply to RGB images. In some cases, we can adjust the whole image at once; in other cases, we need to adjust the color channels separately.
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
-%[text] %[text:anchor:T_D3AB61B9] ## Example One
-%[text] Fix that damn Dress!
-%[text] Can we adjust the image so that it looks right?
+%[text] ## RGB Enhancement
+%[text] In an RGB image, color is represented by the amount of red, green, and blue at each pixel. This can make enhancement tricky because these three channels are intertwined. Changing one channel can affect both the **color** and **brightness** of the image at the same time.
+%%
 clearvars
 close all
 mmSetUnitDataFolder(2); % Change to the Unit 2 data folder
-im_rgb = imread('black-blue-dress-super-169.jpg');
-imshow(im_rgb)
+%%
+%[text] Consider this image
+p.rgb = imread("Ho_Chi_Minh_City_Tet_Decorations,_washed-out.jpg");
+
+figure
+imshow(p.rgb)
+%[text] - it's pretty washed out.  \
+%%
+%[text] The histogram shows us the problem
+figure
+mmHistColor(p.rgb,'stem')
+ylim([0 4e4])
+%[text] - everything is shifted to the right. 
+%[text] - That's why its so white \
+%%
+%[text] ### Contrast Enhancement
+%[text] We previously used `imadjust` to fix intensity distributions across the histogram for grayscale images. However, the function call for `imadjust` is very complicated. Luckily, the function stretchlim can automatically find the inputs for `imadjust. stretchlim` estimates the **lower and upper intensity limits** that can be used to improve image contrast. Rather than automatically stretching the image itself, it identifies a range of pixel values that contains most of the image data, usually ignoring a small fraction of very dark and very bright pixels. You then plug the output into `imadjust`
+p.lowhigh = stretchlim(p.rgb);
+p.rgba = imadjust(p.rgb,p.lowhigh,[]);
+imshowpair(p.rgb,p.rgba,'montage')
+%[text] - the image looks much better \
+%[text] 
+%[text] We can use the course function `mmHistColor` to display the three channels from the image. But its difficult to guess what channel should be adjust to correct the colors in the image. 
+figure;
+mmHistColor(im_rgb)
+%[text] To adjust the channels of an image, we can use the **imadjust** function to modify the histogram distribution. For an RGB image, the syntax is not very intuitive, especially when we want to adjust each channel separately.
+%[text] ### 
 %%
 %[text] %[text:anchor:H_05FD7CD3] ### Install ImageAdjuster
-%[text] To enhance an image, we can use the **imadjust** function to modify the histogram distribution. For an RGB image, the syntax is not very intuitive, especially when we want to adjust each channel separately.
-%[text] The **ImageAdjuster** app makes this process much easier. It is not included with MATLAB by default, so we need to install it.
+%[text] The **ImageAdjuster** app makes the process of using `imadjust` much easier. It is not included with MATLAB by default, so we need to install it.
 %[text] %[text:anchor:H_8AA42A09] #### Add-on Tool
 %[text] Run the following line to copy the word "ImageAdjuster" to the clipboard.
 clipboard('copy','ImageAdjuster')
@@ -22,32 +46,36 @@ clipboard('copy','ImageAdjuster')
 %[text] 3. In the search box, paste the word. ImageAdjuster should appear. If not, type it manually.
 %[text] 4. Search for **ImageAdjuster**.
 %[text] 5. Open the ImageAdjuster page (by Brett Shoelson).
-%[text] 6. Click the Add button to install it.
+%[text] 6. Click the Add button to install it. \
 %[text] ![](text:image:27e3)
 %[text] - Select "Add to MATLAB".
 %[text] - Select "Open Folder".
 %[text] - Double-click the ImageAdjuster.mlappinstall file.
 %[text] - Select Install.
 %[text] - ![](text:image:5e3f)
-%[text] - Return to the MATLAB drive by clicking the MATLAB Drive icon.
+%[text] - Return to the MATLAB drive by clicking the MATLAB Drive icon. \
+%%
+%[text] ### Can we fix the damn dress?
+im_rgb = imread('black-blue-dress-super-169.jpg');
+imshow(im_rgb)
 %%
 %[text] %[text:anchor:H_4138B441] ### Launching ImageAdjuster
+%[text] Now for the moment of truth. Let's try to adjust the channels of the image so the color is better represented
 %[text] #### **Action**
 %[text] 1. Open the Apps tab.
 %[text] 2. Select **ImageAdjuster**.
 %[text] 3. Click the yellow folder icon.
 %[text] 4. Choose **Import from Workspace**.
-%[text] 5. Select the image variable, such as *im_rgb*.
+%[text] 5. Select the image variable, such as *im\_rgb*.
 %[text] 6. Click **Process Planes Individually**.
 %[text] 7. Click **Auto-Adjust**.
 %[text] 8. Adjust the gamma settings and inspect the result.
-%[text] 9. Click **Done / Export**.
+%[text] 9. Click **Done / Export**. \
 %%
-%[text] %[text:anchor:H_7BAD907C] ### Adjust channels independently
 %[text] After you adjust the image in the **ImageAdjuster** app, click **Done / Export**. MATLAB will print code in the Command Window.
 %[text] - Copy the code from the Command Window.
-%[text] - Replace ***imgin*** with ***im_rgb*** and ***imgout*** with ***rgba***.
-%[text] - Execute the code.
+%[text] - Replace ***imgin*** with ***im\_rgb*** and ***imgout*** with ***rgba***.
+%[text] - Execute the code. \
 
 %%
 %[text] #### My Previous attempt
@@ -56,6 +84,8 @@ rgba = imadjust(im_rgb,[0.24 0.20 0.12; 1.00 1.00 1.00], ...initial intensity ra
     [0.00 0.00 0.00; 1.00 1.00 1.00], ... new intensity ranges
     [3.56 2.94 0.88]); % gamma settings for each channel
 imshowpair(im_rgb,rgba,'montage')
+%[text] - *maybe* blue and black \
+%[text] ### 
 %%
 %[text] %[text:anchor:H_21991BCE] ## You've seen the 'dress', now try the sneaker
 %[text] Some people claim that this sneaker is pink and white. I see gray and teal. Lets see if we can adjust the colors using 
@@ -71,7 +101,7 @@ imshow(img)
 %%
 %[text] You can launch the app by typing its name.
 ImageAdjuster(img)
-%[text] - Hint: process the planes individually.
+%[text] - Hint: process the planes individually. \
 %%
 %[text] Output from ImageAdjuster:
 imga = imadjust(img,[0.00 0.01 0.00; 0.62 0.83 0.80], ...
@@ -95,7 +125,7 @@ figure
 imshow(img_gray)
 title('Grayscale image')
 %[text] - Notice how much the grayscale version differs from the original color image.
-%[text] - Notice the size change between the two variables in the Workspace.
+%[text] - Notice the size change between the two variables in the Workspace. \
 %%
 %[text] ## Color enhancement with different color models
 %[text] RGB is useful for storing color information, but it is not always the best model for editing colors. Changing one channel in an RGB image can affect both the color and the brightness at the same time.
@@ -104,7 +134,7 @@ title('Grayscale image')
 %[text] For example, the **HSV color model** represents color using three components:
 %[text] - **Hue (H):** the type of color, such as red, green, blue, or yellow
 %[text] - **Saturation (S):** how vivid or colorful the pixel is
-%[text] - **Value (V):** how bright the pixel is
+%[text] - **Value (V):** how bright the pixel is \
 %[text] Instead of asking, *“How much red, green, and blue should I change?”*, HSV lets us ask questions such as: *What happens if I make the colors more vivid without substantially changing their brightness?* Or, *Can I brighten the image without intentionally changing its hue?*
 %[text] Consider the following image of a swimmer.
 clear
@@ -123,7 +153,7 @@ figure
 
 p.hsv = rgb2hsv(p.rgb); % Create HSV version of the swimmer image
 imshow(p.hsv)
-%[text] - This looks unusual because it is not an RGB image, even though we are displaying it as if it were one.
+%[text] - This looks unusual because it is not an RGB image, even though we are displaying it as if it were one. \
 %%
 %[text] #### Compare HSV to RGB
 %[text] Here we compare the different channels of the two color models.
@@ -162,7 +192,7 @@ for n = 2:cols
 end
 impixelinfo
 %[text] - Notice that the HSV channels do not look like a normal RGB image.
-%[text] - Hover over the ocean in the hue channel and note the intensity values.
+%[text] - Hover over the ocean in the hue channel and note the intensity values. \
 %%
 %[text] #### Change saturation
 %[text] Saturation controls how vivid the colors are. Here, we multiply the saturation channel by a factor to make the colors less vivid or more vivid.
@@ -209,7 +239,7 @@ title('original')
 nexttile;
 imshow(p.rgbV)
 title(sprintf('Value Factor  %1.2f', Value_factor))
-%[text] - Note that a value of 0 is black.
+%[text] - Note that a value of 0 is black. \
 %%
 %[text] #### Color swapping
 %[text] We can use the hue channel to modify the colors in an image.
@@ -223,11 +253,11 @@ hues = im2uint8(p.hsv(:,:,1)); % Convert hue values to integer values to match t
 imhist(hues,hsv) % Use the HSV colormap
 %[text] - This image contains mostly blues and reds.
 %[text] - Notice that the blue tones have larger hue values than the swimmer's colors.
-%[text] - This is a good example for color replacement.
+%[text] - This is a good example for color replacement. \
 %%
 %[text] #### Change hue in the image
 %[text] In an HSV image, we can change the hue by changing the values in the H channel.
-%[text] To select a range of hues, we create a logical mask such as H > 0.35 & H < 0.45.
+%[text] To select a range of hues, we create a logical mask such as H \> 0.35 & H \< 0.45.
 %[text] To select the ocean, we can use the mean hue value for the whole image, since most of the water has a similar color. Then we replace all pixels in that range with a new hue value.
 p.hsv = rgb2hsv(p.rgb); % Convert to HSV
 
@@ -247,7 +277,7 @@ clf;
 imshow(p.rgbH)
 title(sprintf('Hue Value = %1.1f',Hue_value))
 %[text] - This color modification would be difficult to do directly in RGB space.
-%[text] - Notice that 0 and 1 produce the same result because HSV wraps around like a color wheel.
+%[text] - Notice that 0 and 1 produce the same result because HSV wraps around like a color wheel. \
 %[text] 
 %%
 %[text] ### Fun with L\*a\*b\*
@@ -274,16 +304,16 @@ for n=1:3
     nexttile(n+3)
     histogram(p.lab(:,:,n))
 end
-%[text]
-%[text] - Notice that the L* plane looks like a black-and-white image, but darker than the original.
-%[text] - Notice the range of values. L* ranges from 0 to 100, while a* and b* can be negative or positive.
-%[text] - This is no longer an RGB image; it is now an L*a*b* image.
+%[text] 
+%[text] - Notice that the L\* plane looks like a black-and-white image, but darker than the original.
+%[text] - Notice the range of values. L\* ranges from 0 to 100, while a\* and b\* can be negative or positive.
+%[text] - This is no longer an RGB image; it is now an L*a*b\* image. \
 %%
-%[text] We will modify this plane to improve the contrast of the image. First, scale the L* plane from 0 to 1.
+%[text] We will modify this plane to improve the contrast of the image. First, scale the L\* plane from 0 to 1.
 p.Lscale = p.lab(:,:,1)/100; % Normalize the lightness channel to the range 0 to 1
-%[text] - Now we can treat Lscale as a grayscale image.
+%[text] - Now we can treat Lscale as a grayscale image. \
 %%
-%[text] Here we try three different contrast enhancement techniques on the L* plane.
+%[text] Here we try three different contrast enhancement techniques on the L\* plane.
 figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight")
 
@@ -305,12 +335,12 @@ nexttile;
 p.adaptiveL = adapthisteq(p.Lscale); % Apply adaptive histogram equalization
 imshow(p.adaptiveL);
 title('Adaptive Histogram Eq');
-%[text] - Adaptive histogram equalization often gives the strongest improvement, but we should compare all of the methods.
+%[text] - Adaptive histogram equalization often gives the strongest improvement, but we should compare all of the methods. \
 %%
 %[text] To incorporate these changes back into the original RGB image, we complete the following steps:
-%[text] 1. Convert the adjusted L* channel back to the 0 to 100 scale.
-%[text] 2. Insert the modified plane back into the L*a*b* image.
-%[text] 3. Convert the adjusted L*a*b* image back to RGB.
+%[text] 1. Convert the adjusted L\* channel back to the 0 to 100 scale.
+%[text] 2. Insert the modified plane back into the L*a*b\* image.
+%[text] 3. Convert the adjusted L*a*b\* image back to RGB. \
 %[text] First, we display the original image for reference.
 figure
 mmTightTiledLayout
@@ -343,6 +373,11 @@ p.adaptiveIMG = lab2rgb(p.adaptiveIMG); % convert to RGB
 nexttile
 imshow(p.adaptiveIMG)
 title("Adaptive Histogram Eq")
+%%
+%[text] ### Challenge
+%[text] How would you fix the dress using L\*a\*b\* ?
+p.rgb = imread('black-blue-dress-super-169.jpg');
+imshow(p.rgb)
 %%
 %[text] # 
 
