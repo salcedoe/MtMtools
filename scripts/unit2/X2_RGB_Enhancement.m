@@ -20,27 +20,27 @@ imshow(p.rgb)
 figure
 mmHistColor(p.rgb,'stem')
 ylim([0 4e4])
-%[text] - everything is shifted to the right. 
-%[text] - That's why its so white \
+%[text] - everything is shifted to the right, which is why everything is so washed out \
 %%
 %[text] ### Contrast Enhancement
-%[text] We previously used `imadjust` to fix intensity distributions across the histogram for grayscale images. However, the function call for `imadjust` is very complicated. Luckily, the function stretchlim can automatically find the inputs for `imadjust. stretchlim` estimates the **lower and upper intensity limits** that can be used to improve image contrast. Rather than automatically stretching the image itself, it identifies a range of pixel values that contains most of the image data, usually ignoring a small fraction of very dark and very bright pixels. You then plug the output into `imadjust`
+%[text] We previously used `imadjust` to fix intensity distributions across the histogram for grayscale images. However, the function call for `imadjust` is very complicated. Luckily, the function **`stretchlim`** can automatically find the inputs for `imadjust. stretchlim` estimates the **lower and upper intensity limits** that can be used to improve image contrast. Rather than automatically stretching the image itself, it identifies a range of pixel values that contains most of the image data, usually ignoring a small fraction of very dark and very bright pixels. You then plug the output into `imadjust`
 p.lowhigh = stretchlim(p.rgb);
 p.rgba = imadjust(p.rgb,p.lowhigh,[]);
 imshowpair(p.rgb,p.rgba,'montage')
 %[text] - the image looks much better \
-%[text] 
-%[text] We can use the course function `mmHistColor` to display the three channels from the image. But its difficult to guess what channel should be adjust to correct the colors in the image. 
+%%
+%[text] #### Review histogram
+%[text] Here we show the histograms for the adjusted image. 
 figure;
-mmHistColor(im_rgb)
-%[text] To adjust the channels of an image, we can use the **imadjust** function to modify the histogram distribution. For an RGB image, the syntax is not very intuitive, especially when we want to adjust each channel separately.
+mmHistColor(p.rgba,'stem')
+ylim([0 4e4])
 %[text] ### 
 %%
-%[text] %[text:anchor:H_05FD7CD3] ### Install ImageAdjuster
-%[text] The **ImageAdjuster** app makes the process of using `imadjust` much easier. It is not included with MATLAB by default, so we need to install it.
-%[text] %[text:anchor:H_8AA42A09] #### Add-on Tool
-%[text] Run the following line to copy the word "ImageAdjuster" to the clipboard.
+%[text] %[text:anchor:H_05FD7CD3] ### ImageAdjuster
+%[text] So, we can use `stretchlim` and `imadjust` to get an automated contrast enhancement improvement.  But, what if we wanted a finer control on the contrast enhancement — not just the automated version. The **ImageAdjuster** app can help us find the right settings for `imadjust`, using manual slider bars. 
+%[text] But, the app is not included with MATLAB by default, so we need to install it. Run the following line to copy the word "ImageAdjuster" to the clipboard.
 clipboard('copy','ImageAdjuster')
+%[text] Then,
 %[text] 1. Open the Home tab.
 %[text] 2. Click the Add-ons button. ![](text:image:62ae)
 %[text] 3. In the search box, paste the word. ImageAdjuster should appear. If not, type it manually.
@@ -55,12 +55,13 @@ clipboard('copy','ImageAdjuster')
 %[text] - ![](text:image:5e3f)
 %[text] - Return to the MATLAB drive by clicking the MATLAB Drive icon. \
 %%
-%[text] ### Can we fix the damn dress?
-im_rgb = imread('black-blue-dress-super-169.jpg');
-imshow(im_rgb)
+%[text] ### Use ImageAdjuster
+%[text] Let's try it out on the following image. First, load in the following image
+im_rgb = imread('basilica-low-light-reduced.jpg'); %[text:anchor:TMP_47a3]
+ImageAdjuster(im_rgb) % we can call the app, like a function
 %%
-%[text] %[text:anchor:H_4138B441] ### Launching ImageAdjuster
-%[text] Now for the moment of truth. Let's try to adjust the channels of the image so the color is better represented
+%[text] %[text:anchor:H_4138B441] ### Manually Launching the App
+%[text] You can also manually launch the App
 %[text] #### **Action**
 %[text] 1. Open the Apps tab.
 %[text] 2. Select **ImageAdjuster**.
@@ -77,6 +78,11 @@ imshow(im_rgb)
 %[text] - Replace ***imgin*** with ***im\_rgb*** and ***imgout*** with ***rgba***.
 %[text] - Execute the code. \
 
+%%
+%[text] ### Can we fix the damn dress?
+%[text] Now for the moment of truth.
+im_rgb = imread('black-blue-dress-super-169.jpg');
+ImageAdjuster(im_rgb)
 %%
 %[text] #### My Previous attempt
 figure
@@ -373,11 +379,6 @@ p.adaptiveIMG = lab2rgb(p.adaptiveIMG); % convert to RGB
 nexttile
 imshow(p.adaptiveIMG)
 title("Adaptive Histogram Eq")
-%%
-%[text] ### Challenge
-%[text] How would you fix the dress using L\*a\*b\* ?
-p.rgb = imread('black-blue-dress-super-169.jpg');
-imshow(p.rgb)
 %%
 %[text] # 
 
