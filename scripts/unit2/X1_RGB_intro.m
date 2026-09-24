@@ -14,12 +14,12 @@ imageViewer('strawberries.jpg')
 %[text] Notice that each pixel location has three values, one for each color channel.
 %[text] Review the image metadata:
 %[text] - **Colortype:** 'truecolor'
-%[text] - Can you change the colormap? Can you adjust the contrast? Why or why not?
+%[text] - Can you change the colormap? Can you adjust the contrast? Why or why not? \
 %[text] Export the image data to the workspace:
 %[text] ![](text:image:39f7)
 %[text] - Name the variable RGB.
 %[text] - Inspect the variable in the Workspace browser.
-%[text] - Notice the third dimension.
+%[text] - Notice the third dimension. \
 %%
 %[text] You can also load the image directly into the workspace using `imread`.
 RGB = imread("strawberries.jpg");
@@ -40,7 +40,7 @@ rgb_triplet = uisetcolor;
 %[text] - What are the RGB values for red, green, and blue?
 %[text] - What are the RGB values for gray colors?
 %[text] - Toggle between \[0-1\], \[0-255\], and HEX.
-%[text] - Note: HEX is base-16, with values ranging from 0-9 and A-F. The first two digits represent the red channel, the next two represent green, and the last two represent blue. You will often see HEX values in image processing software (for example, Photoshop) or in [internet colors](http://www.color-hex.com).
+%[text] - Note: HEX is base-16, with values ranging from 0-9 and A-F. The first two digits represent the red channel, the next two represent green, and the last two represent blue. You will often see HEX values in image processing software (for example, Photoshop) or in [internet colors](http://www.color-hex.com). \
 %[text] If you get stuck, click OK (or Cancel) to continue.
 %%
 %[text] %[text:anchor:H_1FBD7E10] ### Colormaps are also arrays of RGB triplets
@@ -48,7 +48,7 @@ rgb_triplet = uisetcolor;
 %[text] Here is the **turbo** colormap. It starts with blueish colors and gradually changes to reddish colors.
 turbo(256)
 %[text] - **turbo** starts bluish (notice the high values in the third column for the first few rows).
-%[text] - It finishes up reddish (high values in the first column for the last few rows).
+%[text] - It finishes up reddish (high values in the first column for the last few rows). \
 %%
 %[text] To visualize a colormap, consider the vector V with 16 intensity values spaced from 0 to 255.
 %[text] We use the function **heatmap** to visualize the values in V using their corresponding colormap colors.
@@ -65,10 +65,10 @@ heatmap(V,'Colormap',parula(10));
 title('parula')
 %[text] - The matrices are plotted as heat maps, and each value is shown as a single "pixel".
 %[text] - The colormaps are visualized as the thin color bars immediately to the right of the matrices.
-%[text] - Notice that the matrices have 16 intensity values, but the colormaps have only 10 shades of color. This means that MATLAB is interpolating between colors.
+%[text] - Notice that the matrices have 16 intensity values, but the colormaps have only 10 shades of color. This means that MATLAB is interpolating between colors. \
 %[text] **Now you try:**
 %[text] 1. Change the code so that V contains 25 numbers instead of 16.
-%[text] 2. Change the code so that each colormap contains 25 colors instead of 10.
+%[text] 2. Change the code so that each colormap contains 25 colors instead of 10. \
 %%
 %[text] %[text:anchor:T_608CA992] # Load an RGB image into workspace
 %[text] Now, let's load another RGB image into the MATLAB workspace and review its properties. 
@@ -175,10 +175,10 @@ title('Red channel with jet colormap')
 colorbar
 impixelinfo
 %[text] - Scrub around this image; there is still only one pixel value at each location.
-%[text] - The channel still has the same intensity values; MATLAB has just mapped them to a different colormap.
+%[text] - The channel still has the same intensity values; MATLAB has just mapped them to a different colormap. \
 %[text] **You try:**
 %[text] - Change the colormap to hot.
-%[text] - Display the blue channel with the parula colormap.
+%[text] - Display the blue channel with the parula colormap. \
 %%
 %[text] %[text:anchor:H_1E26A5B4] ### Red, green, and blue colormaps
 %[text] Many imaging programs display each channel in its own matching color. For example, the red channel is shown in shades of red, the green channel in shades of green, and the blue channel in shades of blue. This is done by applying a colormap to each channel that matches the channel's color.
@@ -251,7 +251,7 @@ mmShowHist(RGB)
 GRB = cat(3,green, red, blue); % reorder the planes
 %[text] - now we just have a new image, \
 %%
-%[text] What does our new image looklike
+%[text] What does our new image look like
 figure;
 tiledlayout(1,2,"TileSpacing","none","Padding","compact")
 nexttile; imshow(RGB); title('RGB') % display original
@@ -326,11 +326,7 @@ ylim([0 44721])
 %[text] 2. Create a RBB image where you duplicate the blue channel in the second and third position. Keep the red channel in the first position. What new Color do you get?
 %[text] 3. Create a RRB image where you duplicate the red channel in the first and second position. Keep blue in the third position. Now what new color do you get?
 %[text] 4. Do you get it? \
-RGR = cat(3,red,green,red); %[text:anchor:TMP_90fd]
-RBB = cat(3, red, blue, blue);
-RRB = cat(3, red, red, blue);
-imshow(RRB)
-imshow(RGR)
+
 %%
 %[text] ### Bonus Challenge:
 %[text] 1. How would you recreate the RGR image just by indexing RGB and without using `imsplit` or `cat`?
