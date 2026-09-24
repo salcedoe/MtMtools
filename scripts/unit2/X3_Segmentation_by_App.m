@@ -47,7 +47,7 @@ imshow(strawberry)
 %[text] - The reds are so red - maybe HSV? \
 %%
 %[text] ### Prototyping Color Segmentation
-%[text] We'll use the Color Thresholder to prototype our approach. Prototyping means working the segmentation out by hand, with sliders, before we commit it to code.
+%[text] We'll use the Color Thresholder to prototype our segmentation out by hand, with sliders, before we commit it to code.
 colorThresholder(strawberry) % launch the app and load the strawberry image
 %[text] Try all three color models (RGB, HSV, and L\*a\*b\*).
 %[text] - Use the lasso tool to capture the strawberries.
@@ -228,7 +228,7 @@ T
 %[text] - As you can see, the coefficients increase as you go down the table: RGB is the worst match to the ground truth, and SAM is the best. \
 %%
 %[text] ## Separate Touching Strawberries 
-%[text] If we try to count the strawberries now using MATLAB, we would get a count that is far fewer than the actual number of strawberries. This is because many of the  strawberry masks are fused. This often happens in segmentation when objects are too close together. Luckily, we have the watershed transformation.
+%[text] If we try to count the strawberry masks now using MATLAB, we would get a count that is far fewer than the actual number of strawberries. This is because many of the  strawberry masks are fused. This often happens in segmentation when objects are too close together. Luckily, we have the watershed transformation.
 %[text] The watershed transform can detach connected components (CC) that are just barely touching. Its name comes from the geological concept of a watershed - a region of relatively high elevation separating two lower lying regions (or basins).
 %[text] ![](text:image:1318)![](text:image:0b66)
 %%
