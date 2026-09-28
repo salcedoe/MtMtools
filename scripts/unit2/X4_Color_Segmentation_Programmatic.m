@@ -145,7 +145,7 @@ fprintf('Dice:    %.3f\n', dice(maskGT, p.aMaskClean));
 figure
 imshowpair(maskGT, p.aMaskClean)
 title('Magenta - a* mask only, Green - ground truth only, White - overlap')
-%[text] - Compare these numbers to the table you built in X3. 
+%[text] - Compare these numbers to the table you built in X3.
 %[text] - How does one threshold on the a\* plane stack up against all that clicking in the Color Thresholder? \
 %[text] These scores tell us how well the method agrees with the ground truth **for this image**. They do not yet tell us how well the method will perform on new photographs.
 %[text] This gives us two different questions:
@@ -225,7 +225,7 @@ mmTightTiledLayout
 nexttile
 imshow(p(4).rgb)
 title("Not Red Strawberries")
-%[text] - Again, no red was used in the making of this image. Even though your brain tells you that there is red. 
+%[text] - Again, no red was used in the making of this image. Even though your brain tells you that there is red.
 %[text] - This image is going to be a little harder, because there doesn't look like there is any green either (or is there?)  \
 %%
 %[text] ### Ask the pixels instead of your eyes
@@ -336,10 +336,6 @@ title(sprintf('Fixed raw a* threshold > %.1f',fixedAThresh))
 %[text] A useful rule to remember is:
 %[text] **A segmentation algorithm will usually give you an answer if you ask it a numerical question. Your job is to make sure the numerical question corresponds to the biological or physical question you actually care about.**
 %[text] 
-%%
-%[text] ## Where do we go from here?
-%[text] Color segmentation works when the object and background differ in color in a useful and measurable way. But what happens when color is unavailable or unreliable?
-%[text] In the next exercise, we will look at **texture**: how rough or smooth a region is. We will use texture to find a flatfish camouflaged against sand, a case where color alone is not enough.
 
 %[appendix]{"version":"1.0"}
 %---

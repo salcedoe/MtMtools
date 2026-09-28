@@ -27,6 +27,8 @@
 %[text] - use imsegkmeans to cluster pixels according to color,
 %[text] - convert color clusters into a binary object mask, and
 %[text] - identify the dominant color cluster inside each segmented object. \
+%[text:tableOfContents]{"heading":"**Table of Contents**"}
+%[text] 
 %%
 %[text] %[text:anchor:T_D9896EFC] ## Method 1: Multilevel thresholding
 %[text] ### Load Image
@@ -212,14 +214,9 @@ p.amask = mmGetWatershed(p.amask,5,ShowSteps=true)
 %[text] That is the idea behind our second method.
 %%
 %[text] ## Method 2 — K-means Clustering in the a\*b\* Plane
-%[text] The first method treated the two color channels independently.
-%[text] Now we will use them **together**.
+%[text] The first method treated the two color channels independently. Now we will use them **together**.
 %[text] Each pixel has two color coordinates: $\\\[ (a^\*,b^\*) \\\]$
-%[text] That means every pixel can be represented as a point in a two-dimensional coordinate system.
-%[text] Pixels with similar colors should appear near one another in this a\*b\* plane.
-%[text] 
-%[text] 
-
+%[text] That means every pixel can be represented as a point in a two-dimensional coordinate system. Pixels with similar colors should appear near one another in this a\*b\* plane.
 %%
 %[text] ### Visualize the a\*b\* color space
 %[text] Extract the two color channels.
@@ -286,7 +283,7 @@ cb.Ticks = 1:nColors;
 
 impixelinfo
 linkaxes(ax,"xy")
-%[text] - And it works amazing well. 
+%[text] - And it works amazing well.
 %[text] - Each **candy color** is largely assigned to a distinct k-means cluster.
 %[text] - The table is divided into more than one cluster because its appearance varies across the image. \
 %%
@@ -378,6 +375,10 @@ title("Color Name")
 %[text] **K-means asks:**
 %[text] Which cluster center is this pixel closest to in two-dimensional color space?
 %[text] That is why k-means can be useful when several colors must be separated at the same time.
+%%
+%[text] ## Where do we go from here?
+%[text] Color segmentation works when the object and background differ in color in a useful and measurable way. But what happens when color is unavailable or unreliable?
+%[text] In the next exercise, we will look at **texture**: how rough or smooth a region is. We will use texture to find a flatfish camouflaged against sand, a case where color alone is not enough.
 %%
 %[text] %[text:anchor:T_511EB36B] # Local Functions
 function s = get_plane_mask(plane,name)
