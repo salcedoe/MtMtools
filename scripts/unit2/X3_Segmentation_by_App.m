@@ -350,9 +350,9 @@ switch colorModel
         return
 end
 
-% BW = sliderBW;
-% BW = bwareaopen(BW,500); % remove noise
-% BW = imfill(BW,'holes');
+BW = sliderBW;
+BW = bwareaopen(BW,500); % remove noise
+BW = imfill(BW,'holes');
 
 end
 %%
