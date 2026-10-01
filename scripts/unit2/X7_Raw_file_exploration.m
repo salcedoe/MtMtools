@@ -38,7 +38,6 @@ meta.SubIFDs{1} % the meta data for the raw image
 %[text] - Colortype = 'CFA' - color filter array (aka Bayer Filter) \
 %[text] This looks like it.
 %%
-
 %[text] %[text:anchor:H_EXIF] ### How was this photo actually taken?
 %[text] A raw file is not just pixels - it is a complete record of the exposure. The function **`rawinfo`** pulls that record out for us, and the `ExifTags` field holds the settings the photographer dialed in.
 rawInfo = rawinfo('vertebra.dng'); % modern raw metadata reader
@@ -65,7 +64,7 @@ rawInfo.ColorInfo.WhiteLevel
 %[text] - the height and width of CFA are slightly different than RGB version
 %[text] - cfa is a grayscale image (not an RGB image) because the color values have not be interpolated yet \
 %%
-%[text] %[text:anchor:H_20EF2A20] ## What's the dynamic range and bit depth of the CFA?
+%[text] ### **What are the bit depth and usable code range of the CFA?**
 min(cfa,[],"all") % minimum intensity found
 max(cfa,[],"all") % max intensity found
 2^14 % the max value is close to this, so the sensor is 14-bit
@@ -75,7 +74,16 @@ meta.SubIFDs{1}.WhiteLevel
 %[text] So the sensor records from a black level of 512 up to a white level of 16300. How much range is that, in the units photographers actually use?
 fprintf('usable dynamic range: %.1f stops\n', log2(double(16300-512)));
 fprintf('an 8-bit JPEG gives : 8.0 stops\n');
-%[text] **That is the entire argument for shooting raw**, in one number. Nearly 14 stops of tonal information versus 8. It is also why this file is 51 MB instead of 5 MB.
+%[text] The white level is close to  `2^14`  suggesting that the sensor data use roughly 14 bits of numerical range even though MATLAB stores the values in a `uint16` array.  This is why this file is 51 MB instead of 5 MB. The DNG contains the full-resolution sensor data plus metadata and one or more rendered previews. The RAW sensor data account for most of the file size.
+%%
+%[text] ### Was this shot well exposed?
+%[text] Highlights are "clipped" when pixels hit the white level and stop recording - that detail is gone for good and no amount of editing brings it back.
+s = sprintf('pixels at or above the white level: %.4f%%\n', 100*mean(cfa>=16300,'all'));
+s = [s sprintf('pixels below the black level      : %.2f%%\n', 100*mean(cfa<512,'all'))];
+fprintf('%sbrightest pixel recorded          : %d  (ceiling is 16300)\n', s,max(cfa,[],'all'));
+%[text] Two things fall out of this:
+%[text] - **Nothing is clipped**, and the brightest pixel only reaches about 14,400 of a possible 16,300. There was close to a stop of headroom left unused. This shot is slightly **underexposed** - which is exactly why it looked so dark a moment ago, and why normalizing it matters so much. Photographers call the fix "expose to the right": push the histogram as far right as you can without clipping, because the upper stops hold the most tonal information.
+%[text] - A small number of pixels read *below* the black level. That is **read noise** - the sensor's own electrical noise dipping under the calibrated zero point. It is a useful reminder that the black level is a calibration constant, not a measurement. \
 %%
 %[text] ### View CFA
 %[text] We can view the CFA using imageViewer
@@ -84,33 +92,11 @@ imageViewer(cfa);
 %[text] - Zoom in to see the Bayer Filter pattern
 %[text] - Try changing the color map \
 %%
-%[text] %[text:anchor:H_EXPOSURE] ### Was this shot well exposed?
-%[text] We can answer that from the data, without looking at the picture. Highlights are "clipped" when pixels hit the white level and stop recording - that detail is gone for good and no amount of editing brings it back.
-s = sprintf('pixels at or above the white level: %.4f%%\n', 100*mean(cfa>=16300,'all'));
-s = [s sprintf('pixels below the black level      : %.2f%%\n', 100*mean(cfa<512,'all'))];
-fprintf('%sbrightest pixel recorded          : %d  (ceiling is 16300)\n', s,max(cfa,[],'all'));
-%[text] Two things fall out of this:
-%[text] - **Nothing is clipped**, and the brightest pixel only reaches about 14,400 of a possible 16,300. There was close to a stop of headroom left unused. This shot is slightly **underexposed** - which is exactly why it looked so dark a moment ago, and why normalizing it matters so much. Photographers call the fix "expose to the right": push the histogram as far right as you can without clipping, because the upper stops hold the most tonal information.
-%[text] - A small number of pixels read *below* the black level. That is **read noise** - the sensor's own electrical noise dipping under the calibrated zero point. It is a useful reminder that the black level is a calibration constant, not a measurement. \
-meta.SubIFDs{1,1}.UnknownTags
-%[text] Those two "unknown" tags are not really unknown - they are standard DNG tags that `imfinfo` does not name for us:
-%[text] - **33421** is `CFARepeatPatternDim` = \[2,2\], meaning the filter pattern repeats every 2x2 block.
-%[text] - **33422** is `CFAPattern` = \[0,1,1,2\], where 0=Red, 1=Green, 2=Blue. \
-%[text] So \[0,1,1,2\] reading across that 2x2 block is **R G G B**. Hold onto that - we need it in a moment. 
-%%
-%[text] %[text:anchor:H_MODERN] ## The short way: rawread and rawinfo
-%[text] Everything we just did by hand - opening the Tiff object, hunting through SubIFDs, decoding tag 33422, digging out the black and white levels - was how you had to do it before **R2021a**. It is worth doing once, because it shows you that a DNG is really a *container* holding several images at different sizes plus a pile of metadata.
-%[text] 
-%[text] There is also **`raw2rgb`**, which does demosaic, white balance and color space conversion in a single call:
-%[text] - `oneStep = raw2rgb("vertebra.dng");` \
-
-%[text] We are deliberately **not** going to use it for the rest of this script. Doing each step by hand is the whole point of the exercise - but now you know the shortcut exists for when you have real work to do. \\
-%%
 %[text] %[text:anchor:H_C7D40956] ## Demosaic the CFA
 %[text] Let's create the RGB image from the CFA image. To do that you have to know the camera's Bayer pattern, which is listed in the CFALayout field of `rawInfo`
 rawInfo.CFALayout
 %[text] You can then use the function **demosaic** to demosaic the RGB and create an RGB image with three channels
-bayer_pattern = 'rggb';
+% bayer_pattern = 'rggb';
 bayer_pattern = rawInfo.CFALayout;
 RGB = demosaic(cfa,bayer_pattern); % The imaging toolbox includes a demosaic function
 figure;
@@ -122,7 +108,7 @@ mmHistColor(RGB)
 %[text] - Notice that `demosaic` returns an image the *same* height and width as the CFA, just with a third dimension added for the color planes.
 %[text] - So why was the `rgb` image at the top of the script only 4000x6000? Because the camera trims the sensor border when it makes its own conversion, and the DNG says so explicitly: look at `DefaultCropOrigin` = \[12,12\] and `DefaultCropSize` = \[6000,4000\] in the SubIFD metadata. Twelve pixels are shaved off each edge. Sensors have a margin of pixels around the edge that are not trustworthy - some are masked off entirely and used to measure the black level. \
 %[text] Why do you think the results are so dark and hard to see?
-%[text] - The sensor is 14-bit, so its values top out around 16,384. But the data is stored in a 16-bit container, and `imshow` scales it as though the full 16-bit range were in use. Everything we captured is crammed into the bottom quarter of the display range. We will fix this when we normalize. \\ \
+%[text] - The sensor is 14-bit, so its values top out around 16,384. But the data is stored in a 16-bit container, and `imshow` scales it as though the full 16-bit range were in use. Everything we captured is crammed into the bottom quarter of the display range. We will fix this when we normalize.  \
 %%
 %[text] Let's see if we can figure out what the demosaicing function did.
 idx = 1:2 % look at the top-left 4x4 corner of the image
@@ -150,10 +136,7 @@ nexttile
 mmHistColor(RGBn)
 %[text] Hmm - now it has a greenish cast. Why do you think that is?
 mean(RGBn,[1 2]) % the mean level of each channel, R G B
-%[text] Green is running about double the other two, for two reasons that compound:
-%[text] 1. The RGGB pattern has **two green sites in every 2x2 block**, but only one red and one blue.
-%[text] 2. Silicon is simply most sensitive in the green part of the spectrum. \
-%[text] So raw sensor data is *supposed* to look green. This is not a defect - it is what unprocessed means. Correcting it is the job of white balance, which is why white balance is a required step rather than an artistic choice. 
+%[text] So why is the image so green? Notice that the Bayer pattern contains twice as many green samples as red or blue samples. This improves spatial sampling of luminance detail, but can add a greenish cast to the unprocessed image. Also, the three sensor channels do not respond equally to the same illumination. Cameras compensate for those differences using white-balance gains. Before those gains are applied, RAW sensor data often have a strong color cast.  So raw sensor data is *supposed* to look green. This is not a defect - it is what unprocessed means. Correcting it is the job of white balance, which is why white balance is a required step rather than an artistic choice. 
 %%
 %[text] %[text:anchor:H_278B416B] ## Contrast stretch with imadjust
 p.rgb = rgb; % white balanced on the camera 
@@ -170,9 +153,9 @@ mmHistColor(p.stretched_IMG)
 %%
 %[text] %[text:anchor:H_1D493D3F] ## White Balance
 %[text] Let's see if we can improve the white balance. 
-%[text] Use the function **`illumwhite`** to estimate the white balance correction. It assumes that the brightest values across all three channels represent something white.
+%[text] Use the function **`illumwhite`** to estimate the white balance correction. It assumes that the brightest 1% values across all three channels represent something white.
 illuminant = illumwhite(RGBn); 
-p.caIMG = chromadapt(RGBn, illuminant);
+p.caIMG = chromadapt(RGBn, illuminant,"ColorSpace","linear-rgb");
 p.caIMG = imadjust(p.caIMG, stretchlim(p.caIMG),[0.01 0.99]);
 %%
 %[text] Next, compare the results 
@@ -194,7 +177,7 @@ end
 %[text] The white balance is much improved with a couple of simple manipulations - but look closely at the middle row and you may still see a cast. Let's find out why. 
 %%
 %[text] %[text:anchor:H_WBCOMPARE] ## How good was our white balance guess?
-%[text] `illumwhite` **estimates** the illuminant by assuming the brightest pixels are white. But this is a raw file - the camera recorded what *it* decided the white balance should be, and `rawinfo` will tell us. That gives us something rare: an answer key.
+%[text] `illumwhite` **estimates** the illuminant by assuming the brightest pixels are white. But this is a raw file: the camera stored the white-balance setting used when the photograph was taken. That gives us a useful comparison with our image-based estimate. Neither one is guaranteed to be objectively correct, which is why a known neutral object in the scene is so valuable.
 camWB = rawInfo.ColorInfo.CameraAsTakenWhiteBalance % the camera's own R G G B multipliers
 %[text] To compare fairly, express both as multipliers relative to green (green is the reference channel, so it gets a multiplier of 1).
 ourMult = max(double(illuminant))./double(illuminant); % turn our estimate into multipliers
@@ -203,6 +186,7 @@ camMult = [camWB(1) camWB(2) camWB(4)]./camWB(2); % camera version, dropping the
 
 fprintf('our illumwhite estimate: R %.2f  G %.2f  B %.2f\n', ourMult);
 fprintf('the camera''s own choice: R %.2f  G %.2f  B %.2f\n', camMult);
+%[text] 
 %[text] Now the leftover cast makes sense. `illumwhite` under-boosts red by nearly a full stop and roughly *doubles* the blue the camera asked for. The "brightest pixels are white" assumption is a reasonable guess, but in this scene the brightest pixels were not actually neutral - the Exif even told us the light source was **Shade**, which is strongly blue, so a correct correction should be warming the image up, not cooling it further.
 %[text] Let's apply the camera's numbers instead and compare all three.
 %%
@@ -215,22 +199,21 @@ p.wbRGB = im2uint16(wb);
 p.wbRGB = imadjust(p.wbRGB, stretchlim(p.wbRGB),[0.01 0.99]); % same contrast stretch as the others
 ttls{end+1} = 'Camera WB'
 %%
-
+%[text] MATLAB also includes the function **`raw2rgb`**, which does demosaic, white balance and color space conversion in a single call:
+p.oneStep = raw2rgb("vertebra.dng");
+ttls{end+1} = 'One Step'
+%%
+%[text] ### Compare all the white balance steps
 figure
-% tiledlayout("horizontal","TileSpacing","tight")
-mmTightTiledLayout
+tiledlayout("flow","TileSpacing","tight","Padding","tight")
+% mmTightTiledLayout
 fns = fieldnames(p);
 for n=1:numel(fns)
     nexttile
     imshow(p.(fns{n}))
     title(ttls{n})
 end
-
-%%
-nexttile; imshow(stretched_IMG); title('No white balance')
-nexttile; imshow(caIMG);        title('illumwhite estimate')
-nexttile; imshow(wbRGB);         title('Camera as-taken WB')
-%[text] **Use the coin.** There is a quarter lying next to the vertebra, and a coin is very close to a neutral gray - which makes it an accidental **gray card**. This is exactly how photographers check white balance in the field: find something you know is neutral and ask whether it renders neutral.
+%[text] **Use the coin as reference.** There is a quarter lying next to the vertebra, and a coin is very close to a neutral gray - which makes it an accidental **gray card**. This is exactly how photographers check white balance in the field: find something you know is neutral and ask whether it renders neutral.
 %[text] - In the no-white-balance version the coin is distinctly warm.
 %[text] - In the `illumwhite` version it has gone cool and slightly purple - over-corrected.
 %[text] - In the camera version it reads as plain silver-gray, and the bone finally looks like bone.
