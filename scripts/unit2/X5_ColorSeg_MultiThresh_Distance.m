@@ -273,10 +273,10 @@ ax(2) = nexttile;
 imshow(p.kLabel,[]) % scale class label display 
 title("K-means Cluster Labels")
 
-colormap(ax(2),turbo(nColors)) % add color bar
+colormap(ax(2),turbo(nColors)) % set colormap to turbo
 clim([0.5 nColors+0.5]) % offset colormap limits by .5 (centers labels on colorbar)
 
-cb = colorbar;  %a dd color bar
+cb = colorbar;  %add color bar
 cb.Ticks = 1:nColors;
 
 impixelinfo
