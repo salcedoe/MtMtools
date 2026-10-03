@@ -270,11 +270,13 @@ imshow(p.rgb)
 title("Original Image")
 
 ax(2) = nexttile;
-imshow(p.kLabel,turbo(nColors))
+imshow(p.kLabel,[]) % scale class label display 
 title("K-means Cluster Labels")
 
-clim([0.5 nColors+0.5])
-cb = colorbar;
+colormap(ax(2),turbo(nColors)) % add color bar
+clim([0.5 nColors+0.5]) % offset colormap limits by .5 (centers labels on colorbar)
+
+cb = colorbar;  %a dd color bar
 cb.Ticks = 1:nColors;
 
 impixelinfo
