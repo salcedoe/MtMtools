@@ -55,7 +55,7 @@ ax = gobjects(numel(fn));
 for n=1:numel(fn)
     ax(n) = nexttile;
     imshow(S.(fn(n)))
-    title(titles(n))
+    title(titles(n),Interpreter="none")
 end
 
 set(gcf, 'Tag','mmShowStruct') % tag the figure 
