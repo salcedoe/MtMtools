@@ -1,6 +1,6 @@
 %[text] %[text:anchor:T_77581A44] # An introduction to Image Stacks
 %[text] An image stack is exactly what it sounds like: a stack of images. Think deck of cards or a sheaf of paper. Whereas a single image is—for all intents and purposes—infinitely thin, a stack has volume and multiple slices.
-%[text] For fun: here's the [Flatland](https://www.youtube.com/watch?v=MGv8MMi8QO0) video again. 
+%[text] For fun: here's what life in 2D might look like: [Flatland](https://www.youtube.com/watch?v=MGv8MMi8QO0). 
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 %%
