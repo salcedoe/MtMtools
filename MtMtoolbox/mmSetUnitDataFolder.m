@@ -25,7 +25,7 @@ dp = fullfile(matlabdrive,"MtMresources","data", sprintf("unit%d",unit_num));
 
 if ~exist(dp,"dir")
     beep
-    fprintf('Indicated MtMdata folder not found. Find the unit%d data folder in the MtMdata folder\n',unit)
+    fprintf('Indicated MtMdata folder not found. Find the unit%d data folder in the MtMdata folder\n',unit_num)
     dp = uigetdir;
 end
 

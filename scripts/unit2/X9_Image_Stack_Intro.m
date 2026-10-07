@@ -1,55 +1,53 @@
 %[text] %[text:anchor:T_77581A44] # An introduction to Image Stacks
-%[text] An image stack is exactly what it sounds like: a stack of images. Think deck of cards or a sheaf of paper. Whereas a single image is—for all intents and purposes—infinitely thin, a  stack has volume and multiple slices.
-%[text] [Flatland](https://www.youtube.com/watch?v=MGv8MMi8QO0)
+%[text] An image stack is exactly what it sounds like: a stack of images. Think deck of cards or a sheaf of paper. Whereas a single image is—for all intents and purposes—infinitely thin, a stack has volume and multiple slices.
+%[text] For fun: here's the [Flatland](https://www.youtube.com/watch?v=MGv8MMi8QO0) video again. 
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 %%
 %[text] ## Visualization
 %[text] %[text:anchor:H_A9A7F581] ### Prism - image stack illustration
-%[text] It helps to visualize an Image stack as a Prism - or a 3D cube, like this:
+%[text] It helps to visualize an image stack as a prism—or a 3D cube—like this:
 %[text] ![](text:image:7db6)
-%[text] %[text:anchor:H_63DB8D4E] ## 
 %[text] ### Plane illustration
-%[text] An image stack is exactly that: a stack of images. Think of an image stack as a stack of images piled on top of each other. The first dimension still represents the rows, the second represents the columns, while the third dimensions represent the slices (or planes) of the stack. This is similar to RGB images, but in this case, instead of channels, each plane represent depth (or in some instances, time). And you can have more than three planes. 
-%[text] To indexing a plane, you simply place a value in the third position, as follows:
+%[text] Think of an image stack as images piled on top of each other. The first dimension still represents the rows, the second represents the columns, and the third dimension represents the slices (or planes) of the stack. This is similar to RGB images, but instead of channels, each plane represents depth (or, in some instances, time). And you can have more than three planes. 
+%[text] To index a plane, you simply place a value in the third position, as follows:
 %[text] ```matlabCodeExample
 %[text] STACK(:,:,5)
 %[text] ```
-%[text] -  this would return all rows and all columns in the 5th plane as follows \
+%[text] - This returns all rows and all columns in the 5th plane: \
 %[text] ![](text:image:5ebb)
 %[text] ### Indexing an orthogonal plane of data
-%[text] You can index planes parallel to the z-plane as follows:
+%[text] You can also index a plane that is perpendicular to the image planes (parallel to the z-axis). This returns all rows and all slices in the 5th column:
 %[text] ```matlabCodeExample
 %[text] STACK(:,5,:)
 %[text] ```
 %[text] ![](text:image:9e90)
 %[text] ### Calculating the Max of a Stack across the 3rd dimension
-%[text] %[text:anchor:H_1B4BC365] Converting a 3D stack into a 2D stack is called a projection. One simple way to create a projection is run the **max** function across the 3rd dimension as follows:
+%[text] %[text:anchor:H_1B4BC365] Converting a 3D stack into a 2D stack is called a projection. One simple way to create a projection is to run the **max** function across the 3rd dimension as follows:
 %[text] ![](text:image:3729)
-%[text] - The result is a 2D image (the magenta plane) that has the same x and y of the stack (but now has a z of 1). this has a max value from every column above that magenta plane \
+%[text] - The result is a 2D image (the magenta plane) that has the same x and y dimensions as the stack (but now has a z of 1). Each pixel holds the max value from the column of pixels above it, through all slices of the stack \
 %%
 %[text] ### Animation
-%[text] Now enjoying an animation of indexing across all 10 planes of the prism
+%[text] Now enjoy an animation of indexing across all 10 planes of the prism
 clearvars
 close all
 figure;
 slice_animation; % this is a local function added to the bottom of the live script
-%[text] # 
 %%
-%[text] ## Example: Mouse Tastebud
+%[text] ## Example: Mouse Taste Bud
 %[text] Real-world data
 %[text] %[text:anchor:H_B73A4DA0] ## ![](text:image:9e02)
-%[text] The datasets in this example were captured using a confocal microscope of tastebuds isolate from mouse tongues. [Castillo et al, Development, 2014](http://dev.biologists.org/content/141/15/2993#sec-13)
+%[text] The datasets in this example were captured with a confocal microscope from taste buds isolated from mouse tongues. [Castillo et al., Development, 2014](https://pubmed.ncbi.nlm.nih.gov/24993944/)
 %%
 %[text] ### Get Image File Paths
 %[text] %[text:anchor:H_A6E7D2CB] I have stored two TIF stacks in the data folder. 
 %[text] - taste\_bud\_red.tif
 %[text] - taste\_bud\_blue.tif \
-%[text] The following code opens these files
+%[text] The following code sets the current folder to the unit 2 data folder and stores the filenames
 close all
 clearvars;
 clc
-unit2_path = mmSetUnitDataFolder(2);
+mmSetUnitDataFolder(2);
 r.filename = "taste_bud_red.tif";
 r.color = 'red';
 b.filename = "taste_bud_blue.tif";
@@ -62,7 +60,7 @@ b.meta = imfinfo(b.filename)
 %%
 %[text] #### Plane count
 %[text] For image stacks, the number of elements in the metadata structure arrays is equal to the number of planes in the volume. 
-%[text] - Use numel to determine how many planes are in the red and Blue volumes \
+%[text] - Use numel to determine how many planes are in the red and blue volumes \
 numel(r.meta)
 %[text] - how many planes? \
 %[text] 
@@ -77,37 +75,32 @@ r.meta(5)
 %[text] Enter the syntax to return the Width and Height from the 5th plane in the red volume (using its metadata)
 r.meta(5).Height
 r.meta(5).Width
-%[text] - This syntax returns the information from the field "width" in the fifth plane from the RED stack metadata \
+%[text] - This syntax returns the information from the fields "Height" and "Width" in the fifth plane of the RED stack metadata
+%[text] - Field names are case-sensitive: `Width` works, but `width` does not \
 %%
 %[text] Enter the syntax to return the Width and Height from the 5th plane in the blue volume (using its metadata)
 b.meta(5).Height
 b.meta(5).Width
-%[text] - The BLUE stack has the same dimensions as in the RED stack \
-%%
-
-%[text] - This syntax returns the "Height" from all of the planes in the BLUE stack, which necessarily have to be the same. All planes from an image stack have the same width and height. In this example, the BLUE and the RED stacks have the same dimensions \
-%%
-%[text] Enter the syntax to return the width of all planes in the red volume (using its metadata).
-r.meta.Height
+%[text] - The BLUE stack has the same dimensions as the RED stack \
 %%
 %[text] %[text:anchor:H_412B7CF4] #### Colormaps
-%[text] %[text:anchor:H_2B7E3A6E] The metadata from stacks often include a colormap for each channel. In this example, this specific metadata is saved in the Colormap field
-r.meta(1).Colormap %[text:anchor:H_7CF6E9CF]
+%[text] %[text:anchor:H_2B7E3A6E] The metadata from stacks often include a colormap for each channel. In this example, this specific metadata is saved in the Colormap field.
+r.meta(1).Colormap
 %%
 %[text] **Try it now**: get the colormap from the blue meta structure
 b.meta(1).Colormap
-%[text] - Since these are just shades of red and blue, respectively, there are only color values in the first or last column, respectively.  \
+%[text] - Since these are just shades of red and blue, there are only nonzero values in the first (red) or third (blue) column, respectively. \
 %%
 %[text] ### Image Volume Read
 %[text] %[text:anchor:T_69306EB7] Now that we have reviewed the metadata, we are ready to load an image stack (hopefully)
 %[text] #### Preallocation
-%[text] Remember, preallocation is a critical step to save memory. If you don't preallocate, you run the risk of running out of memory if you load a large dataset. This is especially true for image volumes, which tend to be very large arrays.  From the metadata, we know the height and width of each image slice and we know the number of slices. And we know the bitdepth of the volume
+%[text] Remember, preallocation is a critical step when loading data in a loop. If you don't preallocate, MATLAB has to grow the array—copying it to a new spot in memory—every time through the loop, which is slow and can run you out of memory with large datasets. This is especially true for image volumes, which tend to be very large arrays. From the metadata, we know the height and width of each image slice, and we know the number of slices. And we know the bit depth of the volume.
 %[text] In this example, both the red and blue image stacks have the same number of slices
 % Find the number of slices
 numel(r.meta) % number of slices in the stack.
 numel(b.meta)
 %%
-%[text] And the same Bit depth
+%[text] And the same bit depth
 r.meta(1).BitDepth
 b.meta(1).BitDepth
 %[text] - so, 8-bit \
@@ -122,11 +115,11 @@ b.vol = zeros([b.meta(1).Height  b.meta(1).Width numel(b.meta)],"uint8");
 table([size(r.vol); size(b.vol)], [range(r.vol(:)); range(b.vol(:))], ...
     VariableNames = {'Dimension','Range'})
 %[text] - Here, we organize some properties of the two volumes into a table to review the results
-%[text] - So, the red and blue volumes are 8-bit integer stacks of zeros with the dimensions 512 X 512 X17 \
+%[text] - So, the red and blue volumes are 8-bit integer stacks of zeros with the dimensions 512 x 512 x 17 \
 %%
 %[text] #### Load image data 
-%[text] Remember, RED and BLUE have same number of slices. The following FOR LOOP reads the image stack one slice at a time. The stacks the image data. Note that the FOR LOOP loops for the number of slices in the stack. During each loop, one image slice is read into the corresponding plane of the red and blue volumes. 
-% read in each slice one at time and load into RED and BLUE
+%[text] Remember, RED and BLUE have the same number of slices. The following FOR LOOP reads the image stacks one slice at a time. This stacks the image data. Note that the FOR LOOP loops for the number of slices in the stack. During each loop, one image slice is read into the corresponding plane of the red and blue volumes. 
+% read in each slice one at a time and load into RED and BLUE
 for n=1:numel(r.meta)
     r.vol(:,:,n) = imread(r.filename, n);
     b.vol(:,:,n) = imread(b.filename, n);
@@ -141,10 +134,10 @@ table([r.filename; b.filename], ...
 %[text] - Our pixel values are above zero \
 %%
 %[text] ### Displaying Volumes 
-%[text] Let's start by grabbing the middle slice from each stack and displaying.
+%[text] Let's start by grabbing a slice from near the middle of each stack (slice 10 of 17) and displaying it.
 %[text] Remember, we index volumes as follows:
 %[text] ```
-%[text] red(rows, cols,planes)
+%[text] r.vol(rows, cols, planes)
 %[text] ```
 %[text] - Index the 10th slice from the red volume
 %[text] - title with its volume color
@@ -155,14 +148,16 @@ tiledlayout(1,2,"TileSpacing","tight","Padding","tight")
 nexttile
 rslice = r.vol(:,:,10);
 imshow(rslice)
+title(r.color)
 %%
 %[text] Repeat for the blue volume. 
 nexttile
 bslice = b.vol(:,:,10);
 imshow(bslice)
+title(b.color)
 %%
 %[text] ### Colormaps included
-%[text] As we previously mentioned, the metadata included colormaps for each stack. Remember, we access the colormaps to the images as follows:
+%[text] As we previously mentioned, the metadata included colormaps for each stack. Remember, we apply the colormaps to the images as follows:
 r.map = r.meta(1).Colormap;
 b.map = b.meta(1).Colormap;
 figure
@@ -171,21 +166,20 @@ nexttile
 imshow(rslice,r.map)
 nexttile
 imshow(bslice,b.map)
-
 %%
-%[text] Recall that **imshow** accepts the paired input 'Colormap' to display a specific colormap)
+%[text] Recall that **imshow** accepts a colormap as its second input. Here we use the built-in colormaps **hot** and **turbo**. Use the spinner to change the slice displayed.
 slc = 10; % change the slice displayed %[control:spinner:1ab4]{"position":[7,9]}
 
 tiledlayout(1,2,"TileSpacing","none","Padding","tight")
 nexttile(1) % red volume
-imshow(r.vol(:,:,slc),hot) % second input is with colormap
+imshow(r.vol(:,:,slc),hot) % second input is the colormap
 title(sprintf('Red Slice %d',slc))
 
 nexttile(2) % blue volume
 imshow(b.vol(:,:,slc),turbo);
-title("Blue Slice")
-%[text] - Now the slices are displayed color, but it actually makes the details harder to see
-%[text] - How does turbo look? Or Hot? \
+title(sprintf('Blue Slice %d',slc))
+%[text] - Now the slices are displayed in color, but these colormaps can actually make the details harder to see
+%[text] - Try other colormaps, such as **gray**, **parula**, or the stack colormap `r.map`. Which shows the most detail? \
 %%
 %[text] %[text:anchor:H_009FB9C8] ### Montage
 %[text] A montage displays all of the slices from a volume
@@ -196,28 +190,26 @@ montage(r.vol)
 colormap(hot)
 %%
 %[text] %[text:anchor:H_F111FA83] #### You Try
-%[text] Display a montage of the blue volume and use a parula montage
-figure
-montage(b.vol)
-colormap("turbo")
+%[text] Display a montage of the blue volume and use the turbo colormap
+
 %%
 %[text] ### Explore the volumes
 %[text] Using the Volume Viewer app.
-%[text] - Convert the rendering to an isosurface and set the isovalue lower (move slider  far to the left). \
+%[text] - Convert the rendering to an isosurface and set the isovalue lower (move the slider far to the left). \
 %[text] 
 volumeViewer(r.vol);
-%[text] - Notice how flat this dataset is. There are relatively few number of slices compared to the number of rows and columns
-%[text] - Try the Isosurface Display. Drag the isovalue. Notice this value is like a threshold setting.  \
+%[text] - Notice how flat this dataset is. There are relatively few slices compared to the number of rows and columns
+%[text] - As you drag the isovalue, notice that it acts like a threshold setting \
 %%
-%[text] Repeat with the blue volume, but using the function **volshow.**
-%[text] 
-volshow(b.vol)
+%[text] Repeat with the blue volume, but using the function **volshow**.
+volshow(b.vol,RenderingStyle='CinematicRendering')
+%[text] - we don't get as many visualization choices, but we can add them programmatically \
 %%
 %[text] #### Red Volume Projection
 %[text] Projections simplify viewing an image stack. Recall that a projection is simply a flattened 2D view of a 3D stack. We can easily create a max projection using the function **max**. 
-%[text] Here we display the projection using **mmShowHist.** Note the addition of the parula colormap. 
-r.projection = max(r.vol,[],3); %max of each column along the 3rd dimension
-clf
+%[text] Here we display the projection using **mmShowHist**. Note the addition of the parula colormap. 
+r.projection = max(r.vol,[],3); % max of each column along the 3rd dimension
+figure
 mmShowHist(r.projection)
 colormap("parula")
 %[text] - change the colormap to **turbo** \
@@ -228,19 +220,16 @@ colormap("parula")
 %[text] - Create a projection of the blue channel and add to the ***b*** structure
 %[text] - display using **mmShowHist**
 %[text] - change the colormap to turbo \
-figure
-b.projection = max(b.vol,[],3);
-mmShowHist(b.projection)
-colormap("turbo")
+
 %%
 %[text] #### Overlay Projections
 %[text] **imshowpair** can overlay these projections as if they were different channels
 figure;
 imshowpair(r.projection,b.projection)
 %%
-
-imshowpair(r.projection,b.projection,ColorChannels=[1 0 2]) % 1 0 2
-%[text] - try ColorChannels =  \[1 2 0\] and \[0 1 2\] \
+%[text] Use **ColorChannels** in `imshowpair` to choose which display channel each image goes to. Here, the red projection goes to the red channel and the blue projection to the blue channel, so overlap appears magenta.
+imshowpair(r.projection,b.projection,ColorChannels=[1 0 2])
+%[text] - try ColorChannels = \[1 2 0\] and \[0 1 2\] \
 %%
 %[text] ### Segmenting 3D volumes
 %[text] We can use the same segmentation strategies that we used for 2D images.
@@ -254,14 +243,12 @@ title('RED Volume Histogram')
 %[text] **You Try:**
 %[text] - Show the histogram for the BLUE stack.
 %[text] - Title Blue Volume Histogram. \
-figure;
-imhist(b.vol);
-title('BLUE Volume Histogram')
+
 %[text] 
-%[text] - notice that the pixel distribution is at the low end of the dynamic range, which is why the display of a single slice is pretty dim. \
+%[text] - Notice that the pixel distribution is at the low end of the dynamic range, which is why the display of a single slice is pretty dim. \
 %%
 %[text] #### Normalize
-%[text] We can use the function **mat2gray** on image volumes  to normalize pixel intensities
+%[text] We can use the function **mat2gray** on image volumes to normalize pixel intensities
 r.voln = mat2gray(r.vol);
 b.voln = mat2gray(b.vol);
 %%
@@ -269,14 +256,17 @@ b.voln = mat2gray(b.vol);
 %[text] There seems to be some background noise, so let's use a median filter to clean some of that up. Note the use of the function **medfilt3** here (as compared to medfilt2 for images)
 r.medf = medfilt3(r.voln);
 %%
-%[text] **You try:** Perform the same operation on the blue normalized volume. Add assign to `b.medf`
-b.medf = medfilt3(b.voln);
+%[text] **You try:** Perform the same operation on the blue normalized volume. Assign to `b.medf`
+
 %%
 %[text] #### Inspect Volume
 %[text] So, how did we do?
 volshow(r.vol,RenderingStyle="Isosurface");
 volshow(r.medf,RenderingStyle="Isosurface");
 %[text] - Great, a lot of the background noise appears to be cleaned up, let's keep moving \
+%%
+%[text] Course function can show the two volshows in the same window
+mmVolShowPair(r.vol, r.medf,"RenderStyle","Isosurface")
 %%
 %[text] #### Threshold
 %[text] You can use **imbinarize** to threshold the entire stack, as follows
@@ -287,7 +277,7 @@ b.mask = imbinarize(b.medf);
 %[text] #### Inspect Mask
 %[text] %[text:anchor:H_79C0B655] Using the function volshow
 volshow(r.mask);
-%[text] - looks good. Just some noise \
+%[text] - Looks good overall, though there are still some small specks of noise (we'll clean these up later) \
 %[text] 
 %%
 %[text] Display the blue mask using **volshow**
@@ -298,7 +288,7 @@ volshow(b.mask);
 %[text] - What we really need is a way to inspect the mask on the original data, kind of like **imshowpair** but in 3D \
 %%
 %[text] ### Course Apps
-%[text] I wrote an app called **mmSliceView**  to easily explore image stacks. 
+%[text] I wrote an app called **mmSliceView** to easily explore image stacks. 
 help mmSliceView
 %%
 %[text] #### mmSliceView
@@ -306,7 +296,7 @@ help mmSliceView
 %[text] Input the structure ***r***. When prompted, select **voln** and **mask.**
 mmSliceView(r)
 %[text] - Scrub through the slices using the scroll wheel
-%[text] - Notice that you can Adjust Contrast  for each slice in the Volume Menu
+%[text] - Notice that you can Adjust Contrast for each slice in the Volume Menu
 %[text] - You can also Change the colormap in the Volume Menu
 %[text] - Toggle the mask on and off using the Mask Menu
 %[text] - Change the mask to an overlay by selecting that option in the mask menu \
@@ -316,60 +306,59 @@ mmSliceView(b)
 %[text] - hmm, seems like we are missing some of the data \
 %%
 %[text] #### Adjust Blue Thresholding
-%[text] %[text:anchor:H_79060061] We seemed to be missing some of the signal in the BLUE stack. A simple way to solve this problem is to lower the threshold value. The function **graythresh** also accepts an image stack. We will lower the resultant threshold value using a factor of 0.25. 
-lvl = graythresh(b.voln);
-factor = 0.25; % starts at 0.5
-BBW = imbinarize(b.voln,lvl*factor); % adjust factor
+%[text] %[text:anchor:H_79060061] We seemed to be missing some of the signal in the BLUE stack. A simple way to solve this problem is to lower the threshold value. The function **graythresh** also accepts an image stack. We will lower the resulting threshold value by multiplying it by a factor of 0.25. 
+lvl = graythresh(b.medf);
+factor = 0.25; % try values between 0.1 and 1 (1 = the default Otsu threshold)
+b.mask = imbinarize(b.medf,lvl*factor);
 mmSliceView(b)
 %%
 %[text] #### Compare Masks
 mmSliceView(r.mask,b.mask)
 %%
 %[text] ### Morphological Operations
-%[text] We can use a morphological open to clean up small noise in a mask. The function **bwareaopen** is the easiest way to tackle this (it accepts a 3D mask)
+%[text] We can clean up small specks of noise in a mask with the function **bwareaopen**, which removes connected objects smaller than a given number of voxels (it accepts a 3D mask). Here we use a cutoff of 50 voxels for red and 25 for blue—try other values.
 r.mask = bwareaopen(r.mask, 50);
 b.mask = bwareaopen(b.mask, 25);
 %%
 %[text] %[text:anchor:H_ED34EB65] ### Logical Operations
 %[text] 1. Find the synaptic contact points using a LOGICAL AND between the red and blue masks. Assign to ***maskRB***.
-%[text] 2. Display the red mask and ***maskRB*** in **mmSliceView** \
+%[text] 2. Display the red volume and ***maskRB*** in **mmSliceView** \
 maskRB = r.mask & b.mask;
 %%
 mmSliceView(r.vol,maskRB)
 %%
 %[text] ### Region Properties
-%[text] Notice that there is a 3D version of regionprops. Works almost the same, but in 3D
+%[text] Notice that there is a 3D version of regionprops, **regionprops3**. It works almost the same way, but in 3D
 RP = regionprops3(maskRB)
 %[text] - Instead of AREA, you get VOLUME \
 %%
 %[text] ## Come with me to the fourth dimension and beyond
 %[text] ### A word about dimensions
-%[text] An array can have as many dimensions as you want. It's just really hard to mentally visualize any dimensions beyond the 3rd dimension.  When you are dealing with 3D Datasets and you want to add a color channel, you need to dabble in the fourth dimension.
+%[text] An array can have as many dimensions as you want. It's just really hard to mentally visualize any dimensions beyond the 3rd dimension. When you are dealing with 3D datasets and you want to add a color channel, you need to dabble in the fourth dimension.
 %[text] When dealing with more than three dimensions, the standard order for dimensions changes, as follows:
 %[text] - 1st Dimension - rows
 %[text] - 2nd Dimension - cols
 %[text] - 3rd Dimension - channel
 %[text] - 4th Dimension - plane (slice)
-%[text] - 5th Dimension - time (we'll get to this later) \
+%[text] - 5th Dimension - time (we'll get to this later—see what I did there?) \
 %[text] 4D and 5D arrays are really all about packaging. Just think of them as stacks of images, sorted by channel, z-slice, and (sometimes) time
 %%
-%[text] ### Reshape RED into a 4D array 
-%[text] We can use the function **reshape** to change a 3D array back into a 4D array. Simply input the array that you want to resize, then input the size of the dimensions. In this case, we are going to reshape *RED* so that it has the same number of rows and columns, has a singleton dimension (size of 1) in the 3rd dimension, and has the same number of planes (17), but in the fourth dimension. So basically, we are moving the 3rd dimension to the fourth dimension
-%[text] First, we need to set the size dimension
+%[text] ### Reshape the red volume into a 4D array 
+%[text] We can use the function **reshape** to change a 3D array into a 4D array. Simply input the array that you want to reshape, then input the size of each dimension. In this case, we are going to reshape `r.voln` so that it has the same number of rows and columns, a singleton dimension (size of 1) in the 3rd dimension, and the same number of planes (17), but in the 4th dimension. So basically, we are moving the slices from the 3rd dimension to the 4th dimension
+%[text] First, we need to define the new size
 sz = size(r.voln); % we'll copy the size from the 3D vol
 sz = [sz(1:2) 1 sz(3)] % and insert a 1 in the channel dimension
 %%
 %[text] Now, we can create our 4D Volume
-RGB4 = reshape(r.voln, sz); % REDe, 512, 512, 1, 17
+RGB4 = reshape(r.voln, sz); % 512 x 512 x 1 x 17
 size(RGB4)
 %[text] - Checking the dimensions indicates that RGB4 is 4D
-%[text] - 
-%[text] - Notice that the workspace for the value of RGB4 it just says 4D uint8 \
+%[text] - Notice that the workspace lists RGB4 as a 512x512x1x17 double (because **mat2gray** returns doubles) \
 %%
 %[text] ### Add channels
-%[text] Lets add more channels to our 4D stack. 
-%[text] First we'll add a green channel, but since we don't' have a green volume, we'll need to make one.
-%[text] This syntax creates a 3D array of zeros that is same size as r.vol. 
+%[text] Let's add more channels to our 4D stack. 
+%[text] First we'll add a green channel, but since we don't have a green volume, we'll need to make one.
+%[text] This syntax creates a 3D array of zeros that is the same size as r.vol and inserts it into channel 2. 
 RGB4(:,:,2,:) = zeros(size(r.vol),'double'); % index is all rows, all columns, channel 2, all planes
 %%
 %[text] You try: add the blue volume to the 3rd channel of RGB4
@@ -386,32 +375,30 @@ figure;
 montage(RGB4)
 %%
 %[text] ### mmSliceView
-%[text] **mmSliceView** can also handle 4D slices and you can scrub through each plane to see them in RGB color. Right-click on an image and select auto-contrast to see the image better
+%[text] **mmSliceView** can also handle 4D stacks and you can scrub through each plane to see them in RGB color. Right-click on an image and select auto-contrast to see the image better
 mmSliceView(RGB4)
 %[text] - Notice now that the channel switcher is activated
 %[text] - The 0 Channel means show all channels \
 %%
 %[text] ### 4D Masks
-%[text] We can perform the same operations for the masks. First, we will reshape one of the masks into a 4D logical array. Then we will index into this 4D array the other two 3D logical arrays
+%[text] We can perform the same operations for the masks. First, we will reshape one of the masks into a 4D logical array. Then we will insert the other two 3D masks into channels 2 and 3
 BW4 = reshape(r.mask,size(r.mask,1),size(r.mask,2),1,size(r.mask,3)); % reshape the RED mask into a 4D array and assign to BW4
 BW4(:,:,2,:) = false(size(r.mask)); % index in a 3D array of falses
 BW4(:,:,3,:) = b.mask; % index in the blue channel: all rows, all columns, third channel, all planes
 %%
-montage(im2single(BW4)) % typecast the logical array to a single because montage can't display logical arrays
+figure;
+montage(im2single(BW4)) % convert to single because montage can't display a 3-channel logical array
 %%
-%[text] mmSliceView can handle them both
+%[text] **mmSliceView** can handle them both
 mmSliceView(RGB4,BW4)
 %%
 %[text] ### Publication
-%[text] This sample script was modified from data analysis published in Development by the Barlow LAB Rocky Mountain Taste and Smell Center
-web('http://www.ncbi.nlm.nih.gov/pubmed/24993944','-browser')
+%[text] This sample script was modified from data analysis published in Development by the Barlow Lab at the Rocky Mountain Taste and Smell Center
+web('https://pubmed.ncbi.nlm.nih.gov/24993944/','-browser')
 %%
 %[text] %[text:anchor:T_1CF4BF7C] # Local Functions
 function slice_animation
-
-% close all
-clc
-% figure('Visible','off');
+% Animate indexing through each plane of an image stack: STACK(:,:,n)
 
 s = 10; % size of cube
 x=[0 1 1 0 0 0;1 1 0 0 1 1;1 1 0 0 1 1;0 1 1 0 0 0]*s*2;
@@ -430,36 +417,24 @@ set(gca, "FontSize", 14)
 xlabel('cols',"FontSize",16,"FontWeight","bold")
 ylabel('rows',"FontSize",16,"FontWeight","bold")
 zlabel('slices',"FontSize",16,"FontWeight","bold")
+title('image stack')
 
-title('image stack - DS')
-
-
-view([-52.60 38.40])
-
-
-s = 10;
-x=[0 1 1 0 0 0;1 1 0 0 1 1;1 1 0 0 1 1;0 1 1 0 0 0]*s*2;
-y=[0 0 1 1 0 0;0 1 1 0 0 0;0 1 1 0 1 1;0 0 1 1 1 1]*s*2;
-
-ch = [];
+ch = gobjects(0);
 
 for n = 1:s
-    
+
     delete(ch)
-    z=[0 0 0 0 0 1;0 0 0 0 0 1;1 1 1 1 0 1;1 1 1 1 0 1]*1+n;
-    
+    z=[0 0 0 0 0 1;0 0 0 0 0 1;1 1 1 1 0 1;1 1 1 1 0 1] + n - 1; % slice n spans z = n-1 to n
+
     for i=1:6
-        ch(i)=patch(x(:,i),y(:,i),z(:,i),'y','facealpha',.5);        
+        ch(i)=patch(x(:,i),y(:,i),z(:,i),'y','facealpha',.5);
     end
-    
+
     set(ch,'edgecolor','w')
-    view([-27 40])
-    axis equal
-    
-    drawnow
     title(sprintf('image slice - STACK(:,:,%d)',n),"FontSize",18)
+    drawnow
     pause(1)
-    
+
 end
 end
 
