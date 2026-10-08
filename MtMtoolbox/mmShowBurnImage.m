@@ -19,6 +19,7 @@ arguments
     img
     mask (:,:) {mustBeNumericOrLogical}
     options.color {mustBeText} = '';
+    options.title {mustBeText} = '';
 end
 
 if isempty(options.color)
@@ -29,4 +30,6 @@ end
 
 imshow(burnedImage)
 
+if ~isempty(options.title)
+    title(options.title)
 end

@@ -7,7 +7,7 @@ function [IMGND, metadata] = mmReadImgND(file_path)
 % be prompted for a path
 %
 % OUTPUTS:
-% - IMGND - an XYZCT multidimensional array
+% - IMGND - a multidimensional array ordered rows x cols x channels x z-planes x time (YXCZT)
 % - metadata - the metadata from the array in XML format
 %
 % EXAMPLE:
