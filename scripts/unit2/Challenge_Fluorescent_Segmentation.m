@@ -1,99 +1,187 @@
 %[text] %[text:anchor:T_298821D5] # Challenge: Epifluorescence Segmentation
-%[text] ## Fun with Neurons
-%[text] In this example, we use the intensity data from multiple to channels to inform our analysis. 
-%[text] Immunohistochemical stain:
-%[text] - Blue: general cytosolic stain (all neuronal cells)
-%[text] - Green: Nuclear stain (for a subset of nuclei)
-%[text] - Red: cytosolic stain for a subset of cells \
-%[text] GOAL: Segment the red cells that have a green nucleus (not all do). Note that green and red make yellow. So, the red cells with yellow centers are what we are looking for.
-%[text] STRATEGY: Threshold all three channels and use the binary masks to get the data that we want
+%[text] **Fun with neurons: which red cells have green nuclei?**
+%[text] In this challenge, you will segment each channel of a three-channel fluorescence image and then combine the masks to answer a biological question. This time you are working with a single image, but the logic is new: instead of segmenting one color, you will use the relationships *between* channels to decide which cells count. The red channel comes with a worked recipe. For the green and blue channels, you design the pipeline yourself (hints are at the end).
+%[text] **Groups:** Work in pairs.
+%[text:tableOfContents]{"heading":"Table of Contents"}
 %%
-%[text] %[text:anchor:H_1EA17015] ## Load file
-%[text] You need to be in the Unit 2 data folder for this to work
+%[text] ## Background
+%[text] This image is a section of mouse brain tissue, shared by a former neuroscience graduate student. Beyond that, the image has little provenance: we know what each channel labels, but not the specific antibodies, the microscope, or the imaging settings. That is common with images that get passed around a lab, and it limits what we can claim from them (see Q6).
+%[text:table]
+%[text] | Channel | Stain | What it labels |
+%[text] | --- | --- | --- |
+%[text] | Blue | DAPI | The nuclei of **all** cells |
+%[text] | Green | Nuclear stain | The nuclei of a **subset** of cells |
+%[text] | Red | Cytosolic stain | The cell bodies of a **subset** of neurons |
+%[text:table]
+%[text] We are interested in the red cells that also have a green nucleus. Not all of them do. Because green and red display as yellow, these cells look like red cells with yellow centers.
+%[text] Two things make this harder than it sounds:
+%[text] - The green channel also contains large, bright regions that are **not** nuclei. Real green nuclei sit on top of DAPI (blue) staining, so we can use the blue channel to tell them apart.
+%[text] - The green nuclei are dimmer than the signal in the other two channels, so the green channel has a lower signal-to-noise ratio. \
+%%
+%[text] ## The Question
+%[text] **What fraction of red-labeled cells have a green-labeled nucleus? And do green-positive and green-negative red cells differ in size?**
+%%
+%[text] %[text:anchor:H_1EA17015] ## The Data
+%[text] You need to be in the Unit 2 data folder for this to work. As always, check the metadata before you start processing.
 clearvars
 close all
 clc
 
 mmSetUnitDataFolder(2);
 p.img = imread("JackiRedGreenCells.tiff");
+meta = imfinfo("JackiRedGreenCells.tiff")
 figure
 imshow(p.img)
-%[text] - You can (kind of) see that there are 3 different colors in that image \
+%[text] - What is the bit depth?
+%[text] - Does the file record a pixel size (XResolution and ResolutionUnit)?
+%[text] - You can (kind of) see that there are 3 different colors in this image \
 %%
-%[text] %[text:anchor:H_285905E0] ## Enhance for display
-%[text] It's kind of hard to see the details. Let's use **imadjust** to enhance the contrast. This will be for display purposes only. Don't use p.imga for the processing steps. 
-lowhigh = stretchlim(p.img); % quick and dirty image adjuster (adjusts all planes) 
-p.imga = imadjust(p.img, lowhigh, []); % uses input from stretchlim
+%[text] %[text:anchor:H_285905E0] ### Enhance for display
+%[text] It's hard to see the details, so we use **imadjust** to enhance the contrast. This is for display purposes only. Don't use `p.imga` for any processing steps.
+lowhigh = stretchlim(p.img); % quick and dirty contrast limits (adjusts all channels)
+p.imga = imadjust(p.img, lowhigh, []); % uses the limits from stretchlim
 imshow(p.imga)
-%[text] 
-%[text] - Now you can see that there is information across all three channels  \
-%[text] GOAL: Segment the red cells that have a green nucleus (not all do). Note that green and red make yellow. So, the red cells with yellow centers are what we are looking for.
-%[text] STRATEGY: Threshold all three channels and use the binary masks to get the data that we want
+%[text] - Now you can see that there is information across all three channels \
 %%
-%[text] %[text:anchor:H_C8CB1615] ## Explore the channels
-%[text] %[text:anchor:H_FC9D1F51] Here we use mmShowHist to see what the individual channels look like
+%[text] %[text:anchor:H_C8CB1615] ### Explore the channels
+%[text] %[text:anchor:H_FC9D1F51] Here we use **mmShowHist** to see what the individual channels look like.
 mmShowHist(p.imga);
-%[text] - notice that the dots in the green channel are a little dimmer than the dots in the other two channels. There is lower Signal to Noise in this image (meaning the positive signal is harder to differentiate from the background).  \
-%[text] 
-%[text] 
+%[text] - Notice that the dots in the green channel are dimmer than the signal in the other two channels
+%[text] - Notice the large bright regions in the green channel that are not nuclei \
 %%
-%[text] ## **Segment each Channel**
-%[text] Work on each channel separately. Don't start from the adjusted image. Start from the original image (`p.img`). For maximum compatibility with the challenge solution, create three structures, one for each channel: `r` , `g` , and `b` 
-%[text] #### Red Channel
-%[text] We just want the somas
+%[text] ## Rules
+%[text] 1. **Start from the original image** (`p.img`), not the adjusted one.
+%[text] 2. **Segment each channel separately**, as we did in X8. Index out the channel, treat it as a grayscale image, and combine the masks afterward.
+%[text] 3. **Use the variable names in the Deliverables**, so your results can be compared with the challenge solution. Store intermediate steps as fields (for example, `r.n`, `r.gauss`) so you can review them with **mmShowStruct**.
+%[text] 4. **Visually inspect every mask** on top of its channel (for example, with **imshowpair**). A number that comes from a bad mask is a bad number. \
+%%
+%[text] ## Deliverables
+%[text] By the end of class, this live script should contain:
+%[text] 1. **Channel masks:** `r.mask`, `g.mask`, and `b.mask`, one logical mask per channel.
+%[text] 2. **Combined mask:** `p.mask`, all three masks combined with `cat` and converted to single, displayed with the title "Combined Mask".
+%[text] 3. **Nuclear green mask:** `p.maskGB`, the green staining that overlaps DAPI.
+%[text] 4. **Green-positive red cells:** `r.greenNuc`, the whole red cells that are touched by a nuclear green signal.
+%[text] 5. **Counts:** `nTotal` (all red cells), `nPositive` (red cells with green nuclei), and `fractionPositive`.
+%[text] 6. **Figure 1:** a boxchart comparing the areas of green-positive and green-negative red cells.
+%[text] 7. **Answers** to the questions at the end of this script. \
+%%
+%[text] ## Your Pipeline
+%[text] ### Step 1: Red channel (worked recipe)
+%[text] We just want the cell bodies (somas).
 %[text] 1. Normalize the channel
-%[text] 2. Filter (gaussian filter)
+%[text] 2. Filter (Gaussian filter)
 %[text] 3. Binarize
-%[text] 4. Clean-up small noise and fill holes \
-%[text] #### Green Channel
-%[text] The hardest channel to deal with
+%[text] 4. Clean up small noise and fill holes \
+% Your red channel code here
+
+
+%%
+%[text] ### Step 2: Green channel
+%[text] The hardest channel. Your mask should keep the green nuclei and drop both the small specks of noise and the large non-nuclear regions. Stuck? See Hints 1 and 3.
+% Your green channel code here
+
+
+%%
+%[text] ### Step 3: Blue channel
+%[text] Your mask should capture the DAPI-stained nuclei. Stuck? See Hint 2.
+% Your blue channel code here
+
+
+%%
+%[text] ### Step 4: Combined mask
+%[text] 1. Combine all three masks using `cat` and assign to `p.mask`.
+%[text] 2. Convert this mask to single and display it with the title "Combined Mask".
+%[text] 3. Review this mask carefully. It will guide your data analysis. \
+%[text] Your goal is a set of masks like these. The red, green, and blue panels show each channel's mask (in color) over the grayscale channel. In the combined mask, cyan marks pixels where the green and blue masks overlap.
+%[text] ![](text:image:87e0)
+% Your combined mask code here
+
+
+%%
+%[text] ### Step 5: Find the red cells with green nuclei
+%[text] 1. **Keep only nuclear green.** Create `p.maskGB`, the green staining that overlaps the DAPI (blue) staining. These are the cyan pixels in the combined mask.
+%[text] 2. **Recover whole red cells.** A logical AND between `p.maskGB` and `r.mask` captures only the overlap, not the entire red cell. To keep every red cell that is touched by a green nucleus, use **imreconstruct**: `p.maskGB` is the *marker* and `r.mask` is the *mask*. Save the result as `r.greenNuc`. See Hint 4. \
+% Your code here
+
+
+%%
+%[text] ### Step 6: Count
+%[text] Count all red cells (`nTotal`) and the red cells with green nuclei (`nPositive`), then calculate `fractionPositive`. See Hint 5.
+% Your code here
+
+
+%%
+%[text] ### Step 7: Compare cell sizes (Figure 1)
+%[text] Get the areas of the green-positive and green-negative red cells with **regionprops**, and compare them in a single boxchart. See Hint 6.
+% Your code here
+
+
+%%
+%[text] ## Questions
+%[text] Answer each question in a text line below it.
+%[text] **Q1.** You used **adapthisteq** on the green and blue channels but not on the red channel. Why?
+%[text] *Your answer:*
+%[text] **Q2.** What area range did you use with **bwareafilt** on the green channel, and how did you choose it? What did the upper limit remove?
+%[text] *Your answer:*
+%[text] **Q3.** Count the objects in `p.maskGB & r.mask`, and compare that number with `nPositive`. Why are they different? Which one answers our question?
+%[text] *Your answer:*
+%[text] **Q4.** What fraction of red cells have a green nucleus? Do green-positive and green-negative red cells differ in size?
+%[text] *Your answer:*
+%[text] **Q5.** Zoom in on one small region of the image and count the green-positive red cells by eye. How close is your pipeline's count? Where does it disagree?
+%[text] *Your answer:*
+%[text] **Q6.** This image has little provenance. What information would you need before you could report cell areas in µm² or publish this result?
+%[text] *Your answer:*
+%%
+%[text] ## Hints
+%[text] **Stop!** Only read a hint when you are stuck. Try to solve each problem on your own first.
+%[text] ### Hint 1: Green channel recipe
 %[text] 1. Normalize
-%[text] 2. Correct uneven illumination (adapthisteq)
+%[text] 2. Correct uneven illumination (**adapthisteq**)
 %[text] 3. Filter (median filter)
 %[text] 4. Binarize
-%[text] 5. Clean up both small and large noise using `bwareafilt` - you need to determine the size of the dots you want to keep and remove everything else \
-%[text] #### `Blue Channel`
-%[text] 1. `Normalize`
-%[text] 2. Correct uneven illumination (adapthisteq) 
-%[text] 3. Median Filter
+%[text] 5. Remove both small and large objects with **bwareafilt** (see Hint 3) \
+%[text] ### Hint 2: Blue channel recipe
+%[text] 1. Normalize
+%[text] 2. Correct uneven illumination (**adapthisteq**)
+%[text] 3. Filter (median filter)
 %[text] 4. Binarize \
-%[text] #### Combined Mask
-%[text] 1. Combine all masks using `cat` and assign to `p.mask`.
-%[text] 2. Convert this mask to a single for display as a "Combined Mask". 
-%[text] 3. Reviewing this mask will help you in the data analysis \
-%[text] Final Mask Goals
-%[text] ![](text:image:87e0)
+%[text] ### Hint 3: Choosing a size range for bwareafilt
+%[text] `bwareafilt(mask,[minArea maxArea])` keeps only the objects whose areas fall within the range. To find a sensible range, look at the areas of the objects in your binarized green mask:
+%[text] ```matlabCodeExample
+%[text] rp = regionprops("table", g.mask, "Area");
+%[text] histogram(rp.Area)
+%[text] ```
+%[text] The nuclei should form a cluster of similar sizes. Pick limits around that cluster, then check the result with **imshowpair**.
+%[text] ### Hint 4: imreconstruct
+%[text] **imreconstruct** grows the marker until it fills every connected object in the mask that it touches. Objects in the mask that the marker never touches are dropped.
+%[text] ```matlabCodeExample
+%[text] r.greenNuc = imreconstruct(p.maskGB & r.mask, r.mask);
+%[text] ```
+%[text] The marker must lie inside the mask, which is why we AND them first.
+%[text] ### Hint 5: Counting cells
+%[text] **bwconncomp** counts connected objects in a mask:
+%[text] ```matlabCodeExample
+%[text] cc = bwconncomp(r.mask);
+%[text] nTotal = cc.NumObjects;
+%[text] ```
+%[text] ### Hint 6: Comparing areas in one boxchart
+%[text] The green-negative red cells are `r.mask & ~r.greenNuc`. Stack the areas from both groups into one column, label each with its group, and pass both to **boxchart**:
+%[text] ```matlabCodeExample
+%[text] rpPos = regionprops("table", r.greenNuc, "Area");
+%[text] rpNeg = regionprops("table", r.mask & ~r.greenNuc, "Area");
+%[text] area = [rpPos.Area; rpNeg.Area];
+%[text] group = categorical([repmat("Green+",height(rpPos),1); repmat("Green-",height(rpNeg),1)]);
+%[text] boxchart(group, area)
+%[text] ```
+%[text] If you trust the pixel size in the metadata, convert the areas to µm² first (remember to multiply by the pixel size squared). Otherwise, report them in pixels and label the axis accordingly.
 %%
-%[text] ### Data Analysis
-%[text] The Goal is to Find Red Cells with Green Nuclei.
-%[text] #### Exclude non-nuclear green staining from analysis
-%[text] 1. The Blue channel indicates where all the nuclei in the tissue is located. So, we only want green staining that overlaps with the blue staining (cyan color in Combined mask)
-%[text] 2. Call this mask `p.maskGB`. \
-%[text] #### Create a Mask that captures red cells with green dots
-%[text] You can use this mask to count the number of red cells with green nuclei
-%[text] #### Count
-%[text] 1. Count the number of Red Cells with green nuclei
-%[text] 2. What ratio of red cells with green nuclei to red cells without green nuclei?  \
-%[text] 
-%%
-%[text] ### Advanced: Morphological reconstruct
-%[text] optional
-%[text] In the previous mask, using basic logical operations, you captured the nuclei overlap, not the entire red cell. If you want to capture all the red cells that are touched by green nuclei, you need to use the function **imreconstruct**. With this function, we can use the green mask as a marker to identify which of the cells in the red mask to keep. 
-%[text] Review the documentation for `imreconstruct` and create a mask that captures the red cells that have nuclei. In the vernacular of the function, the p.maskGB mask would be the 'marker' and the r.mask would be the 'mask'. Save this mask as `r.greenNuc`. 
-
-%%
-%[text] #### Region Properties
-%[text] Capture the region properties of red cells with green nuclei and red cells without green nuclei.
-%[text] Display the areas of these cells as box charts with the same y-limits (two-tiled figure)
-
-%%
-%[text] ### **Going forward**
-%[text] Next week, we will try Cellpose, a generalist Machine Learning algorithm for cellular segmentation
-%[text] Click on 
-%[text] ![](text:image:1f64) 
-%[text] and search for: 
+%[text] ## Going forward
+%[text] Next week, we will try Cellpose, a generalist machine-learning algorithm for cell segmentation, and compare its red-cell count with yours.
+%[text] Click on
+%[text] ![](text:image:1f64)
+%[text] and search for:
 %[text] **Medical Imaging Toolbox Interface for Cellpose Library**
-%[text] - Install.  \
+%[text] - Install \
 
 %[appendix]{"version":"1.0"}
 %---
