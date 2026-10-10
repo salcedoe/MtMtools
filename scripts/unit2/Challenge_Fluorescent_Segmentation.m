@@ -155,9 +155,9 @@ mmShowHist(p.imga);
 %[text] ### Hint 4: imreconstruct
 %[text] **imreconstruct** grows the marker until it fills every connected object in the mask that it touches. Objects in the mask that the marker never touches are dropped.
 %[text] ```matlabCodeExample
-%[text] r.greenNuc = imreconstruct(p.maskGB & r.mask, r.mask);
+%[text] r.greenNuc = imreconstruct(p.maskGB, r.mask);
 %[text] ```
-%[text] The marker must lie inside the mask, which is why we AND them first.
+%[text] Only the red cells that touch a nuclear green signal survive. Each one is kept whole, not just the overlapping pixels.
 %[text] ### Hint 5: Counting cells
 %[text] **bwconncomp** counts connected objects in a mask:
 %[text] ```matlabCodeExample

@@ -1,7 +1,13 @@
-%[text] # Advanced Segmentation Analysis
+%[text] # Counting Nuclei Around Kidney Tubules with the Distance Transform
 %[text] %[text:anchor:H_7A1FFC3A] ## Exercise: Loop of Henle
 %[text] %[text:anchor:H_F21A4EF7] ![](text:image:161f)![](text:image:6865) ![](text:image:77c4)
-%[text] %[text:anchor:H_825E539B] The loop of Henle forms a hair-pin structure that dips down into the medulla of the kidney. There is a thick descending limb and a thick ascending limb. In the above image, you can also see the collecting ducts that collect the urine and deliver to the ureter and bladder. The number of nuclei surrounding a duct appears to be biologically relevant. Ducts with more nuclei are more likely a collecting duct while those with fewer nuclei may be a cross-section of the loop of henle. So, we can categorize a duct by the number of nuclei surrounding it.
+%[text] %[text:anchor:H_825E539B] A cross-section through the kidney medulla cuts through several kinds of tubules. Two of them can look similar in an H&E section: the thin limbs of the loop of Henle, which are lined by flat (squamous) cells with only a few nuclei, and collecting ducts, which are lined by cuboidal cells with many nuclei. In this script, we use the number of nuclei surrounding each tubule to tell them apart. To this, we need to identify all the nuclei surrounding a given duct, but none of the other nuclei. So, we need some way to measure distance in an image. This is where the distance transform comes into to play. It can be used to measure distances inside an image. 
+%[text] **The plan:**
+%[text] 1. Segment the nuclei using k-means clustering (from X5)
+%[text] 2. Segment the duct lumens using k-means and the Segment Anything Model (SAM)
+%[text] 3. Use the **distance transform** to draw a ring around each duct
+%[text] 4. Count the nuclei that touch each ring
+%[text] 5. Classify each duct by its nuclei count \
 clearvars
 close all
 clc
@@ -10,23 +16,39 @@ p.name = "Loop of Henle"
 p.rgb = imread("loop_of_henle_cross_section.jpg");
 figure
 imshow(p.rgb)
-%[text] In this exercise, we will segment the dark blue structures, which are the nuclei of the cells. Notice that there are a different number of nuclei in a Loop of Henle Cross-sections compared to Collecting duct. 
+%[text] In this exercise, we will segment the dark blue structures, which are the nuclei of the cells. Notice that there are different numbers of nuclei around loop of Henle cross-sections compared to collecting ducts.
 %%
 %[text] %[text:anchor:H_EEBF0E35] ### Apply Median Filter
-%[text] Here we apply a `7X7` median filter to smooth out some of the noise in the image
+%[text] Here we apply a 7 × 7 median filter to smooth out some of the noise in the image. The `[7 7 1]` input applies the filter to each color channel separately.
 figure;
 p.medf = medfilt3(p.rgb, [7 7 1]);
 imshow(p.medf)
 %%
-%[text] ### Segmentation Using K-Means Clustering
+%[text] ### Convert to L\*a\*b\*  and Visualize
 p.lab = rgb2lab(p.medf); % convert to L*a*b* Space
+figure;
+
+tiledlayout(2,3,"TileSpacing","tight")
+titles = ["L (lightness)", "a (green-red)", "b (yellow-blue)"];
+for n=1:3
+    nexttile(n);
+    imshow(p.lab(:,:,n),[])
+    title(titles(n));
+
+    nexttile(n+3)
+    histogram(p.lab(:,:,n))
+end
+%%
+%[text] ### Segmentation Using K-Means Clustering
+%[text] Here, we use k-means clustering (first introduced in X5). It sorts every pixel into one of `nColors` groups based on its color (here, its a\* and b\* values). We pick 4 groups: white lumen, dark blue nuclei, pink cytoplasm, and dark pink.
 p.ab = p.lab(:,:,2:3); % grab the a* and b* color channels
 p.ab = im2single(p.ab); % type-cast to a single
-nColors = 4; % Predetermine the number of colors:White, Blue, and Pink, and dark pink
+nColors = 4; % predetermine the number of colors: white, blue, pink, and dark pink
 p.label = imsegkmeans(p.ab,nColors, 'NumAttempts',3); % use K-means clustering
 %[text] - Notice that we use both the a\* and b\* planes together
 %[text] - The function **imsegkmeans** returns a label map which has a different numeric label (1,2,3, or 4) for each color in the image.
-%[text] - The label map, ***pixel\_labels***, is the same size as the image and has a label for each corresponding pixel location.  \
+%[text] - The label map, `p.label`, is the same size as the image and has a label for each corresponding pixel location.
+%[text] - Label numbers can change if you change any step (the filter size, `nColors`, or even the MATLAB version). Always check which label is which before making a mask. \
 %%
 %[text] To see how we did, we display the label map beside the original image for comparison
 figure;
@@ -36,34 +58,47 @@ ax(1) = nexttile;
 imshow(p.rgb); % show original image
 title('original image')
 
-ax(1) = nexttile;
-imshow(p.label,turbo(10)) % show label map
+ax(2) = nexttile;
+imshow(p.label,[]) % show label map
 title('Label Map')
-colorbar % add colorbar
+
+colormap(ax(2),parula(nColors))
+
+clim([0.5 nColors+0.5])
+cb = colorbar;
+cb.Ticks = 1:nColors;
+
 impixelinfo
 linkaxes(ax,'xy')
-%[text] - Nice. The nuclei appear to have a consistent label — 2 \
+%[text] - Nice. The nuclei appear to have a consistent label \
 %%
 %[text] %[text:anchor:H_62F52117] ### Create a binary image of nuclei from the label map
-%[text] Since we are only interested in the nuclei, we want to create a binary mask for just the nuclei. Recall, all of the nuclei are labeled with the label 4, so creating the mask is a simple logical operation
-nuc.mask = p.label==2; % create a binary mask from label
+%[text] Since we are only interested in the nuclei, we want to create a binary mask for just the nuclei. Rather than hard-coding a label number in `p.label`, we find the label by its color: the nuclei are the darkest cluster (lowest mean L\*), and the duct lumens are the brightest (highest mean L\*). Here we use regionprops to find the mean intensities of each label in the L\* plane. Converting `p.label` to categorical nicely labels the rows in the regionprops table.
+rpL = regionprops('table',categorical(p.label),p.lab(:,:,1),'MeanIntensity') % calculate mean intensity of L*
+%[text] - Label 1 has the highest mean intensity — the brightest
+%[text] - Label 4 has the lowest mean intensity — the darkest \
+%%
+[~, nucLabel] = min(rpL.MeanIntensity); % darkest cluster = nuclei
+[~, ductLabel] = max(rpL.MeanIntensity); % brightest cluster = duct lumens
+nuc.mask = p.label == nucLabel; % create a binary mask from the label map
 
 figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight")
 nexttile
 imshowpair(p.rgb,nuc.mask)
-title('Nuclei ovelay')
+title('Nuclei overlay')
 nexttile
 
-mmShowBurnImage(p.rgb,~nuc.mask) %burn not nuclei mask to make the nuclei pop
+mmShowBurnImage(p.rgb,~nuc.mask) % burn the not-nuclei mask to make the nuclei pop
 
 title('Not-nuclei masked')
+%[text] - correctly identifies the nuclei \
 %%
 %[text] %[text:anchor:H_3EF8E670] ### Morphological Operations
 %[text] %[text:anchor:H_4F34ECBB] Use morphological operations to clean up mask noise and separate touching nuclei. 
 nuc.mask  = imfill(nuc.mask, 'holes'); % fill the holes
-nuc.mask = bwareaopen(nuc.mask, 50); % move small mask
-nuc.mask = mmGetWatershed(nuc.mask,[3 2 2]); % separate touching nuclei
+nuc.mask = bwareaopen(nuc.mask, 50); % remove small objects
+nuc.mask = mmGetWatershed(nuc.mask,[3 2 2]); % separate touching nuclei: run the watershed three times, with progressively smaller minima
 
 figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight")
@@ -77,33 +112,49 @@ title('Original')
 %[text] - pretty, pretty good \
 %%
 %[text] ## Capture the Ducts
-%[text] Using label map, it's also really easy to capture the ducts
-duct.maskLAB = p.label==3;
+%[text] Using the label map, it's also really easy to capture the ducts: they are the white lumens, the brightest cluster.
+duct.maskLAB = p.label == ductLabel;
 duct.maskLAB = bwareaopen(duct.maskLAB,1000);
-clf
+figure
 imshowpair(p.rgb,duct.maskLAB,'blend') % What happens if you remove 'blend' from imshowpair?
-%[text] - Well, many of the Ducts
+%[text] - Well, many of the ducts
 %[text] - Notice that we don't get the ambiguous ducts that have pink stain inside of them \
 %%
-%[text] #### SAM to the rescue ( Duct hunting)
-%[text] The Segment Anything Model allows you to input foreground and background points. Since we already have generated some masks for the Ducts and the Nuclei, we can input their centroids as the foreground and background points, respectively. The function `regionprops` captures the centroids for us (among other things).
+%[text] #### SAM to the rescue (Duct hunting)
+%[text] The Segment Anything Model (SAM) allows you to input foreground and background points. When we used SAM in the ImageSegmenter App to segment the strawberries, we manually clicked on the image to indicate the foreground and background parts of the image. Since we have already generated masks for the ducts and the nuclei, we can input their centroids as the foreground and background points, respectively. The function `regionprops` captures the centroids for us (among other things).
+%[text] Note: SAM requires the *Image Processing Toolbox Model for Segment Anything Model* support package. Install it from the Add-On Explorer before running this section.
+% Capture Duct and Nuclei Centroids
 duct.rp = regionprops('table',duct.maskLAB,["Centroid","EquivDiameter","Circularity"] ); % duct centroids for foreground points
 nuc.rp = regionprops('table',nuc.mask,["Centroid","EquivDiameter","Circularity"]); % nuclei centroids for background points
 imageSize = size(p.rgb); % set the image size
-%%
-%[text] We can now plug that information into SAM, as follows
-% segment with SAM
-sam = segmentAnythingModel; % load the model
-embeddings = extractEmbeddings(sam,p.medf); % uhhh...extract the embeddings
 
+% overlay Centroids on image
+figure;
+imshow(p.rgb)
+
+hold on
+plot(duct.rp.Centroid(:,1),duct.rp.Centroid(:,2),'g+','MarkerSize',10,'LineWidth',1.5);
+plot(nuc.rp.Centroid(:,1),nuc.rp.Centroid(:,2),'r.','MarkerSize',8);
+hold off
+title('Green = Foreground, Red = Background')
+%[text] 
+%%
+%[text] #### SAM initialization step
+%[text] SAM first converts the image into **embeddings**, a compact numerical summary of the image's features. This is the slow step, but it only has to run once. After that, segmenting with different points is fast.
+% segment with SAM
+sam = segmentAnythingModel("sam-base"); % load the base model
+embeddings = extractEmbeddings(sam,p.medf); % extract the embeddings (slow, but only once)
+%%
+%[text] #### SAM Segment step
+%[text] For the segmenting step, we input the centroids as the Foreground and Background points. Notice that we also input the embeddings created in the initialization step
 duct.maskSAM = segmentObjectsFromEmbeddings(sam,embeddings,imageSize, ... input the model and the embeddings
     ForegroundPoints=duct.rp.Centroid, ...
     BackgroundPoints=nuc.rp.Centroid); % segment masks using the centroids as foreground and background points
 
 % display result
 figure;
-imMask = insertObjectMask(p.rgb,duct.maskSAM); % overlay mask on original image
-imshow(imMask) % display
+imMask = insertObjectMask(p.rgb,duct.maskSAM); % overlay mask on original image (similar to imoverlay)
+imshow(imMask) % display overlay
 %[text] - Cool, we get all the ducts (but now just a little crappier) \
 %%
 %[text] No matter, we can combine the original masks with these new SAM masks, and then clean everything up using some morphological operations. 
@@ -112,10 +163,14 @@ duct.mask = imfill(duct.mask,'holes'); % fill holes
 duct.mask = imclearborder(duct.mask); % remove any ducts touching the edges
 duct.mask = bwareaopen(duct.mask,750); % clean up small noise
 
+
+%%
+
 % display the results
 figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight")
 nexttile
+% mmShowBurnImage(p.rgb,duct.maskLAB)
 
 imMask = insertObjectMask(p.rgb,duct.maskLAB,"MaskColor","cyan"); % overlay maskLAB on original image
 imshow(imMask) % display
@@ -125,15 +180,19 @@ nexttile
 imMask = insertObjectMask(p.rgb,duct.mask,"MaskColor","green"); % overlay final mask on original image
 imshow(imMask) % display
 title("After SAM")
+nexttile
+imshowpair(duct.maskLAB,duct.mask)
+title("Mask Overlay")
 %[text] - Pretty, pretty good
-%[text] - We removed the duct on the bottom because we only have a partial duct
-%[text] - We also exclude some small or really ambiguous ducts \
-%[text] 
+%[text] - We removed the duct on the edges of the image because we only have a partial duct
+%[text] - We also exclude some small or really ambiguous ducts
+%[text] - Cool, we get all the ducts, but the edges are rougher
+%[text] - `segmentObjectsFromEmbeddings` is designed to segment one object per call. Here we give it every duct centroid at once, which is part of why the result is rough. Looping over the ducts, one centroid at a time, usually gives cleaner masks \
 %%
 %[text] %[text:anchor:H_0E852282] ## Count nuclei surrounding DUCTs
-%[text] Ok, so we have the nuclei and we have the ducts. We want to categorize these ducts into henle tubes or collecting ducts. Henle Tubes should have fewer nuclei, while collecting ducts have more.
+%[text] OK, so we have the nuclei and we have the ducts. We want to categorize these ducts as loops of Henle or collecting ducts. Loops of Henle should have fewer nuclei, while collecting ducts have more.
 %[text] ### Create Label map of DUCTs
-%[text] For this next step, we want to work one duct at a time. So we need a way to differentiate between separate ducts in the duct mask. Converting to a label map allows us to do so. 
+%[text] For this next step, we want to work one duct at a time. So we need a way to differentiate between separate ducts in the duct mask. Converting to a label map allows us to do so. A label map labels each distinct connected component in a binary image with a distinct label: e.g. The first duct will be labeled with ones, the second duct with twos, and so on. 
 duct.label = bwlabel(duct.mask); % Create a label map from the binary image
 
 figure; 
@@ -152,18 +211,18 @@ nexttile
 imOverlay = labeloverlay(p.rgb,duct.label);
 imshow(imOverlay)
 title("label overlay")
-%[text] - Now each duct is now populated with a unique label \
+%[text] - Now each duct has a unique label \
 max(duct.label(:))
 %[text] - the max value in the map equals the number of distinct ducts found \
 %%
 %[text] ## Establish a boundary using the Distance Transform
 %[text] %[text:anchor:T_368B5803] ### Aside: What is the Distance Transform?
-%%
-%[text] The distance transformation is very useful for measuring the distances in an image. It calculates the distance (in pixels) from the TRUEs in a binary image. The default measurement is to use the Pythagorean theorem (or Euclidean distance) to calculate the distance. 
-%[text] First, a simple example. We will create a 5X5 logical array ***M*** with a TRUE at its center. Then we will calculate the Distance Transform of ***M*** using the function **bwdist.**
+%[text] The distance transform replaces every pixel in a binary image with its distance (in pixels) to the **nearest TRUE** pixel. TRUE pixels get a distance of 0. By default, **bwdist** measures straight-line (Euclidean) distance, so a diagonal neighbor is √2 ≈ 1.41 pixels away.
+%[text] **Why we need it:** if we compute the distance transform of a duct mask, then every pixel between 0 and 20 pixels away forms a ring around the duct. Nuclei that touch that ring belong to that duct.
+%[text] First, a simple example. We will create a 5 × 5 logical array ***M*** with a TRUE at its center. Then we will calculate the Distance Transform of ***M*** using the function **bwdist**.
 % create matrix
-M = zeros(5);
-M(3,3) = 1
+M = false(5);
+M(3,3) = true
 % display
 figure;
 
@@ -177,13 +236,13 @@ heatmap(B)
 title('distance transform')
 %[text] - B is the distance transform.
 %[text] - B is a matrix the same size as M.
-%[text] - Every element of B contains the calculated distance in pixels from the TRUE found in ***M***.
+%[text] - Every element of B contains the distance in pixels to the TRUE found in ***M***.
 %[text] - Notice that the corresponding location in ***B*** to where the TRUE is found in ***M*** contains a zero. There is zero distance from the TRUE in this location.
 %[text] - Diagonals are calculated using Euclidean Distance: \
 %[text]  $A^2 +B^2 =C^2${"editStyle":"visual"}
 %%
-%[text] %[text:anchor:H_CF45EE32] ### Distance transform with multiple connected components
-%[text] What happens when we calculate the distance transform in a logical array that has multiple TRUES?
+%[text] %[text:anchor:H_CF45EE32] ### Distance transform with multiple TRUE pixels
+%[text] What happens when we calculate the distance transform of a logical array that has multiple TRUEs? Here we place four single TRUE pixels in a 100 × 100 array.
 binmat = false(100);
 binmat([2425 2475 7425 7475]) = true;
 B2 = bwdist(binmat);
@@ -198,43 +257,46 @@ imshow(B2,parula(35))
 title('Distance transform')
 colorbar
 impixelinfo
-%[text] - Notice the distance transform has zeros (blue) in the regions corresponding to the connected components
-%[text] - The furthest distance calculated is ~14 pixels (bright spots). This is the farthest distance from a TRUE to another TRUE or to an edge of the image.
-%[text] - Notice the feathering affect just outside the squares \
+%[text] - The distance transform is zero (dark blue) at each of the four TRUE pixels
+%[text] - Close to each point, the distances form circular rings. Each pixel measures its distance only to its **nearest** TRUE, so where the rings from neighboring points meet, they form straight lines halfway between the points
+%[text] - As a result, each point ends up owning one square quadrant of the image. The rings start out circular and become more square-like (a "squircle") as they approach the quadrant's edges
+%[text] - The largest distance is about 35 pixels (the bright spots), at the center and the corners of the image: the pixels farthest from any TRUE \
 %%
 %[text] ### Back to the Ducts
-%[text] To find the nuclei surrounding a duct, we need to establish a set distance, or boundary, in which these nuclei can be found, but in which nuclei from other ducts can be excluded.  A good approximation would be roughly the diameter of a nuclei from the edge of a duct. To establish this boundary, we will use the distance transform. 
-%[text] #### First, visualize the distance transform from one duct.
-%[text] Here we visualize the distance transform of the first duct
-duct.mask1 = duct.label == 40;
+%[text] We will use the distance transformation to find nuclei in the vicinity of a duct.
+%[text] #### First, we visualize
+%[text] Here we visualize the distance transform of a single duct. Change `ductID` to look at a different one.
+ductID = 40; % the duct to examine (must be no larger than the number of ducts)
+duct.mask1 = duct.label == ductID;
 duct.distTxfm1 = bwdist(duct.mask1);
 
-figure; % clear figure
+figure;
 nexttile; 
 imshowpair(duct.mask1,p.rgb,'blend');
-title("DUCT 1 logical array")
+title(sprintf("Duct %d logical array",ductID))
 hold on
 imcontour (duct.distTxfm1,'c-'); % creates cyan lines
 
 nexttile; 
 imagesc(duct.distTxfm1)
-title("DUCT 1 Distance transform")
+title(sprintf("Duct %d distance transform",ductID))
 colorbar
 
 axis image
 grid on
-impixelinfo
-%[text] - inside the mask, L1, the distance transform is zero
+% impixelinfo
+%[text] - Inside the duct mask, `duct.mask1`, the distance transform is zero
 %[text] - Distance is calculated from the edge of the mask \
 %%
 %[text] %[text:anchor:H_D30CDED8] #### Next, determine the size of the Nuclei
+%[text] To find the nuclei surrounding a duct, we need to establish a set distance, or ring, in which that duct's nuclei can be found, but from which the nuclei of other ducts are excluded. A good ring width is about one nucleus diameter: wide enough to touch the nuclei lining the duct, but narrow enough to avoid the nuclei of neighboring ducts. To draw this ring, we will use the distance transform.
 %[text] We already found the equivalent diameter of the nuclei in a previous step. So, we'll just average those calculations
 groupsummary(nuc.rp,[],["mean","std"],"EquivDiameter")
 %[text] - So roughly 20±5 pixels
 %[text] - Let's start with a pixel boundary of 20.  \
 %%
 %[text] #### Capture a 20 pixel wide boundary around each duct
-%[text] Using a distance transform and a logical operation, we can find find the values in the distance transform that fall between 0 and 20 around every duct. Remember, the distance transform radiates from every true in the mas (basically all the edges of all the ducts)
+%[text] Using a distance transform and a logical operation, we can find the values in the distance transform that fall between 0 and 20 around every duct. Remember, the distance transform radiates from every TRUE in the mask (basically all the edges of all the ducts). Excluding 0 leaves out the ducts themselves.
 duct.distTxfm = bwdist(duct.mask); % distance transform around all ducts
 duct.boundary = duct.distTxfm > 0 & duct.distTxfm < 20; % create a boundary of 20 pixels around each duct
 
@@ -247,11 +309,11 @@ nexttile
 imshowpair(nuc.mask, duct.boundary)
 %[text] - Is 20 good? Try modifying the radius to 30 or 10.
 %[text] - Optimally, we don't want the boundaries to overlap by too much
-%[text] - The boundaries should touch, but not necessarily encase, all surrounding nucleus \
+%[text] - The boundaries should touch, but not necessarily encase, all surrounding nuclei \
 %%
 %[text] %[text:anchor:H_CCE0C76C] ### Capture Nuclei surrounding the first duct using Morphological Reconstruction
-%[text] Here we capture the nuclei surrounding duct 1 (the duct with label 1) using a morphological reconstruction. A morphological reconstruction returns the masks in on logical array that "touch" (overlap in some fashion) with the masks in another logical array. 
-boundaryMask1 = duct.distTxfm1 < 20 & duct.distTxfm1 > 0; % create a 20 pixel boundary around duct1
+%[text] Here we capture the nuclei surrounding our chosen duct (`ductID`) using a morphological reconstruction. **imreconstruct(marker, mask)** keeps every object in *mask* that touches *marker*, and drops the rest. Here, the ring is the marker and the nuclei are the mask, so we keep only the nuclei that touch the ring, and we keep each of those nuclei whole.
+boundaryMask1 = duct.distTxfm1 < 20 & duct.distTxfm1 > 0; % create a 20 pixel boundary around the chosen duct
 BWencircling = imreconstruct(boundaryMask1, nuc.mask); % capture nuclei touched by the boundary
 
 figure;
@@ -266,44 +328,70 @@ title("Nuclei within the specified radius")
 %[text] - try different radii \
 %%
 %[text] %[text:anchor:H_F562C223] #### Count the number of nuclei found
-%[text] The function `bwconncomp` is a simplified version of regionprops that allows you to quickly count the number of connected components. 
+%[text] The function `bwconncomp` finds the connected objects in a mask (`regionprops` then measures them). It's a quick way to count objects.
 cc = bwconncomp(BWencircling)
 %[text] It returns a structure. 
 %[text] - **NumObjects** contains the number of objects found
 %[text] - **PixelIdxList** contains the linear indices for each of the objects found. e.g. `cc.PixelIdxList{1}` would return the linear indices for the first nucleus found.  \
 %%
 %[text] %[text:anchor:H_14A52225] ### Find nuclei encircling all the ducts
-%[text] To find the nuclei encircling all the ducts, we need a FOR LOOP and repeat the process for each duct. The function `getNucleiCount` does this for us. The last input is the width of the boundary
-[p,nuc,duct] =  getNucleiCount(p,nuc,duct, 23); 
-%[text] - notice how we match the label of the duct to the sounding nuclei
-%[text] - We were also able to capture the number of nuclei surrounding each duct \
+%[text] To find the nuclei encircling all the ducts, we need a FOR LOOP to repeat the process for each duct. The local function `getNucleiCount` (at the bottom of this script) does this for us. The last input is the width of the ring.
+boundaryWidth = 20; % ring width in pixels (about one nucleus diameter)
+[nuc,duct] = getNucleiCount(p,nuc,duct,boundaryWidth);
+%[text] - Notice how each set of nuclei gets the same label as the duct it surrounds
+%[text] - We also captured the number of nuclei surrounding each duct
+%[text] - A nucleus that sits between two ducts touches both rings, so it is counted for both. In `nuc.label`, though, it keeps only the label of the later duct \
 nuc.count
 %%
-%[text] However, notice how we struggled to capture the nuclei in the non-circular ducts
+%[text] ## Classify the ducts
+%[text] Larger ducts have longer perimeters, so they touch more nuclei no matter what type they are. To compare ducts fairly, we divide each count by the duct's perimeter.
+ductStats = regionprops("table", duct.label, "Centroid","Perimeter", "Area"); % one row per duct label
+ductStats.NucleiCount = nuc.count;
+ductStats.NucleiPer100px = 100 * ductStats.NucleiCount ./ ductStats.Perimeter;
+figure
+histogram(ductStats.NucleiPer100px)
+xlabel("Nuclei per 100 px of perimeter")
+ylabel("Number of ducts")
+%[text] - Do you see two groups? Where would you draw the line between loops of Henle and collecting ducts?
+%[text] - Look back at the non-circular ducts. Why do you think we struggled to capture their nuclei? (Hint: look at how well the duct mask follows the edge of the lumen.) \
 %%
-function [p,nuc,duct] =  getNucleiCount(p,nuc,duct, boundaryWidth)
+%[text] #### Group Ducts
+ductStats.Collecting = ductStats.NucleiCount > 8;
+figure;
+imshow(p.rgb)
+
+hold on
+plot(ductStats.Centroid(ductStats.Collecting,1),ductStats.Centroid(ductStats.Collecting,2),'k*','MarkerSize',8);
+
+%%
+%[text] ## Summary
+%[text] - **k-means clustering** split the image into color groups. We chose the nuclei and lumen clusters by their lightness.
+%[text] - **SAM** helped recover ducts that k-means missed.
+%[text] - The **distance transform** (`bwdist`) gives every pixel its distance to the nearest TRUE. Thresholding it draws a ring of any width around a mask.
+%[text] - **imreconstruct** keeps whole objects that touch a marker, which let us capture the nuclei touching each ring.
+%[text] - Normalizing counts by perimeter lets us compare ducts of different sizes. \
+%%
+%[text] %[text:anchor:T_D97E275E] # Local Functions
+function [nuc,duct] = getNucleiCount(p,nuc,duct,boundaryWidth)
+% count the nuclei touching a ring of width boundaryWidth around each duct
 
 nuc.label = zeros(size(duct.label),'like',duct.label); % preallocate the nuclei label map
 duct.labelCount = max(duct.label(:)); % number of ducts = max label found in label map
 nuc.count = zeros(duct.labelCount,1); % preallocate nuclei count
 
-
 for n=1:duct.labelCount % iterate for all ducts
     Ln = duct.label == n; % current duct
     Dn = bwdist(Ln); % distance transform
-    boundaryMask = Dn< boundaryWidth &  Dn > 0; % create boundary
-    
-    BWencircling = imreconstruct(boundaryMask, nuc.mask);
-    
+    boundaryMask = Dn < boundaryWidth & Dn > 0; % create the ring
+
+    BWencircling = imreconstruct(boundaryMask, nuc.mask); % nuclei touching the ring
+
     cc = bwconncomp(BWencircling);
     nuc.count(n) = cc.NumObjects; % number of nuclei found
-    % nuc.label(Rn & nuc.mask) = n; % match nuclei label to duct label
     nuc.label(BWencircling) = n; % match nuclei label to duct label
-
-    % nexttile;
-    % imshowpair(BWencircling, p.rgb)
 end
-figure(Visible="on");
+
+figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight");
 
 ax(1) = nexttile;
@@ -317,111 +405,6 @@ imshow(imOverlay)
 linkaxes(ax,'xy')
 impixelinfo
 end
-
-%%
-%[text] %[text:anchor:T_D97E275E] # Local Functions
-function [BW,maskedRGBImage] = henle_thresh_ducts(RGB) %[text:anchor:H_245B2E73]
-%createMask  Threshold RGB image using auto-generated code from colorThresholder app.
-%  [BW,MASKEDRGBIMAGE] = createMask(RGB) thresholds image RGB using
-%  auto-generated code from the colorThresholder app. The colorspace and
-%  range for each channel of the colorspace were set within the app. The
-%  segmentation mask is returned in BW, and a composite of the mask and
-%  original RGB images is returned in maskedRGBImage.
-
-% Auto-generated by colorThresholder app on 04-Oct-2020
-%------------------------------------------------------
-
-
-% Convert RGB image to chosen color space
-I = rgb2hsv(RGB);
-
-% Define thresholds for channel 1 based on histogram settings
-channel1Min = 0.000;
-channel1Max = 0.917;
-
-% Define thresholds for channel 2 based on histogram settings
-channel2Min = 0.000;
-channel2Max = 0.121;
-
-% Define thresholds for channel 3 based on histogram settings
-channel3Min = 0.902;
-channel3Max = 1.000;
-
-% Create mask based on chosen histogram thresholds
-sliderBW = (I(:,:,1) >= channel1Min ) & (I(:,:,1) <= channel1Max) & ...
-    (I(:,:,2) >= channel2Min ) & (I(:,:,2) <= channel2Max) & ...
-    (I(:,:,3) >= channel3Min ) & (I(:,:,3) <= channel3Max);
-BW = sliderBW;
-
-BW = bwareaopen(BW, 500);
-BW = imfill(BW, 'holes');
-
-BW = bwareaopen(BW, 50);
-
-% Initialize output masked image based on input image.
-maskedRGBImage = RGB;
-
-% Set background pixels where BW is false to zero.
-maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
-
-end
-
-function [BW,maskedRGBImage] = henle_thresh_nuclei(RGB)
-%createMask  Threshold RGB image using auto-generated code from colorThresholder app.
-%  [BW,MASKEDRGBIMAGE] = createMask(RGB) thresholds image RGB using
-%  auto-generated code from the colorThresholder app. The colorspace and
-%  range for each channel of the colorspace were set within the app. The
-%  segmentation mask is returned in BW, and a composite of the mask and
-%  original RGB images is returned in maskedRGBImage.
-
-% Auto-generated by colorThresholder app on 30-Sep-2020
-%------------------------------------------------------
-
-
-% Convert RGB image to chosen color space
-I = rgb2hsv(RGB);
-
-% Define thresholds for channel 1 based on histogram settings
-channel1Min = 0.671;
-channel1Max = 0.751;
-
-% Define thresholds for channel 2 based on histogram settings
-channel2Min = 0.315;
-channel2Max = 0.868;
-
-% Define thresholds for channel 3 based on histogram settings
-channel3Min = 0.475;
-channel3Max = 0.878;
-
-% Create mask based on chosen histogram thresholds
-sliderBW = (I(:,:,1) >= channel1Min ) & (I(:,:,1) <= channel1Max) & ...
-    (I(:,:,2) >= channel2Min ) & (I(:,:,2) <= channel2Max) & ...
-    (I(:,:,3) >= channel3Min ) & (I(:,:,3) <= channel3Max);
-BW = sliderBW;
-
-% Fill holes
-BW = imfill(BW, 'holes');
-
-% Close mask with disk
-radius = 4;
-decomposition = 4;
-se = strel('disk', radius, decomposition);
-BW = imclose(BW, se);
-BW = imfill(BW, 'holes');
-
-BW = bwareaopen(BW, 10);
-
-BW = get_watershed(BW, 5);
-BW = get_watershed(BW, 1);
-
-% Initialize output masked image based on input image.
-maskedRGBImage = RGB;
-
-% Set background pixels where BW is false to zero.
-maskedRGBImage(repmat(~BW,[1 1 3])) = 0;
-
-end
-
 
 %[appendix]{"version":"1.0"}
 %---
