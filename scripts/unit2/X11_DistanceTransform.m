@@ -78,6 +78,7 @@ rpL = regionprops('table',categorical(p.label),p.lab(:,:,1),'MeanIntensity') % c
 %[text] - Label 1 has the highest mean intensity — the brightest
 %[text] - Label 4 has the lowest mean intensity — the darkest \
 %%
+%[text] ### Visualize Nuclei capture
 [~, nucLabel] = min(rpL.MeanIntensity); % darkest cluster = nuclei
 [~, ductLabel] = max(rpL.MeanIntensity); % brightest cluster = duct lumens
 nuc.mask = p.label == nucLabel; % create a binary mask from the label map
@@ -163,9 +164,6 @@ duct.mask = imfill(duct.mask,'holes'); % fill holes
 duct.mask = imclearborder(duct.mask); % remove any ducts touching the edges
 duct.mask = bwareaopen(duct.mask,750); % clean up small noise
 
-
-%%
-
 % display the results
 figure;
 tiledlayout("horizontal","TileSpacing","none","Padding","tight")
@@ -188,32 +186,6 @@ title("Mask Overlay")
 %[text] - We also exclude some small or really ambiguous ducts
 %[text] - Cool, we get all the ducts, but the edges are rougher
 %[text] - `segmentObjectsFromEmbeddings` is designed to segment one object per call. Here we give it every duct centroid at once, which is part of why the result is rough. Looping over the ducts, one centroid at a time, usually gives cleaner masks \
-%%
-%[text] %[text:anchor:H_0E852282] ## Count nuclei surrounding DUCTs
-%[text] OK, so we have the nuclei and we have the ducts. We want to categorize these ducts as loops of Henle or collecting ducts. Loops of Henle should have fewer nuclei, while collecting ducts have more.
-%[text] ### Create Label map of DUCTs
-%[text] For this next step, we want to work one duct at a time. So we need a way to differentiate between separate ducts in the duct mask. Converting to a label map allows us to do so. A label map labels each distinct connected component in a binary image with a distinct label: e.g. The first duct will be labeled with ones, the second duct with twos, and so on. 
-duct.label = bwlabel(duct.mask); % Create a label map from the binary image
-
-figure; 
-tiledlayout("horizontal","TileSpacing","tight","Padding","tight");
-nexttile
-
-imshow(duct.label,[]) % notice second input of empty brackets
-
-axis image off % axis properties
-colormap("turbo")
-colorbar
-impixelinfo
-title("Label Matrix for Ducts")
-
-nexttile
-imOverlay = labeloverlay(p.rgb,duct.label);
-imshow(imOverlay)
-title("label overlay")
-%[text] - Now each duct has a unique label \
-max(duct.label(:))
-%[text] - the max value in the map equals the number of distinct ducts found \
 %%
 %[text] ## Establish a boundary using the Distance Transform
 %[text] %[text:anchor:T_368B5803] ### Aside: What is the Distance Transform?
@@ -262,7 +234,63 @@ impixelinfo
 %[text] - As a result, each point ends up owning one square quadrant of the image. The rings start out circular and become more square-like (a "squircle") as they approach the quadrant's edges
 %[text] - The largest distance is about 35 pixels (the bright spots), at the center and the corners of the image: the pixels farthest from any TRUE \
 %%
-%[text] ### Back to the Ducts
+%[text] ## Use Distance transform to calculate duct spacing
+%[text] We can use the distance transform to come with an average distance between each duct
+%[text] ### Calculate Distance transform
+distTxfm = bwdist(duct.mask); % distance around each duct
+figure;
+imshow(distTxfm,[])
+title('Distance Transform of Ducts')
+colormap("parula")
+impixelinfo
+%[text] - Those lines (or ridges) represent the halfway distance between ducts
+%[text] - If we average the distances along those ridges, we can can get an estimate of the average halfway point between ducts \
+%%
+%[text] ### Regional Maxima (Halfway points)
+%[text] The max halfway point between ducts will be found along those ridges in the distance transform. These points are also know as regional maxima. We can create a mask to the regional maxima using  `imregionalmax`
+regMax = imregionalmax(distTxfm); % half the distance between ducts (max values)
+%%
+figure;
+ov1 = insertObjectMask(p.rgb, duct.mask, "MaskColor", "yellow");
+ov2 = insertObjectMask(ov1, regMax, "MaskColor", "cyan");
+imshow(ov2)
+%%
+figure
+separation = distTxfm(regMax) * 2; % 2 times the halfway point
+histogram(separation)
+title(sprintf('Median Separation = %1.2f',median(separation)))
+%[text] - with right skew in the distribution, a median is probably the better reporter of average distance \
+
+%%
+%[text] ### Do our results make sense?
+%[text] Always check your math
+imageViewer(p.rgb)
+%%
+%[text] %[text:anchor:H_0E852282] ## Count nuclei surrounding DUCTs
+%[text] OK, so we have the nuclei and we have the ducts. We want to categorize these ducts as loops of Henle or collecting ducts. Loops of Henle should have fewer nuclei, while collecting ducts have more.
+%[text] ### Create Label map of DUCTs
+%[text] For this next step, we want to work one duct at a time. So we need a way to differentiate between separate ducts in the duct mask. Converting to a label map allows us to do so. A label map labels each distinct connected component in a binary image with a distinct label: e.g. The first duct will be labeled with ones, the second duct with twos, and so on. 
+duct.label = bwlabel(duct.mask); % Create a label map from the binary image
+
+figure; 
+tiledlayout("horizontal","TileSpacing","tight","Padding","tight");
+nexttile
+
+imshow(duct.label,[]) % notice second input of empty brackets
+
+axis image off % axis properties
+colormap("turbo")
+colorbar
+impixelinfo
+title("Label Matrix for Ducts")
+
+nexttile
+imOverlay = labeloverlay(p.rgb,duct.label);
+imshow(imOverlay)
+title("label overlay")
+%[text] - Now each duct has a unique label \
+max(duct.label(:))
+%[text] - the max value in the map equals the number of distinct ducts found \
 %[text] We will use the distance transformation to find nuclei in the vicinity of a duct.
 %[text] #### First, we visualize
 %[text] Here we visualize the distance transform of a single duct. Change `ductID` to look at a different one.
@@ -337,7 +365,7 @@ cc = bwconncomp(BWencircling)
 %[text] %[text:anchor:H_14A52225] ### Find nuclei encircling all the ducts
 %[text] To find the nuclei encircling all the ducts, we need a FOR LOOP to repeat the process for each duct. The local function `getNucleiCount` (at the bottom of this script) does this for us. The last input is the width of the ring.
 boundaryWidth = 20; % ring width in pixels (about one nucleus diameter)
-[nuc,duct] = getNucleiCount(p,nuc,duct,boundaryWidth);
+[nuc,duct] = getNucleiCount(p,nuc,duct,boundaryWidth); % local function
 %[text] - Notice how each set of nuclei gets the same label as the duct it surrounds
 %[text] - We also captured the number of nuclei surrounding each duct
 %[text] - A nucleus that sits between two ducts touches both rings, so it is counted for both. In `nuc.label`, though, it keeps only the label of the later duct \
