@@ -86,11 +86,20 @@ mmShowHist(p.imgn)
 %[text] %[text:anchor:H_F15F4639] ### Fun with imshowpair
 %[text] We can use imshowpair to display two-channel images. With this syntax, we are saying "Put Channel 2 in the Green position, and Channel 1 in the Blue position." — that better matches how the images were captured. 
 figure
-imshowpair(p.imgn(:,:,1),p.imgn(:,:,2),ColorChannels=[0 2 1]) % 
+imshowpair(p.imgn(:,:,1),p.imgn(:,:,2),ColorChannels=[0 2 1]) 
 %[text] - Remember, the default for `imshowpair` is magenta-green \
 %[text] **you try**: 
 %[text] - swap red and blue
 %[text] - Show green and magenta \
+%%
+%[text] ### Add scale bar
+%[text] The function mmAddScaleBar allows you to interactively add a scale bar to an image. The following code adds a white scalebar to the current axis (`gca`). Just drag the blue line to where you want it (Careful, don't change its size). 
+mmAddScaleBar(gca,50,p.meta.PixelSpacing(1),'white',2)
+%%
+%[text] Indicate where to add the scalebar
+%[text] 
+imshowpair(p.imgn(:,:,1),p.imgn(:,:,2),ColorChannels=[0 2 1])
+mmAddScaleBar(gca,50,p.meta.PixelSpacing(1),'white',2,'sw','um') % add to bottom left corner (south-west)
 %%
 %[text] ## Three-Channel Example,  Olfactory Bulb
 %[text] ### Load image
