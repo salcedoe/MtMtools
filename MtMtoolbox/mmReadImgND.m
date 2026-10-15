@@ -8,7 +8,12 @@ function [IMGND, metadata] = mmReadImgND(file_path)
 %
 % OUTPUTS:
 % - IMGND - a multidimensional array ordered rows x cols x channels x z-planes x time (YXCZT)
-% - metadata - the metadata from the array in XML format
+% - metadata - a structure describing the image. Key fields:
+%     PixelSpacing      [x y] for single-plane images, [x y z] for z-stacks
+%                       (z is converted to the same unit as x and y, so
+%                       prod(metadata.PixelSpacing) is the voxel volume)
+%     PixelSpacingUnit  unit of PixelSpacing (e.g. "µm")
+%     XML               the full OME metadata in XML format
 %
 % EXAMPLE:
 %
@@ -16,7 +21,7 @@ function [IMGND, metadata] = mmReadImgND(file_path)
 % ---
 % AUTHOR: Ernesto Salcedo, PhD University of Colorado School of Medicine
 % Created: 1-Sep-2017
-% Updated: 29-Sep-2021
+% Updated: 15-Oct-2026 (z spacing added to PixelSpacing for z-stacks)
 
 if exist("bfmatlab","dir")
     status = bfCheckJavaPath(1);
@@ -91,12 +96,34 @@ metadata.Height = double(omeMeta.getPixelsSizeY(series_jidx).getNumberValue);
 metadata.BitDepth = double(omeMeta.getPixelsSignificantBits(series_jidx).getNumberValue);
 
 try
-    % get pixel dimensions
-    PhysicalSizeX = double(omeMeta.getPixelsPhysicalSizeX(series_jidx).value);
-    PhysicalSizeY = double(omeMeta.getPixelsPhysicalSizeY(series_jidx).value);
+    % get pixel dimensions (x and y)
+    sizeX = omeMeta.getPixelsPhysicalSizeX(series_jidx);
+    sizeY = omeMeta.getPixelsPhysicalSizeY(series_jidx);
+    PhysicalSizeX = double(sizeX.value);
+    PhysicalSizeY = double(sizeY.value);
     metadata.PixelSpacing = [PhysicalSizeX PhysicalSizeY];
+    xyUnit = sizeX.unit();
+    try
+        metadata.PixelSpacingUnit = string(char(xyUnit.getSymbol()));
+    catch
+        metadata.PixelSpacingUnit = "unknown";
+    end
 catch
     disp('Physical Pixel Size not found')
+end
+
+% add z spacing for z-stacks, converted to the same unit as x and y
+if PlaneCount > 1 && isfield(metadata,'PixelSpacing')
+    try
+        sizeZ = omeMeta.getPixelsPhysicalSizeZ(series_jidx);
+        PhysicalSizeZ = sizeZ.value(xyUnit); % convert to x/y unit
+        if isempty(PhysicalSizeZ)
+            PhysicalSizeZ = sizeZ.value; % conversion not possible: use as stored
+        end
+        metadata.PixelSpacing(3) = double(PhysicalSizeZ);
+    catch
+        disp('Z spacing not found')
+    end
 end
 
 metadata.ChannelCount = ChannelCount;
