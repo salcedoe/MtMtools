@@ -1,8 +1,15 @@
 %[text] # Transforming Surfaces
 %[text] In this module, we will demonstrate how easy it is to Scale, Rotate, and Translate surfaces. These actions are collectively known as transformations.
+%[text] ### Learning Objectives
+%[text] After this exercise, you should be able to
+%[text] 1. Scale a shape by multiplying its vertices
+%[text] 2. Translate (move) a shape by adding to or subtracting from its vertices
+%[text] 3. Rotate a shape with a rotation matrix, and explain why we center a shape before rotating it
+%[text] 4. Measure a 3D surface using its range and the distances between its vertices \
+%[text:tableOfContents]{"heading":"Table of Contents"}
 %%
 %[text] %[text:anchor:H_D3E98789] ## First, a review of the 2D realm
-%[text] Triangles have three vertices (three X,Y coordinates). We can organize these vertices as a matrix, where every row in the matrix represents one pair of vertices:
+%[text] Triangles have three vertices (three X,Y coordinates). We can organize these vertices as a matrix, where every row in the matrix represents one vertex (an x,y pair):
 clearvars
 V = [0 0; 3 0; 3 4]  %[output:535d747c]
 %[text] - Here, the first column is the x-coordinates and the second column is the y-coordinates \
@@ -33,18 +40,18 @@ scatter(V(:,1),V(:,2),'filled'); %[output:7c833860]
 patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1); %[output:7c833860]
 xlim([-2 10]); ylim([-2 12]) %[output:7c833860]
 xline(0); yline(0) %[output:7c833860]
-%[text] - the green triangle is the original triangle
-%[text] - the yellow triangle is the scaled triangle
-%[text] - The red vertices are the scaled vertices \
+%[text] - The blue triangle is the original triangle
+%[text] - The yellow triangle is the scaled triangle
+%[text] - The orange vertices are the scaled vertices \
 %[text] How does this work?
 %[text] - $V\_1 =0,0\\Longrightarrow V\_1 \*3=0,0${"editStyle":"visual"}
 %[text] - $V\_2 =3,0\\Longrightarrow V\_2 \*3=9,0${"editStyle":"visual"}
-%[text] - $V\_3 =4,3${"editStyle":"visual"}$\\Longrightarrow V\_3 \*3=12,9${"editStyle":"visual"} \
+%[text] - $V\_3 =3,4\\Longrightarrow V\_3 \*3=9,12${"editStyle":"visual"} \
 %%
 %[text] %[text:anchor:H_FEB7576A] ### Centroid
 %[text] The center of a triangle is its centroid. To calculate the centroid, you simply calculate the mean of the vertices. 
-%[text] Try it now. Calculate the mean of V and assign to ***centroids***:
-centroid = mean(V) % centroid of small triangle %[output:4074fb4c]
+%[text] Try it now. Calculate the mean of V and assign to ***centroid***:
+centroid = mean(V) % centroid of the scaled triangle%[output:4074fb4c]
 %%
 %[text] Plot the centroid 
 clf; %[output:841b79be]
@@ -58,7 +65,7 @@ axis equal %[output:841b79be]
 %[text] - here, the centroid is plotted as a black x \
 %%
 %[text] %[text:anchor:H_5AA86369] ### Translation
-%[text] Moving the triangle is known as translation. We use addition / subtraction to move the location of the triangle. For example, to center our triangle to 0,0, we subtract the current centroid from all vertices. 
+%[text] Moving the triangle is known as translation. We use addition / subtraction to move the location of the triangle. For example, to center our triangle at 0,0, we subtractthe current centroid from all vertices. 
 %[text] Try it now: Center our triangle at 0,0 and then recalculate the centroid
 V = V - centroid %[output:837c2720]
 %%
@@ -78,29 +85,29 @@ grid minor %[output:1780cd18]
 %[text] 
 %%
 %[text] %[text:anchor:H_F787E7D5] ## Rotation
-%[text]  remember the following results for cosine and sine
+%[text] Remember the following results for cosine and sine
 cosd(90) %[output:83133738]
 sind(90) %[output:61dfc5cc]
 %%
 %[text] **WARNING**. The following contains linear algebra. Do not panic. You still don't really need to know linear algebra. 
 %[text] Rotation can be accomplished through linear algebra and rotation matrices:
 %[text] $R\\left(\\theta \\right)=\\left\\lbrack \\begin{array}{cc}\n\\cos \\;\\theta  & -\\sin \\theta \\\\\n\\sin \\;\\theta  & \\cos \\;\\theta \n\\end{array}\\right\\rbrack${"editStyle":"visual"}
-%[text] - this is just a square matrix of 4 values known as **a transformation matrix** \
+%[text] - This is just a square matrix of 4 values known as a **rotation matrix** (one kind of **transformation matrix**) \
 %%
 %[text] Here is the linear algebra equation
 %[text] $\\left\\lbrack \\begin{array}{c}\nx^{\\prime } \\\\\ny^{\\prime } \n\\end{array}\\right\\rbrack${"editStyle":"visual"}= $\\left\\lbrack \\begin{array}{cc}\n\\cos \\;\\theta  & -\\sin \\theta \\\\\n\\sin \\;\\theta  & \\cos \\;\\theta \n\\end{array}\\right\\rbrack \\left\\lbrack \\begin{array}{c}\nx\\\\\ny\n\\end{array}\\right\\rbrack${"editStyle":"visual"}
 %[text] - where x' and y' are the new x and y coordinates
-%[text] - So, you basically just multiply the rotation matrix by your vertices matrix
+%[text] - So, you basically just multiply the rotation matrix by your (transposed) vertices matrix
 %[text] - Notice in the vertices matrix, the x coordinates are in the top row and the y coordinates are in the bottom row (so, transposed from the way we have V) \
-%[text] Common rotations matrices are:
+%[text] Common rotation matrices are:
 %[text] $\\left\\lbrack \\begin{array}{cc}\n0 & -1\\\\\n1 & 0\n\\end{array}\\right\\rbrack ,\\left\\lbrack \\begin{array}{cc}\n-1 & 0\\\\\n0 & -1\n\\end{array}\\right\\rbrack ,\\left\\lbrack \\begin{array}{cc}\n0 & 1\\\\\n-1 & 0\n\\end{array}\\right\\rbrack${"editStyle":"visual"}
-%[text] for 90˚, 180˚, and 270˚ counter-clock wise rotations. 
+%[text] for 90°, 180°, and 270° counterclockwise rotations.
 %%
 %[text] %[text:anchor:H_6987826B] ### 90º rotation
 %[text] We can perform the linear algebra as follows 
 Vrot = [ 0 -1; 1 0] * V'; % 90˚ counter-clockwise rotation
 Vrot = Vrot' % transpose the vertices back %[output:1dbc127d]
-%[text] - Notice that we are NOT using dot multiplication here, because we want linear algebra to happen
+%[text] - Notice that we are NOT using element-wise multiplication (`.*`) here, because we want matrix multiplication (linear algebra) to happen
 %[text] - Also notice that we had to transpose V to make the linear algebra work and then we transposed V back again \
 %%
 %[text] %[text:anchor:H_145C7D94] ### Plot the result
@@ -117,7 +124,7 @@ grid minor %[output:93915ff8]
 xline(0,'LineWidth',1); yline(0,'LineWidth',1) %[output:93915ff8]
 %%
 %[text] ### Gamify your triangle
-%[text] Video games use rotation matrices, scaling, and translation to move objects in a game. Here we plot original triangle (in yellow), make a copy of that triangle (in blue), and then update the vertices in the triangle to scale or translate the triangle
+%[text] Video games use rotation matrices, scaling, and translation to move objects in a game. Here we plot the original triangle (in yellow), make a copy of that triangle (in blue), and then update the vertices in the triangle to scale or translate the triangle
 %%
 figure %[output:8a156018]
 patch(V(:,1),V(:,2),'yellow','FaceAlpha',0.1); % original triangle face %[output:8a156018]
@@ -137,7 +144,7 @@ angl = 45;
 rot_mat = [cosd(angl) -sind(angl);... %[output:group:99a32b58] %[output:4087da2e]
            sind(angl) cosd(angl)] %[output:group:99a32b58] %[output:4087da2e]
 
-Vrot2 = rot_mat* Vrot2'; % rotate 180
+Vrot2 = rot_mat* Vrot2'; % rotate by angl degrees
 Vrot2 = Vrot2'; % transpose back
 hp.Vertices = Vrot2; % update the vertices in the blue triangle
 %[text] - What would happen if you ran this code block again? \
@@ -155,8 +162,8 @@ hp.Vertices = Vrot2; % update the vertices in the blue triangle
 %[text] 
 %%
 %[text] #### Translate triangle
-%[text] The following code moves the triangle so the minimum vertex will be at 0,0
-Vrot2 = Vrot2 - min(Vrot2); % move minimum vertex to 0,0
+%[text] The following code moves the triangle so the bottom-left corner of its bounding box will be at 0,0 (the smallest x and the smallest y)
+Vrot2 = Vrot2 - min(Vrot2); % move the minimum x and minimum y to 0,0
 hp.Vertices = Vrot2; % update the vertices in the blue triangle %[output:12160604]
 %[text] 
 %%
@@ -168,97 +175,92 @@ hp.Vertices = Vrot2; % update the vertices in the blue triangle
 Vrot2 = Vrot2 - mean(Vrot2);
 hp.Vertices = Vrot2; % update the vertices in the blue triangle
 %%
+%[text] ### Challenge 1: rotate by 180°
+%[text] Starting with the vertices of the yellow triangle in V:
+%[text] 1. Rotate the vertices V by 180°, counterclockwise
+%[text] 2. Shrink the triangle by 1/2
+%[text] 3. Translate the triangle so that the bottom-left corner of its bounding box is at 0,0
+%[text] 4. Plot the new triangle with **patch** \
+% YOUR CODE HERE
+
+%%
 %[text] ## Transform the Diamond
 %[text] ### Create the Diamond
-figure
+%[text] This is the diamond from the previous script (X4)
 V = [0.5 0.5 1.0;...
     0 0 0;...
     1 0 0;...
     0 1 0;...
     1 1 0;...
-    0.5 0.5 -1]; % What vertex do we need to add here? 
+    0.5 0.5 -1];
 
 F = boundary(V);
 
-figure % Turn Visible on  %[output:446051d8]
+figure %[output:446051d8]
 p = patch('Faces', F, "Vertices",V, ... %[output:446051d8]
     'FaceColor','red', ... %[output:446051d8]
     'EdgeColor','k',... %[output:446051d8]
     'FaceAlpha',1,... %[output:446051d8]
-    'EdgeAlpha',1); % update %[output:446051d8]
-
+    'EdgeAlpha',1); %[output:446051d8]
 
 view(35,30) %[output:446051d8]
 axis vis3d equal %[output:446051d8]
-colormap("turbo") %[output:446051d8]
+grid on %[output:446051d8]
 xlabel('x'); ylabel('y'); zlabel('z') %[output:446051d8] %[output:7e6b9a0c] %[output:95909d17]
 %%
-%[text] %[text:anchor:H_B5449802] ### Scale and Translate that Diamond
+%[text] %[text:anchor:H_B5449802] ### Scale that Diamond
 %[text] %[text:anchor:H_1CF53D45] - Double the size of the diamond \
-p.Vertices = p.Vertices * 4;% update vertices to double size  %[output:16799c36]
+p.Vertices = p.Vertices * 2; % update vertices to double size  %[output:16799c36]
 %%
 %[text] %[text:anchor:H_F74A42F5] ### Set the face colors to the colormap
 p.FaceColor = 'flat'; %[output:6d5bb600]
 p.FaceVertexCData = (1:height(F))'; % FaceVertexCData needs to be column vector %[output:6d5bb600]
 colormap("sky") % update to preferred colormap %[output:6d5bb600]
-%[text] ## 
-%[text] 
-%%
-%[text] ### Rotate surface
-%[text] The course function mmCreateRotation returns a transformation matrix that you can use to rotate the surface
-tform = mmCreateRotationMat(45,'z') % returns a transformation matrix %[output:0fdc11bb]
-%%
-%[text] You apply the transformation matrix to the Surface vertices using the function **`transformPointsForward`**
-p.Vertices = transformPointsForward(tform,p.Vertices)
-%%
-%[text] The course function **`mmRotateSurfaceVertices`** combines this steps into one function call
-p.Vertices = mmRotateSurfaceVertices(p.Vertices,'x',45)
-%[text] - Try different rotations \
 %%
 %[text] ### Move Surface
-%[text] Review your diamond. Notice how the center axes of the diamond runs through 0.5, 0.5 of the xy plane. 
-%[text] Shift the center axes to 0,0
+%[text] Rotations happen around the origin (0,0,0). Review your diamond: its central axis runs through 1, 1 of the xy-plane (it was at 0.5, 0.5 before we doubled its size), so it is **not** centered on the origin.
+%[text] **Predict:** what do you think would happen if we rotated the diamond before centering it?
+%[text] So, before we rotate, we first move the center of the diamond to 0,0,0
 p.Vertices = p.Vertices-mean(p.Vertices); % update vertices to recenter to 0,0,0 %[output:9959a99d] %[output:125cb42e] %[output:7e22feae]
+%[text] - To see why this matters, try running the next two sections *without* running this section first (rerun the "Create the Diamond" section to start over) \
+%%
+%[text] ### Rotate surface
+%[text] The course function **mmCreateRotationMat** returns a transformation matrix that you can use to rotate the surface around the origin
+tform = mmCreateRotationMat(45,'z') % returns a transformation matrix %[output:0fdc11bb]
+%%
+%[text] You apply the transformation matrix to the surface vertices using the function **`transformPointsForward`**
+p.Vertices = transformPointsForward(tform,p.Vertices);
 %%
 %[text] %[text:anchor:H_02C43AE5] ### Course function
-%[text] The function **mmRotateSurfaceVertices** packages the above code and allows you to select the axis of rotation. Remember, you need to **setupMatGeom** to use this function (once per  MATLAB session)
-%[text] For example, the following code
-p.Vertices = mmRotateSurfaceVertices(p.Vertices,'z',90); %[output:38e134af]
-%[text] 
-%[text] 
+%[text] The course function **`mmRotateSurfaceVertices`** combines these steps into one function call, and allows you to select the axis of rotation (x, y, or z). It rotates the surface around its own center, so it works even if the surface isn't centered at 0,0,0
+p.Vertices = mmRotateSurfaceVertices(p.Vertices,'x',45); %[output:38e134af]
+%[text] - Try different rotations \
+%%
+%[text] ### Align to cardinal axes
+%[text] It is easiest to measure the extent of the diamond when it is aligned to the cardinal axes (x, y, and z). The course function **mmAlignSurface2Axes** rotates the surface so that its longest direction lines up with the x-axis, no matter how we rotated it before
+p.Vertices = mmAlignSurface2Axes(p.Vertices) %[output:13fc74cc] %[output:77d2877c]
 %%
 %[text] %[text:anchor:H_774A6BE9] ## Measure your diamond
-%[text] Make sure you rotate the diamond back so that it aligned to the xy plane. Once our diamond is nicely aligned to the cardinal axes, we can easily measure the extent of our diamond using simple math
-range(p.Vertices) %[output:11cd462c]
-%[text] - The range tells the width, depth, and height of our diamond \
-%%
-%[text] ### Align to cardinal Axes
-%[text] Actually easier to measure the extent of the diamond if its aligned to the cardinal axes
-p.Vertices = mmAlignSurface2Axes(p.Vertices) %[output:13fc74cc] %[output:77d2877c]
-range(p.Vertices) %[output:490c5108]
-%[text] 
+%[text] Once our diamond is nicely aligned to the cardinal axes, we can easily measure the extent of our diamond using simple math
+range(p.Vertices) %[output:11cd462c] %[output:490c5108]
+%[text] - The range tells the length, width, and height of our diamond
+%[text] - Does the longest range match the height of the doubled diamond (from z = -2 to z = 2)? \
 %%
 %[text] %[text:anchor:H_FC689FF7] ### Pythagorean for measuring
-%[text] %[text:anchor:H_936E9349] We can calculate the distance between vertices using Euclidean Distances (just as we did for the triangles). We just need to include a third term in our calculations
+%[text] %[text:anchor:H_936E9349] We can calculate the distance between vertices using Euclidean distances (the Pythagorean theorem, which you have used for triangles). We just need to include a third term in our calculations
 %[text] $\\textrm{Distance}=\\sqrt{{\\left(x\_2 -x\_1 \\right)}^2 +{\\left(y\_2 -y\_1 \\right)}^2 +{\\left(z\_2 -z\_1 \\right)}^2 }${"editStyle":"visual"}
 %[text] %[text:anchor:H_A69B020A] What is the distance between
 %[text] - V1 and V2, V3, V4, and V5? \
-%[text] %[text:anchor:H_00AE96B7] How far is V1 from V2? V3-5?
-d = V(2:5,:) - V(1,:) % subtract the first row from the rest of the matrix (x and y distances from V1 to the rest)
+%[text] %[text:anchor:H_00AE96B7] How far is V1 from V2? V3-5? Here we use the original diamond vertices stored in V
+d = V(2:5,:) - V(1,:) % subtract the first row from the rest of the matrix (x, y, and z distances from V1 to the rest)
 sqrt(sum(d.^2,2)) % Pythagorean for all distances
 sqrt(sum(V(1,:).^2)) % Pythagorean for distance from 0,0,0
 %%
 %[text] %[text:anchor:H_9AB8C59A] ### Challenge: vertex separation 
 %[text] %[text:anchor:H_44CD7C04] What is the distance between V1 and V6?
-d = V(1,:) - V(6,:)
-sqrt(sum(d.^2,2))
-%[text] - does our result make sense? \
-%%
-%[text] %[text:anchor:T_8EB44798] # **Challenges**
-%[text] %[text:anchor:H_59F975D7] ### **Challenge 1: rotate by 180˚**
-%[text] 1. Rotate the vertices V  by 180˚, counter clockwise
-%[text] 2. Shrink the triangle by 1/2
-%[text] 3. Translate the triangle so that its lowest vertices are 0,0 \
+% YOUR CODE HERE
+
+%[text] - Does your result make sense? \
 
 
 %[appendix]{"version":"1.0"}

@@ -1,5 +1,11 @@
-%[text] %[text:anchor:T_101DA890] # Vertices, Triangles, and 3D surfaces
-%[text] In this module, we will build 3D surfaces (also known as manifold surfaces or meshes) using the power of triangle. 
+%[text] %[text:anchor:T_101DA890] # Vertices, Triangles, and 3D Surfaces
+%[text] In this module, we will build 3D surfaces (also known as triangle meshes) using the power of triangles.
+%[text] ### Learning Objectives
+%[text] After this exercise, you should be able to
+%[text] 1. Describe how a vertex matrix and a face matrix work together to define a surface
+%[text] 2. Use **patch** to plot a surface from faces and vertices
+%[text] 3. Change the color and transparency of a surface
+%[text] 4. Create a surface from a segmentation with **isosurface**, and reduce its size with **reducepatch** \
 %[text] %[text:anchor:H_3B24DDD8] ## Faces and vertices matrices
 %[text]  Terminology
 %[text] - Points in space are called VERTICES (or nodes)
@@ -9,13 +15,13 @@
 %%
 %[text] ## Triangles in 3D
 %[text] ### A point in 3D requires three coordinates
-%[text] Specifically, an X, a Y, and a Z coordinate. Using the notation (X,Y,Z), this code adds a single point (or vertex) at (0.5,0.5,0)
+%[text] Specifically, an X, a Y, and a Z coordinate. Using the notation (X,Y,Z), this code adds a single point (or vertex) at (0.5,0.5,1)
 close all
 figure; %[output:76975e09]
 clearvars
 scatter3(0.5,0.5,1,'m','filled') %[output:76975e09]
 xlabel('x'); ylabel('y'); zlabel('z') %[output:76975e09]
-%[text] - notice that here we use **scatter3**.  \
+%[text] - Notice that here we use **scatter3**, the 3D version of **scatter** \
 %%
 %[text] ### A Triangle in 3D requires 3 coordinates at every vertex
 %[text] Let's add two more points to create the vertices of a triangle 
@@ -38,13 +44,13 @@ view([41.873 48.000]) %[output:1f79321e]
 xlabel('x'); ylabel('y'); zlabel('z') %[output:1f79321e]
 %[text] -  This call specifies the X, Y, and Z coordinates as column vectors
 %[text] -  Notice that patch automatically closes the shape.
-%[text] - Also notice that we didn't need a "hold on" — patches automatically assume hold is on \
+%[text] - Also notice that we didn't need a "hold on" — **patch** is a low-level function that adds to the current axes without clearing it \
 %%
 %[text] ### Faces Matrix
 %[text] In the previous call to **patch,** we inputted vectors for X, Y, and Z. This works fine; however, you must specify each coordinate explicitly, even if you are reusing that coordinate (say, for example, we wanted to add another face to our burgeoning manifold surface)
 %[text] %[text:anchor:H_33BBB902] There is another way to input coordinates into patch. This is known as the Vertices / Faces input pair. This is the most common way to organize the data for a surface. 
 %[text] A Face matrix is simply a collection of row indices for the vertices matrix. That is to say that every single number found in the face matrix points to a row in the paired vertices matrix.
-%[text] Consider the following Face Matrix;
+%[text] Consider the following Face Matrix:
 F = [1 2 3] %[output:85f5baa3]
 %[text] - Since there are three columns in this array, this face matrix forms triangles.
 %[text] - Since there is only one row, this face matrix would form only one triangle.
@@ -77,7 +83,7 @@ p.Vertices %[output:3b6326c6]
 view(10,45)
 %[text] - notice that as you manually rotate the triangle, the view settings are updated, and you get a little prompt to update your code \
 %%
-%[text] You can use these sliders to play around the view settings. Notice that el always rotates around the cardinal axes.
+%[text] You can use these sliders to play around with the view settings. **az** (azimuth) spins the view around the z-axis, and **el** (elevation) raises or lowers the viewpoint above the xy-plane.
 el = 20; %[control:slider:819a]{"position":[6,8]}
 az = 80; %[control:slider:3ad3]{"position":[6,8]}
 view(az,el) %[output:68808be8]
@@ -97,13 +103,13 @@ text(0,1,0,'V4') %[output:78c8e81a]
 %[text] 
 %%
 %[text] %[text:anchor:H_84E0092B] #### Next, add another face
-%[text] To add a new face, we have to need to another row to F. Reviewing the vertex array, we can add a second face using vertices in rows 1, 2, and 4:
+%[text] To add a new face, we need to add another row to F.Reviewing the vertex array, we can add a second face using vertices in rows 1, 2, and 4:
 V %[output:73fa6e67]
 %%
 %[text] 
 F = [1 2 3; ... %[output:group:9295443c] %[output:0e33588a]
     1 2 4]     % second row indicates second face %[output:group:9295443c] %[output:0e33588a]
-%[text] - So, we are reusing Vertices 1 and 3. And our second face will share an edge with the first face \
+%[text] - So, we are reusing Vertices 1 and 2. And our second face will share an edge with the first face \
 %[text]  
 %%
 %[text] ### Two-Faced Patch  
@@ -126,7 +132,7 @@ label_patches(F, V); %[output:586cebf1]
 %%
 %[text] ### Add a third face
 %[text] %[text:anchor:H_AAD44FFE] Let's continue with our pyramid.  First, we need another vertex. So, where do we need more vertices to complete the pyramid?
-V = [V; 1 1 0]; % add new vertices at 1, 1, 0
+V = [V; 1 1 0]; % add a new vertex at 1, 1, 0
 
 scatter3(V(:,1),V(:,2),V(:,3),'filled') %[output:92ffcdee]
 view(3) %[output:92ffcdee]
@@ -136,7 +142,7 @@ text(1,1,0,'V5') %[output:92ffcdee]
 %[text] %[text:anchor:H_2C49D0C7] ### Add another Face
 %[text] Which vertices do we need to add a face that shares an edge with F2?
 %[text] - Vertices 1, 4, and 5 \
-%[text] %[text:anchor:H_CF36FE76]  Add a new row to F that point to vertices 1, 4, and 5
+%[text] %[text:anchor:H_CF36FE76]  Add a new row to F that points to vertices 1, 4, and 5
 F = [F; 1 4 5];
 p.Vertices = V; %[output:9d3ad020]
 p.Faces = F; %[output:9d3ad020]
@@ -148,9 +154,11 @@ label_patches(F,V); %[output:9d3ad020]
 %[text] ### Final Face(s)
 %[text] %[text:anchor:H_16093655] We now have all the vertices we need to complete our pyramid. We just need to add three more faces: one to close up the side and two to close up the bottom.
 %[text] What do we need to add to F to complete the pyramid? Add THREE new rows to F
-F = [F; 1 3 5] %[output:5e919367]
+%[text] - We've given you the side face (vertices 1, 3, and 5). Add the two bottom faces yourself
+%[text] - Hint: the bottom square is made up of vertices 2, 3, 4, and 5. Split it into two triangles \
+F = [F; 1 3 5] % add two more rows here for the bottom faces %[output:5e919367]
 %%
-%[text] Update the your pyramid
+%[text] Update your pyramid
 p.Faces = F; %[output:9bfdcd67]
 label_patches(F,V); %[output:9bfdcd67]
 %%
@@ -174,23 +182,23 @@ F = boundary(V) %[output:2eebe769]
 figure;  %[output:2f7dd80d]
 p = patch('Faces',F,"Vertices",V,'facecolor', 'c'); %[output:2f7dd80d]
 view(3) %[output:2f7dd80d]
-%[text] We will explicitly set the face color, set the **FaceColor** property to 'flat'
+%[text] To set the color of each face explicitly, first set the **FaceColor** property to 'flat'
 p.FaceColor = 'flat'; % FaceColor is set to 'flat' %[output:2f7dd80d]
-%[text] And set the color of each face to an RGB triplet. You need one triplet per face. One simple way to generate RGB triplets is to call a colormap function, like **hsv.** 
+%[text] And set the color of each face to an RGB triplet. You need one triplet per face. One simple way to generate RGB triplets is to call a colormap function, like **parula** or **hsv**.
 cdata = parula(size(F,1)) % number of rows in cdata should equal the number of rows in F %[output:364102cf]
-%[text] Once you have come with a matrix of triplets, we set the **FaceVertexCData** property to this matrix:
+%[text] Once you have come up with a matrix of triplets, we set the **FaceVertexCData** property to this matrix:
 p.FaceVertexCData = cdata; %[output:2f7dd80d]
 axis vis3d %[output:2f7dd80d]
 %[text] - Notice here that FaceVertexCData has one row of RGB triplets for each face \
 %%
 %[text] #### Change the face colors to a different color map
 %[text] %[text:anchor:H_EDA0B756] Remember, you just need to come up with a new *cdata* matrix and assign that matrix to the **FaceVertexCData** property
-cdata = bone(height(F)); % update cdata to parula %[text:anchor:H_2C294192]
+cdata = bone(size(F,1)); % update cdata to the bone colormap%[text:anchor:H_2C294192]
 p.FaceVertexCData = cdata; %[output:3ab43734]
 %[text] - re-run this codeblock, changing only the colormap \
 %%
 %[text] #### Set FaceColor to the current colormap
-%[text] %[text:anchor:H_5E6CF101] If you don't want to explicitly create a *cdata* colormap matrix for your manifold, you can simply set the **FaceVertexCData** property to a series of whole numbers, and then the current colormap of the figure will be assigned to the manifold. Remember, a every figure has a default colormap (probably parula). If you just want that to use that colormap, just input a column vector of integers, with the same number of rows as F into FaceVertexCData as follows:
+%[text] %[text:anchor:H_5E6CF101] If you don't want to explicitly create a *cdata* colormap matrix for your manifold, you can simply set the **FaceVertexCData** property to a series of numbers, and then the current colormap of the figure will be assigned to the manifold. Remember, every figure has a default colormap (probably parula). If you just want to use that colormap, just input a column vector of numbers,with the same number of rows as F into FaceVertexCData as follows:
 p.FaceColor = 'flat';
 p.FaceVertexCData = (1:size(F,1))' % FaceVertexCData needs to be column vector %[output:2e9d1685] %[output:4197758e]
 axis vis3d %[output:4197758e]
@@ -203,9 +211,8 @@ colormap(spring) %[output:46c2f052]
 p.FaceAlpha = 0.75; %[output:280c566d]
 %%
 %[text] #### Change the transparency
-%[text] %[text:anchor:H_7AC8B035] Try it now. Set the face alpha to 0.5 and 0.25
-p.FaceAlpha = 0.75
-colormap("turbo")
+%[text] %[text:anchor:H_7AC8B035] Try it now. Set the face alpha to 0.5, and then to 0.25
+p.FaceAlpha = 0.5
 %%
 %[text] ####  EdgeAlpha
 %[text] %[text:anchor:H_BCE32D5B] What do you think the edge alpha sets? Try it now. Set the edge alpha to 0.25
@@ -227,73 +234,44 @@ axis equal %[output:6bbc0bff]
 %%
 %[text] %[text:anchor:H_C77FCA4E] ## Challenges
 %[text] %[text:anchor:H_B6DFD096] ### Challenge: Create a Diamond
-%[text] %[text:anchor:H_596AB2F5] - Add one more row to V to create a diamond surface
+%[text] %[text:anchor:H_596AB2F5] - Add one more row to V to create a diamond surface (a pyramid on top of an upside-down pyramid)
 %[text] - Use the function **boundary** to automatically generate the faces matrix and overwrite F
 %[text] - Plot the Vertices and Faces using **patch**
-%[text] - Set FaceColor to the **magenta**.
+%[text] - Set FaceColor to **magenta**
 %[text] - Set the EdgeColor to black
 %[text] - Set FaceAlpha to 0.5
 %[text] - Set EdgeAlpha to 0.25
-%[text] - label the faces and vertices \
-figure
-V = [0.5 0.5 1.0;...
-    0 0 0;...
-    1 0 0;...
-    0 1 0;...
-    1 1 0;...
-    0.5 0.5 -1]; % What vertex do we need to add here? 
+%[text] - Label the faces and vertices \
+%[text] Hint: V still holds the five pyramid vertices. Where does the sixth vertex need to go?
+% YOUR CODE HERE
 
-F = boundary(V);
-
-figure % Turn Visible on  %[output:89cb6daa]
-p = patch('Faces', F, "Vertices",V, ... %[output:89cb6daa]
-    'FaceColor','red', ... %[output:89cb6daa]
-    'EdgeColor','k',... %[output:89cb6daa]
-    'FaceAlpha',0.5,... %[output:89cb6daa]
-    'EdgeAlpha',1); % update %[output:89cb6daa]
-
-
-view(35,30) %[output:89cb6daa]
-axis vis3d equal %[output:89cb6daa]
-colormap("turbo") %[output:89cb6daa]
-xlabel('x'); ylabel('y'); zlabel('z') %[output:89cb6daa]
-%[text] ### 
 %%
 %[text] ## Create Surface from Vertebra Segmentation
-%[text] Load Lung CT Volume and One vertebrae (just the vertebral body, excluding the spinous processes)
+%[text] Load the Lung CT volume and a segmentation of one vertebra (just the vertebral body, excluding the spinous processes)
 clearvars
 close all
 mmSetUnitDataFolder(3) %[output:00b54af3]
 medVolCT = medicalVolume(fullfile("MedicalVolumeDICOMData","LungCT01")) %[output:24275ad8]
-medVolLabel = medicalVolume("LungCT01_vertebra.nii.gz") % load segmentation of one Vertebrae %[output:8d9ab687]
-%[text] - The Label Map is the same size as the cT Volume \
+medVolLabel = medicalVolume("LungCT01_vertebra.nii.gz") % load segmentation of one vertebra%[output:8d9ab687]
+%[text] - The label map is the same size as the CT volume \
 %%
 %[text] ### Show the Label
 volshow(medVolLabel) %[output:1b5aa085]
 %%
 %[text] ### Overlay the Label
-%[text] drag planes to scrub through the volume
+%[text] Drag the planes to scrub through the volume
 volshow(medVolCT, ... %[output:group:42775834] %[output:5b1fe1d1]
     OverlayData=medVolLabel.Voxels, ... %[output:5b1fe1d1]
     RenderingStyle="SlicePlanes", ... %[output:5b1fe1d1]
     OverlayAlpha=0.5) %[output:group:42775834] %[output:5b1fe1d1]
 %%
-function [amap, cmap] = getAlphaColorMap
-% Create custom alpha settings for LungCT01
-alpha = [0 0 0.01 .25]; % alpha seeds for interpolation
-color = [0 0 0; 186 65 77; 231 208 141; 255 255 255] ./ 255; % color seeds for interpolation
-intensity = [-3024 100 400 1499];
-queryPoints = linspace(min(intensity),max(intensity),256);
-amap = interp1(intensity,alpha,queryPoints)'; % alphamap
-cmap = interp1(intensity,color,queryPoints); % colormap
-end
-%%
+%[text] ### Volume render with the overlay
+%[text] Here we use the local function **getAlphaColorMap** (see the end of the script) to make the CT mostly transparent, so the vertebra stands out
 [amap, cmap] = getAlphaColorMap;
 hvs = volshow(medVolCT,OverlayData=medVolLabel.Voxels,Colormap=cmap,Alphamap=amap,RenderingStyle="VolumeRendering",OverlayAlpha=0.75); %[output:3dfb756b]
 %%
-tform = mVseg.VolumeGeometry.intrinsicToWorldMapping; % get the transformation matrix
-
-%%
+%[text] ### Create a surface with isosurface
+%[text] The function **isosurface** wraps a triangle mesh around the voxels in the label map (the boundary between 0 and 1). It returns a structure with faces and vertices, just like the ones we built by hand
 fv = isosurface(medVolLabel.Voxels,0.5) % create a surface %[output:784b1497]
 %%
 figure %[output:19ddf026]
@@ -304,21 +282,24 @@ hp = patch(fv, ... %[output:19ddf026]
 
 mmSetSurfacePlotProps %[output:19ddf026]
 %%
+%[text] ### Correct the voxel spacing
+%[text] The vertices from **isosurface** are in voxel units. To convert them to millimeters, we multiply by the voxel spacing
+%[text] - Careful: isosurface vertices are in (column, row, slice) order, but VoxelSpacing is in (row, column, slice) order. That's OK here because the row and column spacing are the same \
 hp.Vertices = hp.Vertices .* medVolLabel.VoxelSpacing % correct voxel spacing %[output:72bceaa1] %[output:250b208d]
 %%
 %[text] ### Decimate Surface
 %[text] Often, isosurface creates too many triangles. The function reducepatch reduces the number of triangles while maintaining the overall shape of the surfaces
-reducepatch(hp,0.15) % reduce number of triangles (patches) by 85% %[output:1eb1cda0]
-%%
-hp
-%[text] - compare the number of Vertices before and after `reducepatch`. \
+fprintf("Before: %d triangles\n", size(hp.Faces,1))
+reducepatch(hp,0.15) % keep 15% of the triangles (an 85% reduction) %[output:1eb1cda0]
+fprintf("After:  %d triangles\n", size(hp.Faces,1))
+%[text] - Compare the number of triangles before and after **reducepatch**. Does the surface still look like a vertebra? \
 %%
 %[text] %[text:anchor:T_F69B48DE] # Local Functions
 %[text] %[text:anchor:H_95B0506D] ## label patches
-%[text] %[text:anchor:H_D05456FE] To position the face label on the center of the patch, we need to find the centroid of the vertices(which is basically just their averages): [http://www.mathopenref.com/coordcentroid.html](http://www.mathopenref.com/coordcentroid.html) 
+%[text] %[text:anchor:H_D05456FE] To position the face label on the center of the patch, we need to find the centroid of the vertices (which is basically just their averages): [https://www.mathopenref.com/coordcentroid.html](https://www.mathopenref.com/coordcentroid.html)
 function label_patches(F, V)
-hold on
 % labels the faces and vertices of the inputted patches
+hold on % note: this leaves hold on, so later plots are added to the same axes
 offset = 0.025; % offset the label
 % vertex label
 for n=1:size(V,1)
@@ -332,8 +313,16 @@ for n =1:size(F,1)
     text(c(1), c(2), c(3), sprintf('F%d',n),'Color','b','FontWeight','bold');
 end
 end
-%[text] %[text:anchor:H_FC3E9027] ## 
-%[text] 
+%[text] %[text:anchor:H_FC3E9027] ## Get alpha and color maps
+%[text] Creates a custom alphamap and colormap for volume rendering LungCT01
+function [amap, cmap] = getAlphaColorMap
+alphaSeeds = [0 0 0.01 .25]; % opacity seeds for interpolation
+colorSeeds = [0 0 0; 186 65 77; 231 208 141; 255 255 255] ./ 255; % color seeds for interpolation
+intensitySeeds = [-3024 100 400 1499]; % HU values where the seeds are set
+queryPoints = linspace(min(intensitySeeds),max(intensitySeeds),256);
+amap = interp1(intensitySeeds,alphaSeeds,queryPoints)'; % alphamap
+cmap = interp1(intensitySeeds,colorSeeds,queryPoints); % colormap
+end
 
 %[appendix]{"version":"1.0"}
 %---

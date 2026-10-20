@@ -1,24 +1,24 @@
-%[text] %[text:anchor:T_79A94F48] # Tomography Examples
+%[text] %[text:anchor:T_79A94F48] # CT Reconstruction and the Radon Transform
 %[text] In this exercise, we will explore the steps involved in creating a backprojection image.
-%[text] After this exercise, you should be to
+%[text] After this exercise, you should be able to
 %[text] 1. Explain what a Radon Transform is
 %[text] 2. Explain what a sinogram shows
 %[text] 3. Explain what a backprojection is in reference to a Radon Transform and a CT Scan
-%[text] 4. Where a source of noise comes from in CT scans (hint, its the Radon Transform) \
+%[text] 4. Explain where noise in CT scans comes from (hint: it's the reconstruction from the Radon Transform) \
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] 
 clearvars
 close all
 %%
 %[text] %[text:anchor:H_95EAF1C5] ## Radon Transform
-%[text] The radon transform is the mathematical process of creating a one-dimensional representation of a 2D image. It replicates the process that is occurring in a CT machine and ultimately results in the creation of a sinogram. 
-%[text] In this example, we will assume an equal number of emitters and sensors. We will start by creating a simple image and then transform that mask using the Radon transform
+%[text] The Radon transform converts a 2D image into a set of 1D projections — one projection for each viewing angle. Each projection adds up (integrates) the image intensities along parallel lines, much like X-rays passing through the body in a CT machine. Stacking these projections side by side creates a sinogram. 
+%[text] In this example, we will assume an equal number of emitters and sensors. We will start by creating a simple image and then transform that image using the Radon transform.
 %[text] ### Create a Sample Image
-%[text] %[text:anchor:H_6D10E356] Our sample image will be a binary image containing a rectangle 
+%[text] %[text:anchor:H_6D10E356] Our sample image will be a binary image containing a 30 × 10 rectangle (30 pixels wide, 10 pixels tall) 
 % create the image
 I = ones(50); % an image of all ones
-I([1:20 30:50],:)=0; % zero out top and bottom rows
-I(:,[1:10 40:50]) = 0; % zero out left and right columns
+I([1:20 31:50],:)=0; % zero out top and bottom rows (keeps rows 21-30)
+I(:,[1:10 41:50]) = 0; % zero out left and right columns (keeps columns 11-40)
 
 figure; %[output:06e4e037]
 
@@ -27,8 +27,7 @@ nexttile %[output:06e4e037]
 imagesc(I); % plot the image as an axes %[output:06e4e037]
 axis xy %[output:06e4e037]
 axis square %[output:06e4e037]
-xlabel("30 X 10 rectangle") %[output:06e4e037]
-hold on %[output:06e4e037]
+xlabel("30 × 10 rectangle") %[output:06e4e037]
 colormap(gray) %[output:06e4e037]
 %%
 %[text] %[text:anchor:H_05100547] ### Radon transform
@@ -38,21 +37,23 @@ theta = [0 45 90]; % angles to calculate transform
 nexttile %[output:69427547]
 plot(xp, R) % plot the radon transforms %[output:69427547]
 legend(arrayfun(@num2str,theta,'uni',false)) %[output:69427547]
-title('View from to of Image') %[output:69427547]
-xlabel('Radon Transforms for Three angles') %[output:69427547]
+title('Radon Transforms for Three Angles') %[output:69427547]
+xlabel("x' (distance from center)") %[output:69427547]
+ylabel('sum of intensities') %[output:69427547]
 axis square %[output:69427547]
 %[text] - In the Radon Transform, we "look" at the image from different angles — not from above, but in the same plane as the image (As if we live in [Flatland](https://youtu.be/MGv8MMi8QO0?si=uMjufzfE3alQbnjp))
 %[text] - Each "View" is plotted out as a line
-%[text] - In plot, y-axis indicates 'Height' along the transformation angle. e.g. 90˚ has a "height" that is the length of the rectangle (from 10 to 40 along the x-axis  in  the image) \
+%[text] - In the plot, the y-axis is the sum of the intensities along each ray (the "height" of the profile). For example, at 0° each ray passes through the 10-pixel height of the rectangle, so the profile is 10 high and 30 wide. At 90°, each ray passes through the 30-pixel length, so the profile is 30 high and 10 wide. \
 %[text] 
 %%
 %[text] %[text:anchor:H_EF58F7A7] ### Show simulated rotations of the image 
-%[text] Here we pair the simulated rotated image with the corresponding transform immediately below the rotated image. In this example, the view is always from above the image
+%[text] Here we pair the simulated rotated image with the corresponding transform immediately below the rotated image. In this example, the view is always from above the image.
+%[text] **Predict:** before you run this section, sketch what you think the 45° transform will look like.
 figure; %[output:32d430e0]
 tiledlayout(2,3); %[output:32d430e0]
 
 for n=1:3
-    ir = imrotate(I,theta(n)); % rotate image
+    ir = imrotate(I,-theta(n)); % rotate image clockwise to match radon's counterclockwise viewing angle
     ax = nexttile(n); %[output:32d430e0]
     imagesc(ir); % display image (as a plot)
     grid on
@@ -64,16 +65,16 @@ for n=1:3
 
     plot(xp,R(:,n)) % plot the radon transform
     if n==2
-    xlabel('distance from center')
+        xlabel('distance from center')
     end
-    ylim([0 30])
+    ylim([0 35])
 end
 colormap(gray) %[output:32d430e0]
 sgtitle('Radon Transform with View from Top of Image') %[output:32d430e0]
-%[text] The bottom row shows the 1D transform of the image along the indicated angle. Envision a flash light shining up from below the image into a viewer above. The height of the profile is where the light is getting blocked. So, the transform is basically what the shadow might look like on the far side of the image
+%[text] The bottom row shows the 1D transform of the image along the indicated angle. Envision a flashlight shining up from below the image toward a viewer above. The height of the profile tells you how much material the light had to pass through (the sum of the intensities along that ray). So, the transform is like the shadow on the far side of the image — the thicker or denser the object, the darker the shadow.
 %%
 %[text] %[text:anchor:H_76AE8EBC] ### Changing Intensity
-%[text] What happens to the transform if we change the intensity of our rectangle (i.e. radiodensity)?
+%[text] What happens to the transform if we change the intensity of our rectangle (i.e., radiodensity)? **Predict** before you run the next section.
 Idim = I;
 Idim(logical(I)) = 0.5; % set the intensity values to 0.5
 
@@ -81,7 +82,7 @@ theta = [0 45 90]; % angles to calculate transform
 [Rdim,xp_dim] = radon(Idim,theta);
 
 clf; % clear figure %[output:9738d914]
-% tiledlayout(1,3)
+tiledlayout(2,2)
 nexttile %[output:9738d914]
 imshow(Idim) %[output:9738d914]
 title('dim') %[output:9738d914]
@@ -93,20 +94,23 @@ title('full brightness') %[output:9738d914]
 nexttile %[output:9738d914]
 plot(xp_dim, Rdim) %[output:9738d914]
 legend(arrayfun(@num2str,theta,'uni',false)) %[output:9738d914]
-
-ylim([0 30]) %[output:9738d914]
+title('dim transforms') %[output:9738d914]
+ylim([0 35]) %[output:9738d914]
 
 nexttile %[output:9738d914]
 plot(xp, R) %[output:9738d914]
-%[text] - The heights of the lines in for the Dimmer Image are lower
-%[text] - So, these 1D plot represent intensity along the Y-axis \
+legend(arrayfun(@num2str,theta,'uni',false)) %[output:9738d914]
+title('full brightness transforms') %[output:9738d914]
+ylim([0 35]) %[output:9738d914]
+%[text] - The profiles for the dim image are half as high as the profiles for the full-brightness image
+%[text] - So, the height of a 1D profile depends on both how thick the object is and how bright (dense) it is \
 %%
 %[text] %[text:anchor:H_6916CAB3] ## Sinogram
 %[text] A sinogram takes the 1D transforms and plots them as an image where: 
-%[text] - **x-axis**: is the transformation angle
-%[text] - **y-axis**: is the width of transformation
-%[text] - \*\*colormap: \*\*is the height of transform (considering intensity) \
-%[text] In the following plot, we plot the **three transforms** as a single image. Envision rotating the plots from the previous code block 90˚ and viewing them from the side where the y-axis from the previous image is plotted as a color on the heat color scale. In this image, white corresponds to 30. 
+%[text] - **x-axis**: is the projection angle (θ)
+%[text] - **y-axis**: is the position along the detector (x′)
+%[text] - **color**: is the height of the transform (the summed intensity) \
+%[text] In the following plot, we plot the **three transforms** as a single image. Envision rotating the plots from the previous code block 90˚ and viewing them from the side where the y-axis from the previous image is plotted as a color using the `hot` colormap. In this image, white corresponds to 30. 
 %[text] Here, we plot a sinogram with only 3 radon transforms: 0, 45, 90
 figure;  %[output:06d77dad]
 
@@ -127,7 +131,7 @@ ylabel('X\prime','Interpreter','tex'); %[output:06d77dad]
 set(gca,'XTick',0:20:180); %[output:06d77dad]
 colormap(hot); %[output:06d77dad]
 colorbar %[output:06d77dad]
-%[text] - In the Sinogram, the radon transform outlines are filled in \
+%[text] - In the sinogram, each column is one of the 1D profiles above, with its height shown as a color \
 %%
 %[text] %[text:anchor:H_A217EB63] ### Sinogram of the dimmer box
 %[text] Here, we only calculate 3 radon transforms: 0, 45, 90
@@ -140,12 +144,12 @@ set(gca,'XTick',0:20:180); %[output:348c8eb9]
 % axis equal
 colormap(hot(30)); %[output:348c8eb9]
 colorbar %[output:348c8eb9]
-%[text] - the dimmer box will have dimmer colors in the sinogram \
+%[text] - The dimmer box has dimmer colors in the sinogram \
 %%
 %[text] %[text:anchor:H_89BC10FE] ## Refine the Sinogram
 %[text] Here, we add more rotations of the image.
 %[text] Here, we'll plot 180 transforms of the brighter box: 
-theta = 0:180; % angles to calculate transform
+theta = 0:179; % angles to calculate transform (180° is the same view as 0°)
 [R,xp] = radon(I,theta);
 imagesc(theta,xp,R); %[output:5ba49c68]
 title('Sinogram: R_{\theta} (X\prime)','Interpreter','tex'); %[output:5ba49c68]
@@ -154,18 +158,18 @@ ylabel('X\prime'); %[output:5ba49c68]
 set(gca,'XTick',0:20:180); %[output:5ba49c68]
 colormap(hot); %[output:5ba49c68]
 colorbar %[output:5ba49c68]
-%[text] - Now we have a transform at every degree (theta)
-%[text] - At 90˚, we have a long, skinny thing in reference to our emitter
-%[text] - at 0˚ and 180˚, we have a short, wide thing in reference to our emitter \
+%[text] - Now we have a transform at every degree (θ)
+%[text] - Near 90°, the band is narrow but bright: the rays pass through the long (30-pixel) side of the rectangle
+%[text] - Near 0° and 180°, the band is wide but dim: the rays pass through the short (10-pixel) side of the rectangle \
 %%
 %[text] %[text:anchor:H_C8DDA6BB] ## Inverse Radon Transform
-%[text] To recreate the image from the sinogram radon transform, we use the inverse radon transform with the function **`iradon`**. This is also known as a backprojection.
+%[text] To recreate the image from the sinogram, we use the inverse Radon transform with the function **`iradon`**. This is also known as a backprojection. By default, `iradon` performs a *filtered* backprojection: it sharpens each projection with a filter before projecting it back across the image.
 clf %[output:3b8de16c]
 IR = iradon(R,theta);
 imshowpair(I,IR,'montage') %[output:3b8de16c]
 title('Original | Reconstruction') %[output:3b8de16c]
 %[text] - Notice that the reconstructed image is not a perfect reconstruction of the original data.
-%[text] - **Remember** - CT's are mathematical reconstructions, NOT ACTUAL IMAGES. The artifacts found in a CT often arise from the process of recreating Images from backprojections. \
+%[text] - **Remember** - CTs are mathematical reconstructions, NOT ACTUAL IMAGES. The artifacts found in a CT often arise from the process of recreating images from backprojections. \
 %%
 %[text] %[text:anchor:H_700FF51E] ### Change the colormap of the backprojection
 %[text] The parula colormap highlights the noise in the backprojection
@@ -173,11 +177,28 @@ figure %[output:609f5c57]
 imshowpair(I,IR,'montage') %[output:609f5c57]
 colormap(gca, "parula") %[output:609f5c57]
 %%
+%[text] ### Filtered vs. unfiltered backprojection
+%[text] **Predict:** what do you think the reconstruction will look like if `iradon` skips the filter?
+IRnofilt = iradon(R,theta,'linear','none'); % backprojection without a filter
+figure
+tiledlayout(1,3)
+nexttile
+imshow(I,[])
+title('Original')
+nexttile
+imshow(IRnofilt,[])
+title('Unfiltered')
+nexttile
+imshow(IR,[])
+title('Filtered (default)')
+%[text] - Without the filter, every projection is "smeared" back across the whole image, so the rectangle is blurry and surrounded by a bright halo
+%[text] - The filter sharpens each projection before it is smeared back. This removes most of the blur, but it also adds some ringing noise \
+%%
 %[text] %[text:anchor:H_7F35EE42] ## Radon Transform of Intensity and multiple shapes
 %[text] So far, we have simply captured the radon transform of a rectangle with a single intensity, at a single location
-%[text] The following image has three rectangles at three different locations
-I(36:44, 11:39) = 0.5;
-I(6:14, 11:39) = 0.25;
+%[text] The following image adds two more rectangles, with intensities of 0.5 and 0.25, below and above the original rectangle
+I(36:45, 11:40) = 0.5;
+I(6:15, 11:40) = 0.25;
 
 figure; %[output:8b39ca17]
 imshow(I) %[output:8b39ca17]
@@ -189,7 +210,7 @@ theta = [0 45 90]; % angles to calculate transform
 figure %[output:73a875b2]
 tiledlayout(2,3) %[output:73a875b2]
 for n=1:3
-    ir = imrotate(I,-theta(n));
+    ir = imrotate(I,-theta(n)); % rotate image clockwise to match radon's viewing angle
 
     ax = nexttile(n); %[output:73a875b2]
     imagesc(ir);
@@ -202,12 +223,12 @@ for n=1:3
     nexttile(n+3)
     plot(xp,R(:,n))
     title('Radon Transform')
-    ylim([0 30])
+    ylim([0 35])
 end
 colormap(gray) %[output:73a875b2]
-%[text] - Interestingly, the transform looks nearly the same at 0˚. Just the height is different (its an integral of intensity data inside the three rectangles).
+%[text] - Interestingly, the transform at 0° has the same shape as before. Only the height is different (it's the sum of the intensities in all three rectangles).
 %[text] - At oblique angles, the transforms are far more complicated
-%[text] - Only at 90˚are can three separate rectangles evident.  \
+%[text] - Only near 90° are the three separate rectangles evident \
 %%
 %[text] %[text:anchor:H_D0999311] ## Generate the Full Sinogram
 %[text] Transform the rectangles across the full 180˚
@@ -221,21 +242,21 @@ ylabel('X\prime'); %[output:79fab9ba]
 set(gca,'XTick',0:20:180); %[output:79fab9ba]
 colormap(hot); %[output:79fab9ba]
 colorbar %[output:79fab9ba]
-%[text] The presence of three rectangles is evidently at around 90˚. Notice that the color is brightest for the center rectangle (which is also brightest in the original image)
+%[text] The presence of three rectangles is evident at around 90°. Notice that the color is brightest for the center rectangle (which is also brightest in the original image)
 %%
 %[text] %[text:anchor:H_5A30C062] ## Reconstruct the Image
 %[text] Using backprojection
 clf %[output:66be6d2f]
 IR = iradon(R,theta);
-axp = imshowpair(I,IR,'montage'); %[output:66be6d2f]
+imshowpair(I,IR,'montage'); %[output:66be6d2f]
 title('Original | Reconstruction') %[output:66be6d2f]
 colormap (gca, parula) %[output:66be6d2f]
 %[text] Noise is an inevitable part of the process
 %%
 %[text] %[text:anchor:T_76315318] # Create a Shepp-Logan Head Phantom
 %[text] A Shepp-Logan Head Phantom is a standard phantom used for testing radon transformations 
-figure %[output:7fff2f73]
 clearvars
+figure %[output:7fff2f73]
 tiledlayout(1,2,'Padding','compact') %[output:7fff2f73]
 P = phantom; % Create the Phantom - Just an image
 
@@ -252,7 +273,7 @@ title('Radon Transform for Three angles') %[output:7fff2f73]
 axis square %[output:7fff2f73]
 %[text] - The transforms are even more complicated \
 %%
-%[text] %[text:anchor:H_F0FE5F00] ## Create Sinogram for the Shepp-Phatom
+%[text] %[text:anchor:H_F0FE5F00] ## Create Sinogram for the Shepp-Logan Phantom
 %[text] 180 degrees of rotation
 figure %[output:92ddb36c]
 theta = 0:179; % angles to calculate transform
@@ -264,7 +285,7 @@ ylabel('Parallel Sensor Position - x\prime (pixels)'); %[output:92ddb36c]
 set(gca,'XTick',0:20:180); %[output:92ddb36c]
 colormap(hot); %[output:92ddb36c]
 colorbar %[output:92ddb36c]
-%[text] the sinogram is fatter at 90˚ because the original image contains an oval that is wider at the perpendicular angle
+%[text] The sinogram is fatter at 90° because the original image contains an oval that is wider at the perpendicular angle
 %%
 %[text] %[text:anchor:H_A1E7E23F] ## Reconstruct Phantom
 %[text] Backproject the image from the sinogram
@@ -279,7 +300,7 @@ P(220:230, 100:150) = 1;
 imshow(P) %[output:4d27e37b]
 %%
 %[text] %[text:anchor:H_7C9D40FE] ## Sinogram with metal mouth
-%[text] Metal (bright pixels) inevitable adds noise to the backprojection 
+%[text] Metal (bright pixels) inevitably adds noise to the backprojection 
 tiledlayout(2,1) %[output:75f1249d]
 nexttile %[output:75f1249d]
 imagesc(theta,xp,R); %[output:75f1249d]
@@ -321,25 +342,30 @@ colormap(gca, parula) %[output:507d8f62]
 %[text] - Notice the extra background noise around the reconstructed mouth (horizontal lines) \
 %%
 %[text] %[text:anchor:T_EDA8D371] # Exercise - Backprojection
-%[text] You try it: recreate a backprojection from a sinogram
+%[text] You try it: recreate an image from a mystery sinogram. (The answer key is in a separate file.)
 %[text] %[text:anchor:H_78B71E26] ## Clean up
 clearvars
 close all
 mmSetUnitDataFolder(3) %[output:9181879a]
 load("sinogram_example_data2.mat")
-%[text] - or just double-click on the singram\_example\_data2.mat file in the data folder \
+%[text] - or just double-click on the sinogram\_example\_data2.mat file in the data folder \
 %%
 %[text] %[text:anchor:H_8C43281F] ## Load and display
 %[text] %[text:anchor:H_6123337B] Display the sinogram.
-%[text] - The first input into `radon` should be R \
-figure('Visible','on','WindowStyle','docked'); %[output:77940d53]
-theta = 0:179; % angles to calculate transform
+%[text] - The sinogram is stored in **R**, and the detector positions are stored in **xp**
+%[text] - R has one column per angle, from 0° to 179° \
+figure; %[output:77940d53]
+theta = 0:179; % angles used to create the sinogram
 imagesc(theta,xp,R); %[output:77940d53]
+xlabel('\theta (degrees)'); %[output:77940d53]
+ylabel('x\prime'); %[output:77940d53]
+%[text] **Predict:** looking at the sinogram, what shapes do you think are in the original image?
 %%
-%[text] %[text:anchor:H_D18DDD4F] ## Lets find out
-%[text]  Perform a backprojection (using iradon) and display
-P = iradon(R,theta);
-imshow(P) %[output:59446aa6]
+%[text] %[text:anchor:H_D18DDD4F] ## Let's find out
+%[text] Perform a backprojection (using **iradon**) and display the result.
+%[text] - The first input into **iradon** should be R, and the second should be theta \
+% YOUR CODE HERE
+
 
 %[appendix]{"version":"1.0"}
 %---

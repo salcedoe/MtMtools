@@ -1,6 +1,12 @@
-%[text] %[text:anchor:T_50C556DF] # Waves, frequency, and the fast fourier transform
-%[text] In this live script is designed to review key concepts such as sine and cosine and basic properties of waves. We will also introduce the fourier transform, which is a fancy way to break down a complex wave into its sinusoidal components. Finally, we will perform a forward and reverse fourier transform on an image, to review key concepts that occur during MRI imaging. 
-%[text] 
+%[text] %[text:anchor:T_50C556DF] # Waves, Frequency, and the Fast Fourier Transform
+%[text] This live script is designed to review key concepts such as sine and cosine and the basic properties of waves. We will also introduce the Fourier transform, which is a fancy way to break down a complex wave into its sinusoidal components. Finally, we will perform a forward and inverse Fourier transform on an image to review key concepts that occur during MRI imaging.
+%[text] ### Learning Objectives
+%[text] After this exercise, you should be able to
+%[text] 1. Explain how sine and cosine relate to a circle and to a wave
+%[text] 2. Describe the frequency and amplitude of a sine wave
+%[text] 3. Explain what a Fourier transform does to a complex wave
+%[text] 4. Explain what k-space is and how an MRI image is reconstructed from it \
+%[text]
 %[text:tableOfContents]{"heading":"Table of Contents"}
 %[text] %[text:anchor:H_70BCFD9B] ## Clear workspace
 clearvars;
@@ -14,10 +20,11 @@ rad = pi/4; % radian
 
 figure; %[output:073e0fad]
 plot_annotated_triangle(rad) %[output:073e0fad]
-%[text] - sin(θ) - the length of the opposite side of the triangle \
+%[text] - sin(θ) - the length of the opposite side of the triangle
+%[text] - cos(θ) - the length of the adjacent side of the triangle \
 %%
 %[text] %[text:anchor:H_E028C729] ### Sine and cosine can be used to plot out a circle
-%[text] - sin(θ) and cos(θ) give the x and y coordinates of a circle \
+%[text] - cos(θ) and sin(θ) give the x and y coordinates of a point on a circle \
 hold on %[output:7d2ef246]
 r1 = 1; % radius
 
@@ -27,13 +34,13 @@ plot(r1*cos(theta), r1*sin(theta),[0 0],... %[output:7d2ef246]
     [-1 1],'--', [-1 1], [0 0],'--') % plot the circle %[output:7d2ef246]
    
 axis equal %[output:7d2ef246]
-ylabel('sine (radians)') %[output:7d2ef246]
-xlabel('cosine (radians)') %[output:7d2ef246]
+ylabel('y = sin(\theta)') %[output:7d2ef246]
+xlabel('x = cos(\theta)') %[output:7d2ef246]
 
-title('sine vs cosine') %[output:7d2ef246]
+title('The unit circle') %[output:7d2ef246]
 axis on %[output:7d2ef246]
 %%
-%[text] Notice what happens to length of the sine side of the triangle as you go around the circle
+%[text] Notice what happens to the length of the sine side of the triangle as you go around the circle
 figure %[output:94f6fb94]
 bar(theta,sin(theta)); %[output:94f6fb94]
 ylabel('sine(\theta)') %[output:94f6fb94]
@@ -43,9 +50,8 @@ xlabel('\theta (radians)') %[output:94f6fb94]
 %[text] Plotting sine over time produces a sine wave
 % set sampling parameters
 T=1; %duration [s]
-Fs = 8000; %sample rate [Hz] Supported by Sound Card (16000,48000,96000,192000)
-N = T*Fs; %samples
-t = 0 : 1/Fs : T; %samples vector
+Fs = 8000; %sample rate [Hz] (number of samples per second)
+t = 0 : 1/Fs : T; %time of each sample [s]
 
 % create sine wave
 freq = 200; %Frequency [Hz]
@@ -57,14 +63,16 @@ figure; %[output:86f66f2f]
 plot(t(1:100),y(1:100)) % plot a subset of the points %[output:86f66f2f]
 % plot(t,y)
 xlabel('seconds') %[output:86f66f2f]
-ylabel('power') %[output:86f66f2f]
-title(sprintf('Frequency = %d',freq)) %[output:86f66f2f]
+ylabel('amplitude') %[output:86f66f2f]
+title(sprintf('Frequency = %d Hz',freq)) %[output:86f66f2f]
 %[text] - Here we plot only a subset of points (the first 100 points) to better visualize the wave
 %[text] - this sine wave has a frequency of 200 Hz and an amplitude of 1 \
 %%
 %[text] Here's the full 1 second of data
 plot(t,y) %[output:4dd5fc51]
 xlabel('seconds') %[output:4dd5fc51]
+ylabel('amplitude') %[output:4dd5fc51]
+%[text] - At this scale, the 200 cycles are packed so tightly that the wave looks like a solid block
 %%
 %[text] %[text:anchor:H_C0348656] ## Sounds are waves
 %[text] Simple tones can be modeled as sine waves. Here we play our sound wave as a sound
@@ -72,34 +80,35 @@ sound(y,Fs)
 %%
 %[text] %[text:anchor:H_B151654F] ## The Fourier Transform can find the frequency in a wave
 %[text] Fourier showed that any periodic signal *s*(*t*) can be written as a sum of sine waves with various amplitudes, frequencies and phases
-%[text] We will apply the fourier transform to the simple sine wave that we just generated (see local function for code)
+%[text] We will apply the Fourier transform to the simple sine wave that we just generated (see the local function **get\_fourier** at the end of the script for the code)
+%[text] **Predict:** how many peaks do you expect to see, and at what frequency?
+figure;
 get_fourier(y,Fs) %[output:5bd7531e]
 %[text] - Notice that there is one big peak in the fourier plot (at around the frequency of our sine wave)
 %[text] - Go back and change the frequency of the sine wave and repeat the sound produced and the fourier transform \
 %%
 %[text] %[text:anchor:H_308BFE96] ## Create a Complex  wave
-%[text] lets add some noise to our sine wave by adding a second sine wave to the first sine wave at a frequency of 400. For fun, we will also play this wave as a sound
+%[text] Let's make a more complex wave by adding a second sine wave, with a frequency of 400 Hz, to our first sine wave. For fun, we will also play this wave as a sound
 freq = 400;
-y400 = sin(freq*2*pi*t); % Create new sin wave with a 
-y_complex = y400+y; % add a second sine wave to our original wave
-sound(y_complex,Fs);
+y400 = sin(freq*2*pi*t); % create a new sine wave with a frequency of 400 Hz
+y_complex = y400+y; % add the second sine wave to our original wave
+sound(y_complex/2,Fs); % divide by 2 to keep the values between -1 and 1 (larger values get clipped)
 
 plot(t(1:1000),y_complex(1:1000)) %[output:71adce6f]
 xlabel('seconds') %[output:71adce6f]
-ylabel('power') %[output:71adce6f]
+ylabel('amplitude') %[output:71adce6f]
 %%
+%[text] **Predict:** how many peaks will the Fourier transform of this complex wave have?
+figure;
 get_fourier(y_complex,Fs) %[output:1850e851]
 %[text] - Notice there are now multiple prominent peaks, one at the original sine wave frequency and one at 400
 %[text] - Use the data tips tool to see for yourself
-%[text] - Try changing the frequency of the second sign wave (from 400 to 500) \
+%[text] - Try changing the frequency of the second sine wave (from 400 to 500) \
 %%
 %[text] %[text:anchor:H_43B505D0] ## Real world sounds - the call of the blue whale
 %[text] Because blue whale calls are so low, they are barely audible to humans. The time scale in the data is compressed by a factor of 10 to raise the pitch and make the call more clearly audible. 
 %[text] The following reads, plots, and plays the data:
-% whaleFile = fullfile(matlabroot,'examples','matlab','data','bluewhale.au');
-% [w,fs] = audioread(whaleFile);z
-
-mmSetUnitDataFolder(3) %[output:422dbf85]
+mmSetUnitDataFolder(3)%[output:422dbf85]
 [x,Fs] = audioread("bluewhale.au");
 %%
 figure; %[output:6975c431]
@@ -111,7 +120,7 @@ sound(x,Fs)
 %[text] A complex waveform!
 %%
 %[text] %[text:anchor:H_04F3E9F8] ## Whale Call analysis
-%[text] The wale call is comprise of an A "trill" is followed by a series of B "moans."
+%[text] The whale call is composed of an A "trill" followed by a series of B "moans."
 %[text] The B call is simpler and easier to analyze. 
 %[text] - We'll use the previous plot to determine approximate indices for the beginning and end of the first B call.
 %[text] - We'll correct the time base for the factor of 10 speed-up in the data: \
@@ -127,19 +136,21 @@ ylabel('Amplitude') %[output:3ef9274f]
 title('Blue Whale B Call') %[output:3ef9274f]
 %%
 %[text] %[text:anchor:H_1DF6BE14] ## Fourier transform on whale call
-get_fourier(bCall,Fs,10) % Here we Correct the frequency range for the factor of 10 speed-up in the data: %[output:2806957c]
+figure;
+get_fourier(bCall,Fs,10) % correct the frequency range for the factor of 10 speed-up in the data %[output:2806957c]
 title('{\bf Component Frequencies of a Blue Whale B Call}') %[output:2806957c]
 %%
 %[text] %[text:anchor:T_B1037C2F] # 2D Fourier Transforms
-%[text] So, what does this have to do with MRIs? MRIs are actually captured as fourier transforms. To see how this might work, we'll apply a fourier transform to a cross-section of an MRI dataset
+%[text] So, what does this have to do with MRIs? An MRI scanner does not take a picture directly. Instead, it measures the spatial frequencies of the tissue, and stores them in what is called **k-space**. The image is then reconstructed from k-space using an inverse Fourier transform. To see how this works, we'll apply a 2D Fourier transform to a cross-section of an MRI dataset
 %[text] First, we load an MRI dataset
 clearvars
 clc
 close all
 load mri.mat
 montage(D,map) %[output:14025bac]
-title('Horizontal Slices'); %[output:14025bac]
-%[text] notice the dataset is a 4D dataset
+title('Axial Slices'); %[output:14025bac]
+%[text] - Notice that D is a 4D array: 128 rows × 128 columns × 1 color channel × 27 slices
+%[text] - The third dimension (color) has a size of 1, because the images are grayscale \
 %%
 %[text] %[text:anchor:H_CAF570E2] ## Grab the 15th Slice
 figure; %[output:6f322d97]
@@ -147,55 +158,78 @@ slice = squeeze(D(:,:,:,15));
 imshow(slice,[]) %[output:6f322d97]
 %%
 %[text] %[text:anchor:H_2990E979] ## Fourier Transform of the image
-%[text] treat each row like a sine wave
-%[text] Bright colors are high values
-%[text] Dark colors are low values
+%[text] The 2D Fourier transform (**fft2**) breaks the image down into 2D sine waves (stripes) that run in every direction, with different frequencies.
+%[text] - In the magnitude plot, the center shows the low frequencies (large, smooth features) and the edges show the high frequencies (fine details and edges)
+%[text] - We plot the log of the magnitude, because the center values are so much larger than everything else that the rest of the plot would look black \
 figure %[output:5f2253b0]
+tiledlayout(1,3) %[output:5f2253b0]
 
-subplot(1,3,1) %[output:5f2253b0]
+nexttile %[output:5f2253b0]
 imshow(slice,[]) %[output:5f2253b0]
 title('image read in') %[output:5f2253b0]
 
 fftS = fft2(double(slice));
 
 % frequency
-subplot(1,3,2) %[output:5f2253b0]
-% imshow(abs(fftshift(fftS)),[24 100000])
-imshow(abs(fftshift(fftS)), parula(10000)) %[output:5f2253b0]
-% colormap(gray)
-title('Image A FFT2 Magnitude') %[output:5f2253b0]
+nexttile %[output:5f2253b0]
+imshow(log(1 + abs(fftshift(fftS))), []) % log scale, so the small values are visible %[output:5f2253b0]
+title('FFT2 Magnitude (log scale)') %[output:5f2253b0]
 
 % phase
-subplot(1,3,3) %[output:5f2253b0]
+nexttile %[output:5f2253b0]
 imshow(angle(fftshift(fftS)),[-pi pi]) %[output:5f2253b0]
-title('Image A FFT2 Phase') %[output:5f2253b0]
-%[text] Notice that there are two components to the Fourier Transform: a Magnitude and a Phase. The magnitude contains the frequency components of the image
+title('FFT2 Phase') %[output:5f2253b0]
+%[text] Notice that there are two components to the Fourier Transform: a Magnitude and a Phase. The magnitude tells you *how much* of each frequency is in the image, and the phase tells you *where* those waves line up. You need both to rebuild the image.
 %%
-%[text] %[text:anchor:H_5D20CEFC] ## Display inverse fourier transform
-%[text] The MRI captures a fourier transform and needs to invert that transform to create the image
-%[text] This code performs  the inverse fourier transform and displays the results
-% imageC = abs(fftS).*exp(i*angle(fftS))
-
+%[text] %[text:anchor:H_5D20CEFC] ## Display inverse Fourier transform
+%[text] The MRI scanner collects k-space data and must invert that transform to create the image
+%[text] This code performs the inverse Fourier transform (**ifft2**) and displays the results
 imageC = ifft2(fftS);
 
-
-figure; 
-
-cmin = min(min(abs(imageC)));
-cmax = max(max(abs(imageC)));
-
-imshow(abs(imageC), [cmin cmax])
-colormap gray
+figure;
+imshow(abs(imageC), []) % [] scales the display from the min to the max value
+%[text] How close is the reconstruction to the original image?
+maxDifference = max(abs(double(slice) - abs(imageC)), [], 'all')
+%[text] - The difference is tiny (just rounding error). The Fourier transform does not lose any information \
 %%
-web('http://matlabgeeks.com/tips-tutorials/how-to-do-a-2-d-fourier-transform-in-matlab/','-browser')
-%%
-web('http://www.sprawls.org/mripmt/MRI05/')
-%%
-%[text] %[text:anchor:T_708b] # Local Function
-function y = get_sine_wave(Freq)
+%[text] ## Explore k-space
+%[text] In MRI, k-space is the 2D Fourier transform of the image. The center of k-space holds the low spatial frequencies (overall brightness and contrast), and the outer edges hold the high spatial frequencies (fine details and edges).
+%[text] **Predict:** what will the image look like if we keep only the center of k-space? What if we keep only the edges?
+kspace = fftshift(fftS); % shift so the low frequencies are in the center
+[rows, cols] = size(kspace);
+[X, Y] = meshgrid(1:cols, 1:rows);
+r = hypot(X - (cols/2 + 1), Y - (rows/2 + 1)); % distance of each point from the center of k-space
+centerMask = r <= 10; % keep a small circle (radius of 10 pixels) in the center
 
-end
+lowImage = abs(ifft2(ifftshift(kspace .* centerMask))); % reconstruct from the center only
+highImage = abs(ifft2(ifftshift(kspace .* ~centerMask))); % reconstruct from the edges only
 
+figure
+tiledlayout(2,2)
+nexttile
+imshow(log(1 + abs(kspace)) .* centerMask, [])
+title('k-space: center only')
+nexttile
+imshow(log(1 + abs(kspace)) .* ~centerMask, [])
+title('k-space: edges only')
+nexttile
+imshow(lowImage, [])
+title('Image from the center')
+nexttile
+imshow(highImage, [])
+title('Image from the edges')
+%[text] - Center only: the overall shape and contrast are preserved, but the image is blurry
+%[text] - Edges only: only the outlines (edges) of the structures remain
+%[text] - Try changing the radius of centerMask (e.g., 5 or 25) and rerun this section \
+%%
+%[text] ## Further reading
+%[text] A tutorial on 2D Fourier transforms in MATLAB:
+web('https://matlabgeeks.com/tips-tutorials/how-to-do-a-2-d-fourier-transform-in-matlab/','-browser')
+%%
+%[text] A review of how MRI images are formed (Sprawls, *MRI: Physical Principles*):
+web('https://www.sprawls.org/mripmt/MRI05/')
+%%
+%[text] %[text:anchor:T_708b] # Local Functions
 function plot_annotated_triangle(rad)
 plot([0 cos(rad)], [0 sin(rad)],'-ro',... 
     [cos(rad) cos(rad)], [0 sin(rad)],'--ro',...
@@ -204,9 +238,9 @@ plot([0 cos(rad)], [0 sin(rad)],'-ro',...
 axis off
 
 offset = 0.025;
-text(sin(rad)+offset, cos(rad)+offset,'\pi/4','Interpreter','Tex','FontSize',16)
-text(0.25, -0.065,'cos(\theta)','Interpreter','Tex','FontSize',16)
-text(0.79, 0.3,'sin(\theta)','Interpreter','Tex','FontSize',16)
+text(cos(rad)+offset, sin(rad)+offset,'(cos\theta, sin\theta)','Interpreter','Tex','FontSize',16)
+text(cos(rad)/2 - 0.1, -0.065,'cos(\theta)','Interpreter','Tex','FontSize',16)
+text(cos(rad) + offset, sin(rad)/2,'sin(\theta)','Interpreter','Tex','FontSize',16)
 text(0.1, 0.065,'\theta','Interpreter','Tex','FontSize',16)
 end
 
@@ -237,7 +271,7 @@ plot(f(1:floor(n/2)),p(1:floor(n/2)))
 xlabel('Frequency (Hz)')
 ylabel('Power')
 % set(gca,'XTick',[0 50 100 150 200]);
-title('Fourier transform of the sine wave')
+title('Fourier transform (power spectrum)')
 grid on
 end
 
