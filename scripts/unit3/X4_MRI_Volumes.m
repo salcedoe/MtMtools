@@ -17,12 +17,11 @@ close all
 mmSetUnitDataFolder(3); % change Current Folder to the Unit 3 Data Folder
 dataFolder = fullfile("CEREBRIX", "Neuro Crane");
 ls(dataFolder)
-dicomBrowser(dataFolder)
 %[text] - Each folder is one series: one scan of the same patient, made with a different pulse sequence
 %[text] - The folder names are the series descriptions from the scanner. For example, "t2\_tse\_tra" means a T2-weighted turbo spin echo (fast spin echo) scan, acquired in the transverse (axial) plane \
 %%
 %[text] ## The MRI DICOM header
-%[text] In the CT script, the DICOM header told us the slice thickness, pixel spacing, and how to convert pixel values to Hounsfield Units. An MRI header also records the **pulse sequence settings** that were used to make the image. Here we load the header of the first image of the T2-weighted series:
+%[text] In the CT script, the DICOM header told us the slice thickness, pixel spacing, and how to convert pixel values to Hounsfield Units. An MRI header records the **pulse sequence settings** that were used to make the image. Here we load the header of the first image of the T2-weighted series:
 t2Folder = fullfile(dataFolder, "t2_tse_tra_p2 - 6");
 t2Files = dir(fullfile(t2Folder, "*.dcm"));
 meta = dicominfo(fullfile(t2Folder, t2Files(1).name));
@@ -56,6 +55,9 @@ settings = getSeriesSettings(dataFolder)
 %[text] 3. Which series is T2-weighted? Which settings tell you?
 %[text] 4. The "dark-fluid" series has a long TR and a long TE, like a T2-weighted scan, but it also has an inversion time (TI) of 2500 ms. What kind of sequence is this, and what tissue does it suppress? (Hint: look at the [sequences table](https://salcedoe.github.io/MtMdocs/imaging/MRImaging/#common-pulse-sequences) on the [MtMdocs MRI page](https://salcedoe.github.io/MtMdocs/imaging/MRImaging/#learning-objectives).)
 %[text] 5. The "t1\_mpr3D\_ns\_sag\_gd" series ends in "gd". What do you think "gd" stands for? \
+%%
+%[text] The dicom browser shows these series and allows you to browse the individual images
+dicomBrowser(dataFolder)
 %%
 %[text] ## T1- vs T2-weighted volumes
 %[text] Now we load the T1-weighted and T2-weighted series as medicalVolume objects.
