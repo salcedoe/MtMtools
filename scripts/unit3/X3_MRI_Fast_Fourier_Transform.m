@@ -155,7 +155,8 @@ title('{\bf Component Frequencies of a Blue Whale B Call}')
 %[text] In a magnetic field, each proton precesses (wobbles like a spinning top) at the **Larmor frequency**:
 %[text]{"align":"center"} $ f\_0 = \\bar{\\gamma} B\_0 $
 %[text] - $ B\_0 $ is the strength of the main magnetic field, in tesla (T)
-%[text] - $ \\bar{\\gamma} $ is the gyromagnetic ratio. For hydrogen it is 42.58 MHz per tesla \
+%[text] - $ \\bar{\\gamma} $ is the gyromagnetic ratio — the ratio of a particle's magnetic dipole moment to its spin angular momentum. For hydrogen it **is 42.58 MHz per tesla** \
+%[text] We can do the math to calculate ratio for Hydrogen Protons in a 1.5T MRI machine:
 gammaBar = 42.58; % gyromagnetic ratio of hydrogen [MHz/T]
 B0 = 1.5; % field strength of the scanner [T]
 f0 = gammaBar * B0 % Larmor frequency of hydrogen [MHz]
@@ -166,7 +167,8 @@ gammaBarElectron = 28025; % gyromagnetic ratio of the electron [MHz/T]
 fElectron = gammaBarElectron * B0 / 1000 % Larmor frequency of the electron [GHz]
 %[text] - At 1.5 T, electrons precess at about 42 GHz (microwaves), so a receiver tuned to 64 MHz never hears them \
 %%
-%[text] ## Precession makes a wave
+%[text] ## Precession makes a wave (RF, that is)
+%[text] [MtMdocs precession video](https://salcedoe.github.io/MtMdocs/imaging/MRImaging/#precession)
 %[text] Remember that $ \\cos(\\theta) $ and $ \\sin(\\theta) $ give the x and y coordinates of a point on the unit circle. After the 90° pulse, the magnetization, M, lies in the x-y plane and precesses around the z axis. So, the tip of M traces out the unit circle:
 %[text] - $ M\_x = \\cos(2\\pi f t) $ and $ M\_y = \\sin(2\\pi f t) $
 %[text] - The receiver coil records $ M\_x $ over time, and that is a cosine wave \
@@ -231,8 +233,8 @@ xlim([0 100])
 %[text] For a spin echo, the brightness (signal) of each tissue is approximately
 %[text]{"align":"center"} $ S = PD \\cdot (1 - e^{-TR/T1}) \\cdot e^{-TE/T2} $
 %[text] where PD is the proton density (how much hydrogen the tissue has). Use the sliders to change TR and TE. The relaxation times are approximate values at 1.5 T.
-TR = 1600; % repetition time: time between 90° pulses [ms] %[control:slider:b7e1]{"position":[6,10]}
-TE = 60; % echo time: time from the 90° pulse to the echo [ms] %[control:slider:c4d2]{"position":[6,8]}
+TR = 3350; % repetition time: time between 90° pulses [ms] %[control:slider:b7e1]{"position":[6,10]}
+TE = 115; % echo time: time from the 90° pulse to the echo [ms] %[control:slider:c4d2]{"position":[6,9]}
 sequence_parameters(TR, TE)
 %[text] - The T2 decay curves start where the T1 recovery curves were at TR. A tissue that hasn't recovered has less signal to give \
 %[text] Try these settings:
@@ -245,6 +247,7 @@ sequence_parameters(TR, TE)
 %[text] 3. Why does a short TE remove most of the T2 differences?
 %[text] 4. On the T1-weighted setting, gray matter and white matter look almost the same. Set PD to 1 for every tissue and rerun the section. What changes? (Real T1-weighted scans often use extra tricks, like inversion recovery, to make gray and white matter look more different.) \
 %%
+%[text] Function to generate above plots
 function sequence_parameters(TR, TE)
 tissues = ["Fat" "White matter" "Gray matter" "CSF"];
 T1 = [260 790 920 4000]; % T1 of each tissue [ms]
@@ -312,7 +315,7 @@ imshow(slice,[])
 %[text] - In the magnitude plot, the center shows the low frequencies (large, smooth features) and the edges show the high frequencies (fine details and edges)
 %[text] - We plot the log of the magnitude, because the center values are so much larger than everything else that the rest of the plot would look black \
 figure
-tiledlayout(1,3)
+tiledlayout(1,3,Padding="tight")
 
 nexttile
 imshow(slice,[])
