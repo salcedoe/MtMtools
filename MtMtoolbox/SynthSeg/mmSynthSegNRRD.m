@@ -130,7 +130,7 @@ for i = 1:numel(inputs)
     [seg, vols] = postProcessBrainCANDIData(predictIm, flipPredictIm, labelIDs);
 
     if ~isempty(outputvols)
-        fprintf(fid,'InputFile');
+        fprintf(fid,'%s', names{i});
         for v = 2:length(vols)
             fprintf(fid,',%f', vols(v));
         end

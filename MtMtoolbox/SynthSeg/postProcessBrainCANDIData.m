@@ -70,6 +70,10 @@ for ii = 1:size(postInMask,4)
     tmp =  postInMask(:,:,:,ii);
     % get_largest_connected_component
     CC = bwconncomp(postInMask(:,:,:,ii),6);
+    if CC.NumObjects == 0
+        % structure not found (e.g., displaced by a tumor); leave it empty
+        continue
+    end
     numPixels = cellfun(@numel,CC.PixelIdxList);
     [~,idx] = max(numPixels);
     largeComp = false(size(tmp));
