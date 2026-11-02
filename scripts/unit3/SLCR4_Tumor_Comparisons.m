@@ -6,7 +6,8 @@ setupMatGeom %[output:2bb41dfb]
 %%
 %[text] ## Load Merged tumor segmentation
 %[text] #### Set Path
-paths.project = "/Users/ernesto/MATLAB-Drive/MtMdata/unit3/Tumors"; % in unit3 folder %[control:filebrowser:80e3]{"position":[17,67]}
+unit3f = mmSetUnitDataFolder(3); % change Current Folder to the Unit 3 Data Folder and get path
+paths.project = fullfile(unit3f, "Tumors"); % Tumors folder in the Unit 3 Data Folder
 ls(paths.project) % display folder contents %[output:1f526c18]
 paths.intensity = fullfile(paths.project,"MRBT1stripped.nrrd");
 paths.segment = fullfile(paths.project,"Merged Segmentations.seg.nrrd") %[output:7df737f5]
@@ -72,6 +73,14 @@ range(t2Seg.hp.Vertices) %[output:511ebbd4]
 %[text] We can compare the tumor segmentations use a dice analysis
 dice(t1Seg.mask,t2Seg.mask) %[output:43f33d52]
 %[text] - pretty high match \
+%%
+%[text] ### Surface distance
+%[text] Dice tells us how much the two tumors overlap, but not **where** they differ. The course function **`mmSurfaceDistance`** measures the distance from every vertex of one tumor surface to the other surface, and colors the surface by that distance: **blue** where the surface is inside the other tumor, **white** where they agree, and **red** where it is outside. Neither segmentation is the "right" one, so we use Direction="both" to measure the distances in both directions:
+tumorDistTable = mmSurfaceDistance(t1Seg, t2Seg, Names=["Tumor1" "Tumor2"], Direction="both", Title="Tumor1 vs. Tumor2")
+%[text] - The two maps are close to mirror images: where Tumor1 sticks out of Tumor2 (red), Tumor2 is inside Tumor1 (blue)
+%[text] - Most of the surface is within 2 mm, which is about 2 voxels
+%[text] - The histograms have peaks at about -1 and +1 mm. Both tumors were segmented on the same voxels, which are about 1 mm wide (0.94 x 0.94 x 1.4 mm). So where the two segmentations differ, they usually differ by a whole voxel
+%[text] - The voxels of this MRI aren't cubes, but mmSurfaceDistance takes care of that: the distances are in mm \
 %%
 rp = table;
 rp = table("Tumor1", t1Seg.volume*prod(t1Seg.spacing), ... %[output:group:4763b0ee] %[output:81c659a3]

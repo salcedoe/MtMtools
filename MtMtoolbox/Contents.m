@@ -37,6 +37,8 @@
 %   mmGetSlicerSegmentInfo      - Read segment names, layers, labels, and colors from a Slicer .seg.nrrd file
 %   mmGetSlicerSegmentInfoAll   - Load Slicer segmentation metadata from every .seg.nrrd file in a folder
 %   mmGetMedicalVolumeSegment   - Return the mask, color, and transform of a selected segmentation
+%   mmMatchVolumeGeometry       - Pad or crop a segmentation volume to the voxel grid of a reference volume
+%   mmSurfaceDistance           - Compare two segmentations by the signed distance between their surfaces
 %   mmGetWatershed              - Watershed-segment a binary 3D volume
 %   mmGetTextureFilters         - Generate standard texture filters (std, range, entropy) of an image
 %
