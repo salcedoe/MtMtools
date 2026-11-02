@@ -192,12 +192,17 @@ axis tight % axis image would force a 1:1 aspect ratio, which squashes a line pl
 %[text] - This is a little easier to understand
 %[text] - the rough image clearly has more variation in intensity as you move across the image \
 %%
+%[text] Heat maps
+figure
+tiledlayout("vertical","TileSpacing","none")
+nexttile; 
+hm = heatmap(lp1)
+nexttile; heatmap(lp2)
+%%
 %[text] %[text:anchor:H_951CEB66] ### Measurements of Texture
 %[text] Which line profile has a larger standard deviation? We can create a texture profile by comparing a pixel to its neighbor. 
 %[text] Here, we calculate a moving standard deviation of the line profile. The function **movstd** calculates standard deviation over a sliding window of length 5 (second input) across neighboring elements of the line profile.
-
-
-clf
+figure
 nexttile
 
 lp1STD = movstd(single(lp1),5);

@@ -39,6 +39,7 @@
 %   mmGetMedicalVolumeSegment   - Return the mask, color, and transform of a selected segmentation
 %   mmMatchVolumeGeometry       - Pad or crop a segmentation volume to the voxel grid of a reference volume
 %   mmSurfaceDistance           - Compare two segmentations by the signed distance between their surfaces
+%   mmCrossSectionProfile       - Measure the cross-sections (area, diameter, widths) of a bone or vessel along its length
 %   mmGetWatershed              - Watershed-segment a binary 3D volume
 %   mmGetTextureFilters         - Generate standard texture filters (std, range, entropy) of an image
 %

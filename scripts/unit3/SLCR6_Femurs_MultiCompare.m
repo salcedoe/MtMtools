@@ -55,7 +55,7 @@ side = split(RP.SegName);
 RP.Side = categorical(side(:,1)) % add a Side Category %[output:741a108d]
 %%
 %[text] #### Calculate group stats
-S = groupsummary(RP,"Side",["mean" "std"],["Volume" "Length"]) %[output:73b4b49a]
+S = groupsummary(RP,"Side",["mean" "std"],["Volume" "Length" "Diameter"]) %[output:73b4b49a]
 %%
 %[text] #### Visualize the results
 figure %[output:63165178]
@@ -68,6 +68,10 @@ ylabel("volume (cm^3)") %[output:63165178]
 nexttile %[output:63165178]
 mmBoxSwarm(RP.Side, RP.Length) %[output:63165178]
 ylabel("length (mm)") %[output:63165178]
+
+nexttile
+mmBoxSwarm(RP.Side, RP.Diameter)
+ylabel("midshaft diameter (mm)")
 sgtitle("Femur Comparisons") %[output:63165178]
 %%
 %[text] # Functions
@@ -173,19 +177,16 @@ seg.fv.vertices = mmRotateSurfaceVertices(seg.fv.vertices,'y',90);  % rotate bac
 end
 
 function seg = getFemurDiameter(seg)
-% Finds centroid of femur and spans from the 
+% Equivalent diameter of the femur at midshaft (50% of its length), from
+% the cross-section profile along its long axis (see SLCR3)
 
-rp = regionprops3(seg.mask,"Volume","Centroid"); % center of femur - should be in shaft
-[~,maxIdx] = max(rp.Volume); % if any noise, use largest volume
-cntrz = round(rp.Centroid(maxIdx,3)); % centroid of largest volume
-span = 50; % span from centroid
-seg.shaft = seg.mask(:,:,cntrz-span:cntrz+span); % crop femur down to shaft
-
-seg.edt = bwdist(~seg.shaft); % Euclidean Distance Transform of cropped volume
-seg.skel = bwskel(seg.shaft,MinBranchLength=20); % skeletonize
-seg.Radii = seg.edt(seg.skel) * seg.spacing(1) ; % get radii and convert to mm
-seg.diameter = median(seg.Radii)*2; % double
-
+try
+    [~, S] = mmCrossSectionProfile(seg, Plot=false);
+    seg.diameter = S.At.EquivDiameter_mm; % mm
+catch ME % for example, voxels that aren't cubes
+    fprintf('%s: %s\n', seg.segName, ME.message)
+    seg.diameter = NaN;
+end
 end
 
 
