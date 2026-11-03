@@ -32,19 +32,19 @@
 clearvars
 close all
 paths.project = "/Users/ernesto/MATLAB-Drive/MtMresources/data/unit3/CTACardio"; %[control:filebrowser:2ad7]{"position":[17,80]}
-contents = dir(fullfile(paths.project,"*.nrrd")); % find the slicer volume files in folder
-disp((1:numel(contents))' + ". " + string({contents.name})') % display folder content info %[output:666f5c88]
+paths.contents = dir(fullfile(paths.project,"*.nrrd")); % find the slicer volume files in folder
+fnames = {paths.contents.name}' % cell array of relevant files
 %[text] - The output should show a mix of `*.nrrd` and `*.seg.nrrd` files \
 %%
-%[text] Enter the numbers for the Intensity Volume, Segmentation Volume, and TotalSegmentator segmentation volume. This time we also need the TotalSegmentator segmentation, which was likely saved as **CTACardio Crop segmentation.seg.nrrd**.
-paths.intensity = fullfile(paths.project, contents(2).name); % Number of Cropped CTA Cardio volume %[control:spinner:021a]{"position":[52,53]}
-paths.segment = fullfile(paths.project, contents(7).name); % Number of your Segmentation volume %[control:spinner:83d7]{"position":[50,51]}
-paths.total = fullfile(paths.project, contents(1).name) % Cropped CTA Cardio segmentation volume  %[control:spinner:2e01]{"position":[48,49]}
-%[text] - Double-check the file name \
+%[text] Select the file names for the Intensity Volume, Segmentation Volume, and TotalSegmentator segmentation volume. 
+paths.intensity = fullfile(paths.project,fnames(2)); % CTACardio crop .nrrd %[control:dropdown:1462]{"position":[42,51]}
+paths.segment = fullfile(paths.project,fnames(7)); % LastName segmentations .seg.nrrd %[control:dropdown:9705]{"position":[40,49]}
+paths.total = fullfile(paths.project,fnames(1)) % CTACardio Crop segmentation .seg.nrrd %[control:dropdown:1bab]{"position":[38,47]}
+%[text] - Double-check the file names \
 %%
 %[text] ### Use the **example files instead**
 %[text] Only run if you want to use the example files in the unit3 folder. Uncomment code first
-% paths = getExamplePaths %[output:802e7e8b] %[output:8743ec59]
+% paths = getExamplePaths
 
 function paths = getExamplePaths
 unit3f = mmSetUnitDataFolder(3); % change Current Folder to the Unit 3 Data Folder and get path
@@ -59,9 +59,9 @@ end
 %[text] ## Load the volumes
 warning("off", "medical:medicalVolume:noEndian") % Slicer's NRRD files trigger a harmless warning
 
-ctMV = medicalVolume(paths.intensity) % CT volume %[output:801f05fe]
-segMV = medicalVolume(paths.segment) % our kidney and aorta segmentations %[output:9d0a9746]
-totalMV = medicalVolume(paths.total) % TotalSegmentator segmentations %[output:69ceca71]
+ctMV = medicalVolume(paths.intensity) % CT volume
+segMV = medicalVolume(paths.segment) % our kidney and aorta segmentations
+totalMV = medicalVolume(paths.total) % TotalSegmentator segmentations
 %[text] - Does totalMV have the same number of slices as segMV? \
 %%
 %[text] Both segmentations were made from the same cropped volume, so they should have the same size as the CT volume. But some versions of Slicer add an extra empty slice to the TotalSegmentator segmentation. **mmMatchVolumeGeometry** puts each segmentation on the voxel grid of the CT volume, by adding or removing slices at the edges. If a segmentation already matches, it is left unchanged:
@@ -69,14 +69,14 @@ segMV = mmMatchVolumeGeometry(segMV, ctMV);
 totalMV = mmMatchVolumeGeometry(totalMV, ctMV);
 %[text] - Now all three volumes have the same size and voxel spacing. That means we can compare them voxel by voxel
 %[text] - Each voxel is about 1.03 mm on each side. We will use the volume of one voxel to convert voxel counts to mL: \
-voxelVolume = prod(segMV.VoxelSpacing) % mm^3 %[output:8532f04a]
+voxelVolume = prod(segMV.VoxelSpacing) % mm^3
 %%
 %[text] ### Read the Slicer segment information
 %[text] The function `mmGetSlicerSegmentInfo` creates a table that contains the name, label, and color of each segment:
-segT = mmGetSlicerSegmentInfo(paths.segment) % just kidneys and aorta %[output:73052057]
+segT = mmGetSlicerSegmentInfo(paths.segment) % just kidneys and aorta
 totalT = mmGetSlicerSegmentInfo(paths.total); % total segmentator
-height(totalT) % number of segments found by TotalSegmentator %[output:6dde61e9]
-totalT.SegName(contains(totalT.SegName, ["kidney" "aorta"])) %[output:1cdd602d]
+height(totalT) % number of segments found by TotalSegmentator
+totalT.SegName(contains(totalT.SegName, ["kidney" "aorta"]))
 %[text] - TotalSegmentator found 88 structures in our cropped volume, including both kidneys and the aorta
 %[text] - **Make sure your segments have the same names that TotalSegmentator uses**. We will need them to match.
 %[text] - You can update segT.SegName to make sure the names match.  \
@@ -90,33 +90,31 @@ totalT.SegName(contains(totalT.SegName, ["kidney" "aorta"])) %[output:1cdd602d]
 %[text] - **spacing**: the voxel spacing
 %[text] - **volume**: the volume of the segment, in voxels \
 segName = "right kidney";
-mySeg = mmGetMedicalVolumeSegment(segMV, segT, segName=segName) % change segName to the name of your kidney %[output:6527fb67]
-totSeg = mmGetMedicalVolumeSegment(totalMV, totalT, segName=segName) %[output:9f9e5279]
+mySeg = mmGetMedicalVolumeSegment(segMV, segT, segName=segName) % change segName to the name of your kidney
+totSeg = mmGetMedicalVolumeSegment(totalMV, totalT, segName=segName)
 %[text] - if your right kidney name is different, change the input into `mmGetMedicalVolumeSegment` for `mySeg` \
 %%
 %[text] ## Compare the volumes
 %[text] We'll convert to mL, so we can compare to standard values
-myVolume_mL = mySeg.volume * voxelVolume / 1000 % our kidney %[output:0e399e77]
-totVolume_mL = totSeg.volume * voxelVolume / 1000 % TotalSegmentator kidney %[output:2f431b9b]
-volumeRatio = mySeg.volume / totSeg.volume %[output:39a1a6f5]
+myVolume_mL = mySeg.volume * voxelVolume / 1000 % our kidney
+totVolume_mL = totSeg.volume * voxelVolume / 1000 % TotalSegmentator kidney
+volumeRatio = mySeg.volume / totSeg.volume
 %[text] - Our kidney is only about 60% as large as the TotalSegmentator kidney. That's a big difference! \
 %%
 %[text] ## Measure the overlap
 %[text] The functions **dice** and **jaccard** calculate the [Dice coefficient](https://en.wikipedia.org/wiki/Dice-S%C3%B8rensen_coefficient) and the Jaccard index of two masks:
-diceKidney = dice(mySeg.mask, totSeg.mask) %[output:4b429c41]
-jaccardKidney = jaccard(mySeg.mask, totSeg.mask) %[output:318f9c92]
+diceKidney = dice(mySeg.mask, totSeg.mask)
+jaccardKidney = jaccard(mySeg.mask, totSeg.mask)
 %[text] - A Dice coefficient of about 0.76 is only fair agreement. What's going on? Let's look \
 %%
 %[text] ## Where do the segmentations differ?
 %[text] ### Roll your own Label Map In 2D
 %[text] To see where the two kidneys differ, we combine the two masks into one **comparison label map**:
-%[text] - 1 (green) = in both segmentations
-%[text] - 2 (cyan) = only in the TotalSegmentator segmentation
-%[text] - 3 (magenta) = only in our segmentation \
+%[text] 
 compareLabels = zeros(size(mySeg.mask), "uint8");
-compareLabels(mySeg.mask & totSeg.mask) = 1; % & means "and"
-compareLabels(totSeg.mask & ~mySeg.mask) = 2; % ~ means "not"
-compareLabels(mySeg.mask & ~totSeg.mask) = 3;
+compareLabels(mySeg.mask & totSeg.mask) = 1; % GREEN - Ours AND total
+compareLabels(totSeg.mask & ~mySeg.mask) = 2; % CYAN - Total, but not ours
+compareLabels(mySeg.mask & ~totSeg.mask) = 3; % MAGENTA - Ours but not total
 compareMV = medicalVolume(compareLabels, segMV.VolumeGeometry); % same geometry as the segmentation
 %[text] Next, we find the center of the kidney, and display a transverse and a coronal slice through it, zoomed in on the kidney:
 kidneyProps = regionprops3(mySeg.mask | totSeg.mask, "Centroid", "Volume");
@@ -132,6 +130,11 @@ title("Transverse")
 nexttile
 showComparison(ctMV, compareMV, center(1), "coronal", compareColors)
 title("Coronal")
+%[text] Results:
+%[text] - 1 (green) = in both segmentations
+%[text] - 2 (cyan) = only in the TotalSegmentator segmentation
+%[text] - 3 (magenta) = only in our segmentation \
+%[text] Comments and Analysis
 %[text] - The local function **showComparison** (at the end of this script) extracts the same slice from the CT volume and the comparison label map, overlays them, and zooms in on the labels
 %[text] - Most of the cortex is green: both segmentations agree there
 %[text] - The inner part of the kidney is cyan: TotalSegmentator included the **medulla** and the renal sinus, but our threshold didn't. In this CT angiogram, the contrast agent hadn't reached the medulla yet, so its intensity was below our threshold range
@@ -151,7 +154,8 @@ totSeg.hp = mmPlotMask2Surface(totSeg.mask, fcolor="cyan", transform=totSeg.tfor
 legend(["Ours" "TotalSegmentator"])
 %[text] - Because we used the transformations, the vertices are in mm
 %[text] - From the outside, the two kidneys look similar. The TotalSegmentator kidney is a little larger and smoother
-%[text] - Try plotting the TotalSegmentator kidney with smooth=true \
+%[text] - Notice the medullary pyramids in the Magenta surface (our segmentation) \
+%[text] **YOU TRY**: Plot the TotalSegmentator kidney with smooth=true
 %%
 %[text] ### Hausdorff distance
 %[text] The Hausdorff distance finds, for every vertex on each surface, the distance to the nearest vertex on the other surface, and reports the largest of these distances. A single stray vertex can make the Hausdorff distance very large, so we use **robustHD**, a version that is less sensitive to outliers. (The third input, 5, controls how strongly outliers are suppressed.)
@@ -160,11 +164,10 @@ hausdorff_mm = robustHD(mySeg.hp.Vertices, totSeg.hp.Vertices, 5, "euclidean")
 %%
 %[text] ### Look inside the kidneys
 %[text] If we display each kidney with volshow, we can use the volshow tools to cut through the kidneys and look inside. The course function **mmVolShowPair** displays two segment structures side by side, in a **uifigure**: a figure that can hold several viewers.
-%[text] After the kidneys appear:
-%[text] 1. Click on the clipping plane tool in each viewer, and add a clipping plane
-%[text] 2. Drag the clipping plane through each kidney \
-mmVolShowPair(totSeg, mySeg, SegTitle="Kidney comparison: TotalSegmentator (left), ours (right)")
-%[text] - Our kidney is riddled with holes where the medulla should be, while the TotalSegmentator kidney is solid. This is why the volumes differ \
+%[text] After the kidney appears:
+%[text] 1. Click on the clipping plane tool  and add a clipping plane
+%[text] 2. Drag the clipping plane through the kidney \
+volshow(mySeg.mask)
 %%
 %[text] ### Surface distance map
 %[text] The Hausdorff distance boils a whole surface down to one number. Programs like [CloudCompare](https://www.cloudcompare.org) go further: they measure the distance from **every vertex** of one surface to the other surface, and color the surface by that distance. Then you can see exactly **where** two surfaces agree and where they don't. Let's do the same in MATLAB.
@@ -252,8 +255,6 @@ mmPlotMask2Surface(rp.ConvexImage{1}, fcolor="cyan", smooth=false);
 %[text] ### Try 3: The alpha shape
 %[text] An **alpha shape** is like a convex hull that is allowed to have dents. Imagine rolling a ball with a radius of alpha over the surface of the object: wherever the ball can't fit into a dent, the dent gets filled in. A small alpha follows the surface closely, and a large alpha fills in more, until the alpha shape becomes the convex hull.
 %[text] We build an alpha shape from the vertices of our kidney surface, using an alpha of 5 mm:
-figure
-mySeg.hp = mmPlotMask2Surface(mySeg.maskCut, fcolor="m", transform=mySeg.tform);
 alphaKidney = alphaShape(mySeg.hp.Vertices, 6) % alpha radius = 6 mm
 %[text] - **alphaShape** returns an alphaShape object. It holds the points, and the alpha radius used to build the shape \
 %[text] #### Display the alpha shape
@@ -269,6 +270,7 @@ hAlpha = plot(alphaKidney, FaceColor="green", EdgeAlpha=0.3, FaceAlpha=0.5);
 reducepatch(hAlpha,0.25)
 hAlpha.EdgeAlpha=0.1;
 title("Alpha shape (cyan) and our kidney (magenta)")
+mySeg.hp = mmPlotMask2Surface(mySeg.mask, fcolor="m", transform=mySeg.tform, lightEMup=false);
 %[text] - The alpha shape has no holes, which is what we want when we measure a volume
 %[text] - It follows the shape of the kidney much better than the convex hull \
 %%
@@ -320,17 +322,16 @@ totSeg = mmGetMedicalVolumeSegment(totalMV, totalT, segName=segName);
 myAorta_mL = mySeg.volume * voxelVolume / 1000
 totAorta_mL = totSeg.volume * voxelVolume / 1000
 diceAorta = dice(mySeg.mask, totSeg.mask)
-%%
-mmVolShowPair(mySeg, totSeg, SegTitle="Aortas: ours (left), TotalSegmentator (right)")
-%[text] - Our segmentation looks smoother than the blocky TotalSegmentator aorta. TotalSegmentator's fast mode works with 3 mm voxels, and its result is resampled back to our 1 mm grid
-%[text] - Our aorta still has the stumps of some of its branches
-%[text] - The TotalSegmentator aorta extends higher, through the whole aortic arch \
+%[text] 
 %%
 %[text] ## Overlay the surfaces
 figure
 mySeg.hp = mmPlotMask2Surface(mySeg.mask, fcolor="m", transform=mySeg.tform, lightEMup=false);
 totSeg.hp = mmPlotMask2Surface(totSeg.mask, fcolor="cyan", smooth=true, transform=totSeg.tform);
 legend(["Ours" "TotalSegmentator"])
+%[text] - Our segmentation looks smoother than the blocky TotalSegmentator aorta. TotalSegmentator's fast mode works with 3 mm voxels, and its result is resampled back to our 1 mm grid
+%[text] - Our aorta still has the stumps of some of its branches
+%[text] - The TotalSegmentator aorta extends higher, through the whole aortic arch
 %[text] - For a fairer comparison, we should remove the branches from our aorta, and compare the same length of the aorta \
 %%
 %[text] ## Remove the branches
@@ -460,63 +461,12 @@ end
 %[control:filebrowser:2ad7]
 %   data: {"browserType":"Folder","defaultValue":"\"\"","label":"Choose your CTA Cardio Folder","run":"Section"}
 %---
-%[control:spinner:021a]
-%   data: {"defaultValue":1,"label":"Spinner","max":10,"min":1,"run":"Section","runOn":"ValueChanging","step":1}
+%[control:dropdown:1462]
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
-%[control:spinner:83d7]
-%   data: {"defaultValue":2,"label":"Spinner","max":10,"min":1,"run":"Section","runOn":"ValueChanging","step":1}
+%[control:dropdown:9705]
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
-%[control:spinner:2e01]
-%   data: {"defaultValue":2,"label":"Spinner","max":10,"min":1,"run":"Section","runOn":"ValueChanging","step":1}
-%---
-%[output:666f5c88]
-%   data: {"dataType":"text","outputData":{"text":"    \"1. CTACardio Crop segmentation.seg.nrrd\"\n    \"2. CTACardio Crop.nrrd\"\n    \"3. CTACardio.nrrd\"\n    \"4. Lung segmentation preview.seg.nrrd\"\n    \"5. Lung segmentation.seg.nrrd\"\n    \"6. Resampled Volume.nrrd\"\n    \"7. Salcedo Segmentation.seg.nrrd\"\n\n","truncated":false}}
-%---
-%[output:802e7e8b]
-%   data: {"dataType":"text","outputData":{"text":"Using the course example files instead\n","truncated":false}}
-%---
-%[output:8743ec59]
-%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"paths","value":"      project: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/data\/unit3\/CTACardio\"\n    intensity: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/data\/unit3\/CTACardio\/CTACardio Crop.nrrd\"\n      segment: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/data\/unit3\/CTACardio\/Salcedo Segmentation.seg.nrrd\"\n        total: \"\/Users\/ernesto\/MATLAB-Drive\/MtMresources\/data\/unit3\/CTACardio\/CTACardio Crop segmentation.seg.nrrd\"\n"}}
-%---
-%[output:801f05fe]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ctMV","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 int16]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
-%---
-%[output:9d0a9746]
-%   data: {"dataType":"textualVariable","outputData":{"name":"segMV","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 uint8]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
-%---
-%[output:69ceca71]
-%   data: {"dataType":"textualVariable","outputData":{"name":"totalMV","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [465×276×390 uint8]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [1.027 1.027 1.027]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 276\n       NumSagittalSlices: 465\n     NumTransverseSlices: 390\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"right\"    \"anterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
-%---
-%[output:8532f04a]
-%   data: {"dataType":"textualVariable","outputData":{"name":"voxelVolume","value":"       1.0831\n"}}
-%---
-%[output:73052057]
-%   data: {"dataType":"tabular","outputData":{"columnNames":["SegName","Layer","LabelValue","Color","Color","Color"],"columns":6,"dataTypes":["string","double","double","double","double","double"],"groupedColumnIndices":[null,null,null,1,2,3],"header":"3×4 table","name":"segT","rows":3,"type":"table","value":[["\"right kidney\"","1","1","0.56471","0.93333","0.56471"],["\"left kidney\"","1","2","0","0.59216","0.80784"],["\"aorta\"","1","3","0.84706","0.39608","0.3098"]]}}
-%---
-%[output:6dde61e9]
-%   data: {"dataType":"textualVariable","outputData":{"name":"ans","value":"    89\n"}}
-%---
-%[output:1cdd602d]
-%   data: {"dataType":"matrix","outputData":{"columns":1,"header":"3×1 string array","name":"ans","rows":3,"type":"string","value":[["right kidney"],["left kidney"],["aorta"]]}}
-%---
-%[output:6527fb67]
-%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"mySeg","value":"    segName: \"right kidney\"\n       mask: [465×276×390 logical]\n      color: [0.56471 0.93333 0.56471]\n      tform: [1×1 affinetform3d]\n    spacing: [1.027 1.027 1.027]\n     volume: 99574\n"}}
-%---
-%[output:9f9e5279]
-%   data: {"dataType":"textualVariable","outputData":{"header":"struct with fields:","name":"totSeg","value":"    segName: \"right kidney\"\n       mask: [465×276×390 logical]\n      color: [0.72549 0.4 0.32549]\n      tform: [1×1 affinetform3d]\n    spacing: [1.027 1.027 1.027]\n     volume: 155501\n"}}
-%---
-%[output:0e399e77]
-%   data: {"dataType":"textualVariable","outputData":{"name":"myVolume_mL","value":"       107.84\n"}}
-%---
-%[output:2f431b9b]
-%   data: {"dataType":"textualVariable","outputData":{"name":"totVolume_mL","value":"       168.42\n"}}
-%---
-%[output:39a1a6f5]
-%   data: {"dataType":"textualVariable","outputData":{"name":"volumeRatio","value":"      0.64034\n"}}
-%---
-%[output:4b429c41]
-%   data: {"dataType":"textualVariable","outputData":{"name":"diceKidney","value":"      0.77729\n"}}
-%---
-%[output:318f9c92]
-%   data: {"dataType":"textualVariable","outputData":{"name":"jaccardKidney","value":"      0.63571\n"}}
+%[control:dropdown:1bab]
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
