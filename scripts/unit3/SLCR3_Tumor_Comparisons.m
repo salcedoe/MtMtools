@@ -36,18 +36,12 @@ paths.volumes = fullfile(paths.project,fnames(1)) % MRBT1stripped_volumes.csv %[
 %%
 %[text] ### Use Example paths
 %[text] If you don't have the requisite files, using the example paths instead. Uncomment the code first
-% paths = getExamplePaths
-
-function paths = getExamplePaths
-unit3f = mmSetUnitDataFolder(3); % change Current Folder to the Unit 3 Data Folder and get path
-paths.project = fullfile(unit3f, "Tumors"); % Tumors folder in the Unit 3 Data Folder
-ls(paths.project) % display folder contents
-paths.intensity = fullfile(paths.project, "MRBT1stripped.nrrd"); % T1-weighted MRI, with the skull removed
-paths.segment = fullfile(paths.project, "Merged Segmentations.seg.nrrd"); % brain, Tumor1, and Tumor2
-paths.synthseg = fullfile(paths.project, "MRBT1stripped_synthseg_v2.seg.nrrd"); % SynthSeg segmentation
-paths.volumes = fullfile(paths.project, "MRBT1stripped_volumes.csv"); % SynthSeg volumes
-table(fieldnames(paths), structfun(@(x) exist(x, "file"), paths), VariableNames=["path" "X"]) % make sure the paths exist
-end
+% paths.project = fullfile(mmSetUnitDataFolder(3), "Tumors"); % Tumors folder in the Unit 3 Data Folder
+% paths.intensity = fullfile(paths.project, "MRBT1stripped.nrrd"); % T1-weighted MRI, with the skull removed
+% paths.segment = fullfile(paths.project, "Merged Segmentations.seg.nrrd"); % brain, Tumor1, and Tumor2
+% paths.synthseg = fullfile(paths.project, "MRBT1stripped_synthseg_v2.seg.nrrd"); % SynthSeg segmentation
+% paths.volumes = fullfile(paths.project, "MRBT1stripped_volumes.csv"); % SynthSeg volumes
+% table(fieldnames(paths), structfun(@(x) exist(x, "file"), paths), VariableNames=["path" "X"]) % make sure the paths exist
 %[text] - 7 means a folder, and 2 means a file. A zero means that the path doesn't exist. \
 %%
 %[text] ### Load the medical volumes
@@ -183,6 +177,9 @@ synthMV = medicalVolume(paths.synthseg)
 synthT = mmGetSlicerSegmentInfo(paths.synthseg)
 %[text] - Unlike the merged tumor segmentation, the SynthSeg segments don't overlap, so they all share one layer, and each segment has its own label value
 %[text] - SynthSeg works on 1 mm cubic voxels, so its volume has different voxels from our MRI (137×177×136 voxels of 1 mm, instead of 256×256×112 voxels of 0.94 × 0.94 × 1.4 mm) \
+%%
+%[text] We can visualize the intensity volume and the labels, as follows:
+medicalVolumeViewer(intMV,synthMV)
 %%
 %[text] Even though the voxels differ, both segmentations line up when we plot them in mm. Here are the left and right cerebral white matter with the tumor:
 synWML = mmGetMedicalVolumeSegment(synthMV, synthT, segName="left cerebral white matter");
