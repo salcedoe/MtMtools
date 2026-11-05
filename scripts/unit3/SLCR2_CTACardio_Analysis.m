@@ -38,7 +38,7 @@ fnames = {paths.contents.name}' % cell array of relevant files
 %%
 %[text] Select the file names for the Intensity Volume, Segmentation Volume, and TotalSegmentator segmentation volume. 
 paths.intensity = fullfile(paths.project,fnames(2)); % CTACardio crop .nrrd %[control:dropdown:1462]{"position":[42,51]}
-paths.segment = fullfile(paths.project,fnames(7)); % LastName segmentations .seg.nrrd %[control:dropdown:9705]{"position":[40,49]}
+paths.segment = fullfile(paths.project,fnames(1)); % LastName segmentations .seg.nrrd %[control:dropdown:9705]{"position":[40,49]}
 paths.total = fullfile(paths.project,fnames(1)) % CTACardio Crop segmentation .seg.nrrd %[control:dropdown:1bab]{"position":[38,47]}
 %[text] - Double-check the file names \
 %%
@@ -462,11 +462,11 @@ end
 %   data: {"browserType":"Folder","defaultValue":"\"\"","label":"Choose your CTA Cardio Folder","run":"Section"}
 %---
 %[control:dropdown:1462]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:dropdown:9705]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:dropdown:1bab]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
