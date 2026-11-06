@@ -28,6 +28,7 @@ projectFolder = uigetdir(userpath, "Select your SynthSeg project folder")
 if isequal(projectFolder, 0) % uigetdir returns 0 if you click Cancel
     error("No folder selected. Run this section again and select your project folder.")
 end
+checkProjectFolder(projectFolder) % stops with an error if you can't save files in this folder
 %[text] - Tip: instead of using the dialog box, you can type the path to your folder, for example: projectFolder = "/Users/yourname/Documents/SynthSeg\_Project" \
 %%
 %[text] ### Find the data
@@ -242,6 +243,7 @@ batchFolder = uigetdir(userpath, "Select your batch project folder")
 if isequal(batchFolder, 0)
     error("No folder selected. Run this section again and select your batch project folder.")
 end
+checkProjectFolder(batchFolder)
 
 segFolder = fullfile(batchFolder, "segmentations"); % where the SynthSeg output will go
 if ~isfolder(segFolder)
@@ -530,6 +532,22 @@ table(results.Subject, capstoneVoxels, ourVoxels, VariableNames=["Subject" "Caps
 %[text] 4. The ventricles naturally get larger with age. Subject 16 is 76 years old, while the other subjects are 24–36. How could this affect our comparison of the two groups? How would you design a better study? \
 %%
 %[text] ## Local functions
+function checkProjectFolder(folder)
+% Stop with a clear error if the folder is the shared course data folder,
+% or if we can't save files in it
+if contains(folder, "MtMresources")
+    error("This folder is inside the shared course data folder (MtMresources). " + ...
+        "Run this section again and choose a folder of your own, for example in your Documents folder.")
+end
+testFile = fullfile(folder, "write_test.tmp");
+fid = fopen(testFile, "w"); % try to create a small file
+if fid == -1
+    error("You can't save files in this folder: %s\nRun this section again and choose a different folder, for example in your Documents folder.", folder)
+end
+fclose(fid);
+delete(testFile)
+end
+
 function segRAS = lpsToRAS(segMV)
 % Convert a medicalVolume from LPS+ to RAS+ patient coordinates.
 % The two systems differ only in the direction of the x and y axes,
