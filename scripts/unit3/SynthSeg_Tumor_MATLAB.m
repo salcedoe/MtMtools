@@ -23,7 +23,7 @@ paths.stripped = fullfile(paths.project, "MRBT1stripped.nrrd"); % the skull-stri
 paths.mask = fullfile(paths.project, "MRBT1SkullStrip.seg.nrrd"); % the brain segmentation
 paths.synthseg = fullfile(paths.project, "MRBT1stripped_synthseg_v2.seg.nrrd"); % the SynthSeg segmentation
 paths.volumes = fullfile(paths.project, "MRBT1stripped_volumes.csv"); % the SynthSeg volumes
-isfolder(paths.project) %[output:16e9ac31]
+isfolder(paths.project)
 %[text] - If the answer is 0 (false), choose your project folder with the button \
 %%
 %[text] ### OPTIONAL: No project folder
@@ -38,20 +38,20 @@ isfolder(paths.project) %[output:16e9ac31]
 %[text] ## Step 2: Load the MRI
 %[text] If your project folder has **MRBT1stripped.nrrd**, we use it. Otherwise, we use **MRBrainTumor1** from the course data folder (the same MRI that you loaded in Slicer), and remove the skull in Step 4:
 warning("off", "medical:medicalVolume:noEndian") % Slicer's NRRD files trigger a harmless warning
-hasStripped = isfile(paths.stripped) %[output:90080139]
-if hasStripped %[output:group:715246a0]
+hasStripped = isfile(paths.stripped)
+if hasStripped
     paths.mri = paths.stripped;
-    disp("Found MRBT1stripped.nrrd: we use your skull-stripped MRI") %[output:0fa40626]
+    disp("Found MRBT1stripped.nrrd: we use your skull-stripped MRI")
 else
     paths.mri = fullfile(mmSetUnitDataFolder(3), "Tumors", "MRBrainTumor1.nrrd");
     disp("No MRBT1stripped.nrrd: we start from MRBrainTumor1, and remove the skull in Step 4")
-end %[output:group:715246a0]
-mriMV = medicalVolume(paths.mri) %[output:2ff9964b]
+end
+mriMV = medicalVolume(paths.mri)
 %[text] - The voxels are not cubes: they are 0.94 mm wide, but 1.4 mm thick. SynthSeg works on 1 mm voxels, so it resamples the MRI first \
 %%
 %[text] ## Step 3: Run SynthSeg
 %[text] The course function **mmSynthSeg2** runs SynthSeg 2.0. It needs the MRI, and the names of the two files to save:
-[synthMV, synthT, volumes] = mmSynthSeg2(mriMV, OutputFile=paths.synthseg, VolumesFile=paths.volumes); %[output:150f2e45]
+[synthMV, synthT, volumes] = mmSynthSeg2(mriMV, OutputFile=paths.synthseg, VolumesFile=paths.volumes);
 %[text] - This takes about a minute. The first time, the function also loads the network
 %[text] - If the network file isn't in your course toolbox, the function downloads it (about 50 MB) and saves it in your MATLAB folder. This happens only once
 %[text] - If the files already exist, they are replaced
@@ -133,19 +133,4 @@ medicalVolumeViewer(strippedMV, labelMV)
 %---
 %[control:filebrowser:a7c1]
 %   data: {"browserType":"Folder","defaultValue":"\"\"","label":"Choose your project folder","run":"Section"}
-%---
-%[output:16e9ac31]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"ans","value":"   1\n"}}
-%---
-%[output:90080139]
-%   data: {"dataType":"textualVariable","outputData":{"header":"logical","name":"hasStripped","value":"   1\n"}}
-%---
-%[output:0fa40626]
-%   data: {"dataType":"text","outputData":{"text":"Found MRBT1stripped.nrrd: we use your skull-stripped MRI\n","truncated":false}}
-%---
-%[output:2ff9964b]
-%   data: {"dataType":"textualVariable","outputData":{"name":"mriMV","value":"  <a href=\"matlab:helpPopup('medicalVolume')\" style=\"font-weight:bold\">medicalVolume<\/a> with properties:\n\n                  Voxels: [256×256×112 int16]\n          VolumeGeometry: [1×1 medicalref3d]\n            SpatialUnits: \"unknown\"\n             Orientation: \"transverse\"\n            VoxelSpacing: [0.9375 0.9375 1.4]\n            NormalVector: [0 0 1]\n        NumCoronalSlices: 256\n       NumSagittalSlices: 256\n     NumTransverseSlices: 112\n            PlaneMapping: [\"sagittal\"    \"coronal\"    \"transverse\"]\n    DataDimensionMeaning: [\"left\"    \"posterior\"    \"superior\"]\n                Modality: \"unknown\"\n           WindowCenters: []\n            WindowWidths: []\n"}}
-%---
-%[output:150f2e45]
-%   data: {"dataType":"text","outputData":{"text":"Preprocessing...\nSegmenting (1 of 2)...\nSegmenting (2 of 2, flipped)...\nPostprocessing...\nSaved the segmentation: \/Users\/ernesto\/Desktop\/Tumors\/MRBT1stripped_synthseg_v2.seg.nrrd\nSaved the volumes: \/Users\/ernesto\/Desktop\/Tumors\/MRBT1stripped_volumes.csv\nDone in 17 seconds.\n","truncated":false}}
 %---
