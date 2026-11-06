@@ -41,6 +41,8 @@
 %   mmSurfaceDistance           - Compare two segmentations by the signed distance between their surfaces
 %   mmCrossSectionProfile       - Measure the cross-sections (area, diameter, widths) of a bone or vessel along its length
 %   mmSynthSeg2                 - Segment a brain MRI with SynthSeg 2.0 (no Python or Slicer needed)
+%   mmSkullStrip                - Remove the skull from a brain MRI, using SynthSeg 2.0
+%   mmWriteNRRD                 - Save a medicalVolume as a NRRD volume or Slicer segmentation (.seg.nrrd)
 %   mmGetWatershed              - Watershed-segment a binary 3D volume
 %   mmGetTextureFilters         - Generate standard texture filters (std, range, entropy) of an image
 %
