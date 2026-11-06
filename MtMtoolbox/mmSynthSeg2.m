@@ -59,7 +59,7 @@ function [segMV, segT, volumes] = mmSynthSeg2(input, options)
 % ---
 % AUTHOR: Ernesto Salcedo, PhD
 % SITE: University of Colorado Modern Human Anatomy
-% UPDATED: 11/05/2026
+% UPDATED: 11/06/2026
 
 arguments
     input
@@ -347,10 +347,12 @@ function [X, aff, voxelSize] = preprocess(mriMV)
 
 % voxel-to-RAS transformation (0-based voxel indices, as in NIfTI)
 R = mriMV.VolumeGeometry;
-[x, y, z] = intrinsicToWorld(R, [1 2 1 1], [1 1 2 1], [1 1 1 2]); % LPS coordinates (mm)
+[x, y, z] = intrinsicToWorld(R, [1 2 1 1], [1 1 2 1], [1 1 1 2]); % patient coordinates (mm)
 P = [x(:) y(:) z(:)];
-affLPS = [(P(2:4,:) - P(1,:))' P(1,:)'; 0 0 0 1];
-aff = diag([-1 -1 1 1]) * affLPS; % LPS -> RAS
+aff = [(P(2:4,:) - P(1,:))' P(1,:)'; 0 0 0 1];
+if R.PatientCoordinateSystem ~= "RAS+" % DICOM and NRRD volumes are LPS+, NIfTI volumes are RAS+
+    aff = diag([-1 -1 1 1]) * aff; % LPS -> RAS
+end
 X = single(mriMV.Voxels);
 voxelSize = vecnorm(aff(1:3, 1:3));
 
