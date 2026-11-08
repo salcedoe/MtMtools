@@ -28,6 +28,7 @@
 %   mmCalcSurfaceAreaFromMesh   - Calculate the surface area of a triangulated mesh
 %   mmAlignSurface2Axes         - Align a surface's direction of greatest variance to the x-axis
 %   mmAlignSurfaces             - Register two point clouds with iterative closest point (ICP)
+%   mmMirrorAlign               - Mirror a segmentation (left <-> right) and align it to another, on the same voxel grid
 %   mmRotateSurfaceVertices     - Rotate surface vertices about the x, y, or z axis
 %   mmCreateRotationMat         - Create an affine rotation matrix about the x, y, or z axis
 %   transformPoint3d            - Transform 3D points with an affine transform (MatGeom)

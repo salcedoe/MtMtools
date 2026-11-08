@@ -44,32 +44,34 @@ contentT.VolSize = cell(height(contentT),1);
 contentT.PixelSpacing = zeros(height(contentT),3);
 contentT = movevars(contentT,["ID" "VolDim" "VolSize" "PixelSpacing"],'Before',1);
 
-si = []; % successful indices
-allSegT = table; % segmentation metadata
-for n=1:height(contentT)
-
-
+nFiles = height(contentT);
+segC = cell(nFiles,1); % preallocate: one cell per file, each will hold that file's segment table
+ok = false(nFiles,1);  % which files were read successfully
+for n = 1:nFiles
     filepath = fullfile(contentT.folder(n),contentT.name(n)); % construct file path
-    t = mmGetSlicerSegmentInfo(filepath);
-    t.Num = repmat(n, height(t),1);
-    t.Filename = repmat(string(contentS(n).name),height(t),1);
-    t.ID = extractBefore(t.Filename,options.idDelimiter); % extract before an underscore or a space ("_"|" ")       
-    t = movevars(t,{'Num' 'ID'},'Before',1);   
+    try
+        t = mmGetSlicerSegmentInfo(filepath);
+    catch ME
+        fprintf('%d. %s. %s\n',n,contentT.name(n),ME.message)
+        continue % leave this cell empty
+    end
+    t.Num = repmat(n,height(t),1);
+    t.Filename = repmat(contentT.name(n),height(t),1);
+    t.ID = extractBefore(t.Filename,options.idDelimiter); % extract before an underscore or a space ("_"|" ")
+    t = movevars(t,{'Num' 'ID'},'Before',1);
 
     contentT.ID(n) = t.ID(1);
     contentT.VolDim(n) = numel(t.Properties.UserData.ImageSize);
     contentT.VolSize{n} = t.Properties.UserData.ImageSize;
     contentT.PixelSpacing(n,:) = t.Properties.UserData.PixelDimensions;
 
-    try % test if data can be concatenated with previous data
-
-        allSegT = [allSegT; t];
-        si = [si; n]; % concatenate successful indices
-    catch ME
-        fprintf('%d. %s. %s\n',n,t.ID(1), ME.message)
-        % disp(t)
-        continue
-    end
+    segC{n} = t; % store the table; no copying of the growing result
+    ok(n) = true;
+end
+si = find(ok); % successful indices
+allSegT = vertcat(segC{:}); % stack all the tables at once (empty cells are skipped)
+if isempty(allSegT)
+    error('None of the Slicer files could be read')
 end
 allSegT.ID = categorical(allSegT.ID);
 allSegT.SegName = categorical(allSegT.SegName);
