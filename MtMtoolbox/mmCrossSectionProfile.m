@@ -235,6 +235,12 @@ end
 function centerline = skeletonCenterline(box, offset, tform, smoothing, w)
 % Longest path through the skeleton of the mask, smoothed, in mm
 skel = bwskel(box, MinBranchLength=20);
+CC = bwconncomp(skel, 26); % keep the largest piece: a path can't cross between pieces
+if CC.NumObjects > 1
+    [~, big] = max(cellfun(@numel, CC.PixelIdxList));
+    skel(:) = false;
+    skel(CC.PixelIdxList{big}) = true;
+end
 if nnz(skel) < 2
     error("mmCrossSectionProfile:skeleton", "The skeleton of the mask is too small to trace a centerline.")
 end
