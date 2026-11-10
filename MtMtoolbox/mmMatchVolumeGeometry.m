@@ -47,7 +47,7 @@ A = intrinsicToWorldMapping(R).A;
 refA = intrinsicToWorldMapping(refR).A;
 if max(abs(A(1:3,1:3) - refA(1:3,1:3)), [], "all") > options.Tolerance * min(refMV.VoxelSpacing)
     error("mmMatchVolumeGeometry:spacing", ...
-        "The volumes have different voxel spacing or orientation. Resample the segmentation in Slicer instead.")
+        "The volumes have different voxel spacing or orientation. Use mmResampleIsotropic (or resample the segmentation in Slicer) instead.")
 end
 
 % where is the first voxel of mV in the reference grid?
@@ -56,7 +56,7 @@ end
 offset = [i j k] - 1; % [row col slice] shift of mV relative to refMV
 if any(abs(offset - round(offset)) > options.Tolerance)
     error("mmMatchVolumeGeometry:grid", ...
-        "The voxel grids of the volumes don't line up. Resample the segmentation in Slicer instead.")
+        "The voxel grids of the volumes don't line up. Use mmResampleIsotropic (or resample the segmentation in Slicer) instead.")
 end
 offset = round(offset);
 

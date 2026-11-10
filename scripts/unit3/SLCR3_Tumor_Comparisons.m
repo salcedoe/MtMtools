@@ -41,8 +41,6 @@ paths.volumes = fullfile(paths.project,fnames(1)) % MRBT1stripped_volumes.csv %[
 % paths.segment = fullfile(paths.project, "Merged Segmentations.seg.nrrd"); % brain, Tumor1, and Tumor2
 % paths.synthseg = fullfile(paths.project, "MRBT1stripped_synthseg_v2.seg.nrrd"); % SynthSeg segmentation
 % paths.volumes = fullfile(paths.project, "MRBT1stripped_volumes.csv"); % SynthSeg volumes
-% table(fieldnames(paths), structfun(@(x) exist(x, "file"), paths), VariableNames=["path" "X"]) % make sure the paths exist
-%[text] - 7 means a folder, and 2 means a file. A zero means that the path doesn't exist. \
 %%
 %[text] ### Load the medical volumes
 warning("off", "medical:medicalVolume:noEndian") % Slicer's NRRD files trigger a harmless warning
@@ -327,16 +325,16 @@ end
 %   data: {"browserType":"Folder","defaultValue":"\"\"","label":"Choose your Tumor Folder","run":"Section"}
 %---
 %[control:dropdown:295d]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:dropdown:5312]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:dropdown:0b92]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:dropdown:19fb]
-%   data: {"defaultValue":"fnames(1)","itemLabels":["6 BODY BONE cropped.nrrd","Salcedo Segmentation.seg.nrrd","Total Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
+%   data: {"defaultValue":"fnames(1)","itemLabels":["CTACardio Crop segmentation.seg.nrrd","CTACardio Crop.nrrd","CTACardio.nrrd","Lung segmentation preview.seg.nrrd","Lung segmentation.seg.nrrd","Resampled Volume.nrrd","Salcedo Segmentation.seg.nrrd"],"items":["fnames(1)","fnames(2)","fnames(3)","fnames(4)","fnames(5)","fnames(6)","fnames(7)"],"itemsVariable":"fnames","label":"Drop down","run":"Section"}
 %---
 %[control:colorPicker:2342]
 %   data: {"colorFormat":"RGB [0-1]","defaultValue":"[1 1 1]","label":"Color picker","run":"Section"}
