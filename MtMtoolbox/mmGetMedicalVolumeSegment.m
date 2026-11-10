@@ -67,7 +67,10 @@ if ndims(VOX)>3 % 4D arrays are created when overlap is allowed in Slicer
         vol = squeeze(VOX(:,:,:,layer));
         S.mask = vol == label;
     catch
-        warning('%s. Indexing %d layer of the voxel data failed',segT.File(1),layer)
+        warning("mmGetMedicalVolumeSegment:layer", ...
+            "Could not read segment ""%s"" from layer %d: the volume has %d layer(s). " + ...
+            "Do the volume and the segment table come from the same file? Returning an empty mask.", ...
+            S.segName, layer, size(VOX, 4))
         S.mask = false(size(VOX,1:3));
     end
 

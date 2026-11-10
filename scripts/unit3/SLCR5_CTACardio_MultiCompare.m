@@ -31,6 +31,16 @@ tform = myMV.VolumeGeometry.intrinsicToWorldMapping; % get the transformation ma
 
 segT = mmGetSlicerSegmentInfo(paths.segment) % get slicer segmentation data
 %%
+%[text] ### Does your segmentation have layers? (optional)
+%[text] Slicer saves a segmentation in more than one **layer** when segments overlap (for example, a kidney and the aorta). Check your segmentation in two ways:
+%[text] - the size of the voxels below: three numbers means one layer. **Four** numbers means layers: the fourth number is the number of layers
+%[text] - the `Layer` column of `segT` above: if every value is 1, you have one layer \
+size(myMV.Voxels)
+%[text] The example segmentation has one layer, so there is nothing to do. If **your** segmentation has layers, the next sections (volshow and regionprops3) won't run, because they need one label volume. You can collapse the layers in Slicer and save the file again, or use the course function **mmCollapseSegmentLayers**: remove the `%` from the line below, and run this section again.
+%[text] - The result is the same as collapsing the layers in Slicer. Where two segments overlap, the segment in the **higher layer** (the `Layer` column of `segT`) keeps the voxels. The function tells you which segments lost voxels, and how many. Check that the numbers are small
+%[text] - The function doesn't change your file \
+% [myMV, segT] = mmCollapseSegmentLayers(myMV, segT);
+%%
 %[text] ### Display using volshow
 hvr = viewer3d("BackgroundColor",'white',BackgroundGradient='off');
 hvs = volshow(intMV,OverlayData=myMV.Voxels,Parent=hvr,RenderingStyle="GradientOpacity");

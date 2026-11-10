@@ -42,17 +42,27 @@ segMV = medicalVolume(paths.segment) % segmentation volume
 %[text] - The voxels are cubic: about 1.07 mm on each side
 %[text] - Both volumes have the same size, so each voxel of the segmentation matches a voxel of the CT \
 %%
+%[text] ### Load the segment information
+%[text] The segment names, labels, and colors that you set in Slicer are saved in the header of the segmentation file. The course function **mmGetSlicerSegmentInfo** reads them into a table:
+segT = mmGetSlicerSegmentInfo(paths.segment)
+%[text] - This segmentation has six segments, with the label values 1-6 \
+%%
+%[text] ### Does your segmentation have layers? (optional)
+%[text] Slicer saves a segmentation in more than one **layer** when segments overlap, or when they were created in separate layers. Check your segmentation in two ways:
+%[text] - the size of the voxels below: three numbers means one layer. **Four** numbers means layers: the fourth number is the number of layers
+%[text] - the `Layer` column of `segT` above: if every value is 1, you have one layer \
+size(segMV.Voxels)
+%[text] The example segmentation has one layer, so there is nothing to do. If **your** segmentation has layers, the rest of this script won't run, because it needs one label volume. You can collapse the layers in Slicer and save the file again, or use the course function **mmCollapseSegmentLayers**: remove the `%` from the line below, and run this section again.
+%[text] - The result is the same as collapsing the layers in Slicer. Where two segments overlap, the segment in the **higher layer** (the `Layer` column of `segT`) keeps the voxels. The function tells you which segments lost voxels, and how many. Check that the numbers are small
+%[text] - The function doesn't change your file \
+% [segMV, segT] = mmCollapseSegmentLayers(segMV, segT);
+%%
 %[text] If the segmentation and the CT volume have different sizes (some versions of Slicer add an extra empty slice), **mmMatchVolumeGeometry** puts the segmentation on the voxel grid of the CT. If they already match, it leaves the segmentation unchanged:
 segMV = mmMatchVolumeGeometry(segMV, ctMV);
 %%
 %[text] ### View Volume and Segmentation in Viewer
 medicalVolumeViewer(ctMV,segMV)
 %[text] 
-%%
-%[text] ### Load the segment information
-%[text] The segment names, labels, and colors that you set in Slicer are saved in the header of the segmentation file. The course function **mmGetSlicerSegmentInfo** reads them into a table:
-segT = mmGetSlicerSegmentInfo(paths.segment)
-%[text] - This segmentation has six segments, with the label values 1-6 \
 %%
 %[text] ## Plot all segmentations
 %[text] The course function **mmPlotAllSeg** plots every segment in its Slicer color. Its inputs are the segmentation volume and the segment table.
