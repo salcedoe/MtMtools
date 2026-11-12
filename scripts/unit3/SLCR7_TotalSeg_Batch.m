@@ -13,43 +13,49 @@ clearvars
 warning("off", "medical:medicalVolume:noEndian") % Slicer's NRRD files trigger a harmless warning
 %%
 %[text] ## Setup
-%[text] ### Create a project folder
-%[text] TotalSegmentator writes one segmentation file for every scan. These files need a folder of your own. **Don't** save them in the shared class folder (SlicerDropbox): everyone in the class uses the scans in that folder, so please don't add, change, or delete any files there.
-%[text] 1. Create a new, empty folder, for example **TotalSeg\_Batch**
-%[text] 2. Run this section and select the new folder. The script creates a **segmentations** subfolder inside it \
-projectFolder = uigetdir(userpath, "Select your project folder")
-if isequal(projectFolder, 0)
-    error("No folder selected. Run this section again and select your project folder.")
-end
-checkProjectFolder(projectFolder)
-mySegFolder = fullfile(projectFolder, "segmentations"); % where your TotalSegmentator output will go
-if ~isfolder(mySegFolder)
-    mkdir(mySegFolder);
-end
+%[text] ### Example: Segment Liver in CTACardio
+%[text] First, though, let's revisit the CTACardio project we've been working on. When prompted, choose the CTACardio Cropped Intensity file (or whichever intensity file you happen to have)
+[file,location] = uigetfile(fullfile(userpath,".nrrd"));
+scanFile = fullfile(location, file);
+structures = "liver";
+segFile = fullfile(location,"Liver segmentation.seg.nrrd")
 %%
-%[text] ### Find the scans
-%[text] The ten scans are in the shared class folder: MATLAB Drive / SlicerDropbox / TotalSegDemo. Each file is named after its donor, for example "TS27 Body.nrrd". The wildcard **\*** in "TS\* Body.nrrd" matches any text. Then **matches** keeps only the names that are exactly "TS", two digits, and " Body.nrrd", so we find only the ten scans, even if someone saved other files in the folder (like "TS27 Body copy.nrrd"). The ID ("TS27") is the part of the name before " Body":
-scanFolder = fullfile(matlabdrive, "SlicerDropbox", "TotalSegDemo");
-scanFiles = dir(fullfile(scanFolder, "TS* Body.nrrd"));
+%[text] **Run** **`mmTotalSegmentator`**
+tic
+mmTotalSegmentator(scanFile, Structures=structures, OutputFile=segFile); % saves the segmentation file
+seconds = toc
+%%
+intMV = medicalVolume(scanFile); % ct intensity file
+segMV = medicalVolume(segFile); % liver segmentation
+hvwr = viewer3d(BackgroundColor='white',BackgroundGradient='off');
+hvs = volshow(intMV,parent = hvwr,OverlayData= segMV.Voxels,RenderingStyle="GradientOpacity");
+hvs.OverlayAlpha = single(0.5); % opacity of segmentations
+hvs.Alphamap = single(linspace(0,0.5,256)); % adjust intensity alpha values - not the low values
+%%
+%[text] ## Example: Batch run cadaveric tissue
+%[text] ### Setup: First, create a project folder
+%[text] TotalSegmentator writes one segmentation file for every scan. These files need a folder of their own (where you have file write privileges). So, each of you need **your own folder** to store your own TotalSegmentator files. And please **don't** save anything in the shared class folder (SlicerDropbox), or you'll make a mess of things. Everyone will be using that SlicerDropbox folder to load the Intensity files, so please don't add, change, or delete any files there
+%[text] To begin, create a new, empty folder, for example **TotalSeg\_Batch** using the Live Script control below.
+%[text] If you do this right, you will 1) Set the `projectFolder`, and 2) The function `checkProjectFolder` will create a new subfolder inside the `projectFolder`, called **`segmentations`**. That's where everything will be stored. 
+clearvars
+cd(userpath)
+projectFolder = "/Users/ernesto/Desktop/TotalSeg" % TotalSegBatch %[control:filebrowser:87c3]{"position":[17,50]}
+segFolder = checkProjectFolder(projectFolder) % Checks folder/ adds subfolder
+%%
+%[text] ### Next: Find the scans
+%[text] The ten scans are in the shared class folder: MATLAB Drive / SlicerDropbox / TotalSegDemo. Each file is named after the donor ID, for example "TS27 Body.nrrd". The wildcard **\*** in "TS\* Body.nrrd" matches any text. Then **matches** keeps only the names that are exactly "TS", two digits, and " Body.nrrd", so we find only the ten scans, even if someone saved other files in the folder (like "TS27 Body copy.nrrd"). The ID ("TS27") is the part of the name before " Body":
+scanFolder = fullfile(matlabdrive, "SlicerDropbox", "TotalSegDemo"); % path to the MATLAB drive folder
+scanFiles = dir(fullfile(scanFolder, "TS* Body.nrrd")); % only files ending in .nrrd
 scanFiles = scanFiles(matches({scanFiles.name}, "TS" + digitsPattern(2) + " Body.nrrd")); % only the original scans
 numScans = numel(scanFiles)
 IDs = string(extractBefore({scanFiles.name}', " Body")) % "TS27 Body.nrrd" -> "TS27"
 %[text] The local function **checkScans** checks that every scan is there, and that its size (in bytes) hasn't changed. If a scan is missing or damaged, it tells you which one, so that you can let your instructor know:
 checkScans(scanFiles)
+%%
 %[text] The file **TotalSegDemoDonors.csv** has the sex and age of each donor:
-donorT = readtable(fullfile(scanFolder, "TotalSegDemoDonors.csv"), TextType="string");
+donorT = readtable(fullfile(scanFolder, "TotalSegDemoDonors.csv"), TextType="string"); % load the table
 donorT.Sex = categorical(donorT.Sex, ["F" "M"])
 %[text] - These scans are whole-body CT scans: each one is about 512 × 512 × 600 voxels. Their voxels are about 1 mm wide, but **3 mm** thick. Keep this in mind when you look at the lengths: a length along the body can't be more precise than a few mm \
-%%
-%[text] ### Your segmentations, or ours?
-%[text] TotalSegmentator takes about a minute per scan on a computer with a GPU (a Mac with Apple silicon, or a computer with an NVIDIA graphics card), and several minutes per scan without one. If it doesn't run on your computer, set `useProvided` to `true`: the script then uses the segmentations in the **segmentations** folder of TotalSegDemo, which we made with exactly the same code.
-useCourseExamples = false; % true: use the segmentations that we provide %[control:checkbox:845c]{"position":[21,26]}
-if useCourseExamples
-    segFolder = fullfile(scanFolder, "segmentations");
-else
-    segFolder = mySegFolder;
-end
-
 %%
 %[text] ## Segment one scan
 %[text] Before we segment all ten scans, we segment **one**, and check the result. With `Structures`, TotalSegmentator segments only the four structures we need, instead of all 117. This is faster, because it first crops the CT to the region of these structures. 
@@ -58,16 +64,23 @@ scanFile = fullfile(scanFiles(k).folder, scanFiles(k).name);
 segFile = fullfile(segFolder, IDs(k) + " segmentation.seg.nrrd");
 
 structures = ["right femur" "left femur" "right kidney" "left kidney"]; % the structures we want to segment
-if ~useCourseExamples
     tic
     mmTotalSegmentator(scanFile, Structures=structures, OutputFile=segFile); % saves the segmentation file
     seconds = toc
-end
+
 segT = mmGetSlicerSegmentInfo(segFile)
 %[text] **plotOrgans** plots the surfaces of the four structures of a segmentation file:
 plotOrgans(segFile, IDs(k))
 %[text] - Did TotalSegmentator find all four structures?
 %[text] - The segmentation file stores the same segment names and colors as the TotalSegmentator module in Slicer. Open the scan and the segmentation file in Slicer: does the segmentation line up with the scan? \
+%%
+%[text] #### Did that work?
+%[text] Or Did it take too long?
+%[text] TotalSegmentator should take about a minute per scan on a computer with a GPU (a Mac with Apple silicon, or a computer with an NVIDIA graphics card), and several minutes per scan without one. If you feel like this is not going to work on your computer, you can toggle the check below to use the segmentations we already generated before the show. 
+useCourseExamples = false; % true: use the segmentations that we provide %[control:checkbox:0666]{"position":[21,26]}
+if useCourseExamples
+    segFolder = fullfile(scanFolder, "segmentations");%#ok<UNRCH>
+end
 %%
 %[text] ## Segment every scan
 %[text] Now the batch. As in the SynthSeg exercise, the **for** loop runs the same steps once for each scan:
@@ -199,6 +212,7 @@ title("Kidney")
 %%
 %[text] ## Do the kidneys get smaller with age?
 %[text] In older adults, the kidneys slowly lose tissue. Our donors were 56 to 97 years old. Do the older donors have smaller kidneys? We plot the mean kidney volume of each donor against age, with a different color for women and men:
+figure
 kT = donorOrganT(isK, :);
 gscatter(kT.Age, kT.mean_Volume_mL, kT.Sex, [], "o", 8, "filled")
 xlabel("Age (years)")
@@ -233,13 +247,23 @@ heightT.HeightAtDeath_cm = heightT.Height_cm - 0.06 * (heightT.Age - 30)
 %%
 %[text] # Local functions
 %[text] These functions use functions from the course toolbox (MtMtoolbox).
-function checkProjectFolder(folder)
+function segFolder = checkProjectFolder(folder)
 % Stop with a clear error if the folder is a shared class folder
 % (MtMresources or SlicerDropbox), or if we can't save files in it
+
+if strlength(folder)==0
+    error("No folder selected. Run this section again and select your project folder.")
+end
+
 if contains(folder, ["MtMresources" "SlicerDropbox"])
     error("This folder is inside a shared class folder (MtMresources or SlicerDropbox). " + ...
         "Run this section again and choose a folder of your own, for example in your Documents folder.")
 end
+
+if ~exist(folder,"dir")
+    error("This folder doesn't exist: %s\nRun this section again and select an existing folder, or create a new one.", folder)
+end
+
 testFile = fullfile(folder, "write_test.tmp");
 fid = fopen(testFile, "w"); % try to create a small file
 if fid == -1
@@ -247,6 +271,13 @@ if fid == -1
 end
 fclose(fid);
 delete(testFile)
+
+segFolder = fullfile(folder, "segmentations"); % new folder where your TotalSegmentator output will go
+if ~isfolder(segFolder)
+    mkdir(segFolder); % create the folder if it doesn't exist
+    fprintf("Adding new folder: %s\n", segFolder)
+end
+disp("projectFolder successfully setup.")
 end
 
 
@@ -345,6 +376,9 @@ end
 %[metadata:view]
 %   data: {"layout":"inline"}
 %---
-%[control:checkbox:845c]
+%[control:filebrowser:87c3]
+%   data: {"browserType":"Folder","defaultValue":"\"\"","label":"Choose a Batch Folder","run":"Section"}
+%---
+%[control:checkbox:0666]
 %   data: {"defaultValue":false,"label":"useProvided","run":"Section"}
 %---

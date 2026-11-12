@@ -174,7 +174,7 @@ contentT(:, ["ID" "VolSize" "PixelSpacing"])
 %[text] For the following steps to work,you segmentation volume needs to be Isotropic. If its not isotropic, you need to go back and fix it. Luckily there is a way to fix your file right from MATLAB using **mmResampleSlicerFiles**. But you need both the segmentation and the volume that you segmented from the Slicer folder on your computer. 
 %[text] To fix:
 %[text] 1. Uncomment the lines below
-%[text] 2. Enter the full paths of your two files where indicated and run the three lines
+%[text] 2. Enter the full paths of your two files where indicated and run the three lines. (Hint: search using the MATLAB Files tab. If you right-click on a file, you can get the full file path by selecting "Copy Path")
 %[text] 3. Check the report: the volume of each segment should change by less than a few percent
 %[text] 4. Remove your old file from the Slicer Dropbox
 %[text] 5. Upload the new segmentation file (**... isotropic.seg.nrrd**) to the Slicer Dropbox folder  \
@@ -183,7 +183,7 @@ contentT(:, ["ID" "VolSize" "PixelSpacing"])
 % [newIntensity, newSegment] = mmResampleSlicerFiles(myIntensity, mySegment)
 %[text] The course function **mmResampleSlicerFiles** 
 %[text] - Resamples both the intensity and the segmentation files
-%[text] - Saves two new files in the same folder with " isotropic" added to the names. 
+%[text] - Saves two new files in the same folder with " isotropic" added to the names.
 %[text] - Your original files are not changed. \
 %[text] 
 %%

@@ -20,7 +20,7 @@ arguments (Input)
     options.PlotType = 'swarm'
     options.XAxVisible = 'off';
     options.MarkerFaceColor = 'flat';
-    options.MarkerFaceAlpha=0.25;
+    options.MarkerFaceAlpha=0.5;
     options.doBoxPlot = true;
     options.BoxFaceColor = [];
     options.BoxFaceAlpha = 0.1;

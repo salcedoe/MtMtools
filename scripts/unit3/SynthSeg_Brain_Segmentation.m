@@ -24,10 +24,10 @@
 clearvars
 close all
 
-projectFolder = uigetdir(userpath, "Select your SynthSeg project folder")
-if isequal(projectFolder, 0) % uigetdir returns 0 if you click Cancel
-    error("No folder selected. Run this section again and select your project folder.")
-end
+projectFolder = uigetdir(userpath, "Select your SynthSeg project folder") %[output:6890cb29]
+if isequal(projectFolder, 0) % uigetdir returns 0 if you click Cancel %[output:group:077e9ca4]
+    error("No folder selected. Run this section again and select your project folder.") %[output:7ad32fc9]
+end %[output:group:077e9ca4]
 checkProjectFolder(projectFolder) % stops with an error if you can't save files in this folder
 %[text] - Tip: instead of using the dialog box, you can type the path to your folder, for example: projectFolder = "/Users/yourname/Documents/SynthSeg\_Project" \
 %%
@@ -565,4 +565,10 @@ end
 %---
 %[metadata:view]
 %   data: {"layout":"inline"}
+%---
+%[output:6890cb29]
+%   data: {"dataType":"textualVariable","outputData":{"name":"projectFolder","value":"0"}}
+%---
+%[output:7ad32fc9]
+%   data: {"dataType":"error","outputData":{"errorType":"runtime","text":"No folder selected. Run this section again and select your project folder."}}
 %---
